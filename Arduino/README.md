@@ -18,10 +18,10 @@ ARDUINO
 
 Source Tree
 ---
-* [Source](https://github.com/SKT-ThingPlug/thingplug-device-middleware/tree/master/SDK/Arduino)
+* [Source](https://github.com/SKT-ThingPlug/thingplug-device-sdk-C/tree/master/Arduino)
 + __Arduino__ (project root)
 	+ __examples__
-		+ __ThingPlug_oneM2M_SDK__ (Middleware)
+		+ __ThingPlug_oneM2M_SDK__ (device SDK)
 			+ ThingPlug_oneM2M_SDK.ino ( Arduino Sketch File )
 			+ __src__
 			  + __MA__ (ManagementAgent)
