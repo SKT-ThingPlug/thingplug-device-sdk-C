@@ -20,7 +20,7 @@ mbed (+TLS)
 
 Source Tree
 ---
-* [Source](https://github.com/SKT-ThingPlug/thingplug-device-middleware/tree/master/SDK/mbed)
+* [Source](https://github.com/SKT-ThingPlug/thingplug-device-sdk-C/tree/master/mbed)
 + __mbed__ (project root)
 	+ __Library__ (libraries)
 		+ __mbedtls_2_3_0__ (mbed TLS library)
