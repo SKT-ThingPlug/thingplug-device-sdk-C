@@ -13,7 +13,7 @@ Linux (+TLS)
 
 Source Tree
 ---
-* [Source](https://github.com/SKT-ThingPlug/thingplug-device-middleware/tree/master/SDK/linux)
+* [Source](https://github.com/SKT-ThingPlug/thingplug-device-sdk-C/tree/master/linux)
 + __oneM2M__ (ThingPlug oneM2M SDK root folder)
 	+ __docs__ (SDK API documentation)
 	+ __samples__ (Samples including makefiles for build)
