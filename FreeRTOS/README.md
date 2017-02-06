@@ -20,7 +20,7 @@ FreeRTOS (+TLS)
 
 Source Tree
 ---
-* [Source](https://github.com/SKT-ThingPlug/thingplug-device-middleware/tree/master/SDK/FreeRTOS)
+* [Source](https://github.com/SKT-ThingPlug/thingplug-device-sdk-C/tree/master/FreeRTOS)
 + __FreeRTOS__ (project root)
 	+ __Drivers__
 		+ __CMSIS__
