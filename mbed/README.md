@@ -136,9 +136,9 @@ Sample code import
 2. '/Src/Configuration.h' 수정
 	+ __ONEM2M_V1_12__ : define 됐을 경우 oneM2M v1.12가 활성화 됨
 	+ __MQTT_ENABLE_SERVER_CERT_AUTH__ : 0(Normal socket 사용), 1(TLS socket 사용)
-	+ __ACCOUNT_USER__ : ThingPlug 계정의 UKEY
-	+ __ACCOUNT_PASSWORD__ : ThingPlug 계정의 Password
-	+ __ONEM2M_NODEID__ : ThingPlug 계정에 등록된 Device ID
+	+ __ACCOUNT_USER__ : ThingPlug 계정의 ID
+	+ __ACCOUNT_PASSWORD__ : ThingPlug 계정의 사용자 인증키
+	+ __ONEM2M_NODEID__ : ThingPlug 계정에 등록할 Device ID
 3. '/Src/ThingPlug_oneM2M_SDK.cpp' 수정
  1. serial port speed 변경
 	+ SDKVerification.cpp 파일에서 main() 함수의 pc.baud(115200); 수정
