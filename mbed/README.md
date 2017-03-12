@@ -9,7 +9,7 @@ mbed (+TLS)
 	+ Flash memory : 256KB 이상
 2. 테스트 환경
  1. Main board
-	+ STMicroelectronics Nucleo-64 F411RE
+	+ STMicroelectronics Nucleo-64 F411RE (or L152RE)
 	![NUCLEO-F411RE.jpg](images/NUCLEO-F411RE.jpg "" "width:50%;")
 		+ CPU : 100MHz ARM 32-bit Cortex-M4 with FPU
 		+ RAM : 128KB
@@ -82,6 +82,24 @@ Library import
  2. MQTT library와 중복되는 code 수정
 	+ 'WIZnet' directory의 W5500.h 파일의 enum Command의 각 항목 앞에 __CMD___를 붙임 (ex. OPEN -> CMD_OPEN)
 	+ 위의 enum Command를 사용하는 code 부분 모두 수정
+	+ 또는 namespace를 사용하여 아래와 같이 수정하여 사용
+	```
+	namespace w5500_Command {
+		enum Command {
+		    OPEN      = 0x01,
+		    LISTEN    = 0x02,
+		    CONNECT   = 0x04,
+		    DISCON    = 0x08,
+		    CLOSE     = 0x10,
+		    SEND      = 0x20,
+		    SEND_MAC  = 0x21, 
+		    SEND_KEEP = 0x22,
+		    RECV      = 0x40,
+
+		};
+	}
+	using namespace w5500_Command;
+	```
 4. MQTT
  1. Library import
 	+ Import Wizard의 Library tab에서 'mqtt' 검색
