@@ -1,4 +1,4 @@
-ThingPlug oneM2M SDK
+ThingPlug oneM2M device SDK
 ===
 본 챕터는 SKT ThingPlug oneM2M SDK 구조와 API 및 사용법에 대하여 서술한다.
 
@@ -82,4 +82,5 @@ Supported Devices
 * [mbed](mbed)
 * [FreeRTOS](FreeRTOS)
 
-Copyright (c) 2016 SK Telecom Co., Ltd. All Rights Reserved.
+Copyright (c) 2017 SK Telecom Co., Ltd. All Rights Reserved.
+Distributed under Apache License Version 2.0.
