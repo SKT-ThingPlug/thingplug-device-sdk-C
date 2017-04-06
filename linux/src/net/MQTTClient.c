@@ -54,9 +54,9 @@ void OnConnect(void* context, MQTTAsync_successData* response) {
         SKTDebugPrint(LOG_LEVEL_INFO, "subscribed topic : %s", mSubscribeTopic[i]);
 #endif
     }
-        if(rc != MQTTASYNC_SUCCESS) {
-            MQTTAsyncDestroy();
-        }
+    if(rc != MQTTASYNC_SUCCESS) {
+        MQTTAsyncDestroy();
+    }
 }
 
 void OnConnected(void* context, char* cause) {

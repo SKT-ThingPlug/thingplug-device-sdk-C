@@ -46,7 +46,7 @@
 #define TO_MGMTCMD                          "%s/mgmtCmd-%s"
 #define TO_MGMTCMDRESULT                    "%s/mgmtCmd-%s_%s/execInstance-%s"
 
-#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req/+/%s"
+#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req_msg/+/%s"
 #define TOPIC_SUBSCRIBE_RES                 "/oneM2M/resp/%s/+"
 #define TOPIC_SUBSCRIBE_SIZE                2
 //#define TOPIC_PUBLISH                       "/oneM2M/req/%s/ThingPlug"
@@ -330,7 +330,6 @@ static char* strnstr(char *s, char *text, size_t slen) {
 static char* IsCMD(char* topic) {
 	return strnstr(topic, "req", 12);
 }
-
 
 static void ProcessCMD(char* payload, int payloadLen) {
 	SKTDebugPrint(LOG_LEVEL_INFO, "ProcessCMD payload : %.*s", payloadLen, payload);

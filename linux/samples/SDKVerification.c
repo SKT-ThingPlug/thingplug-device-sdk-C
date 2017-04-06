@@ -43,7 +43,7 @@
 #define TO_MGMTCMD                          "%s/mgmtCmd-%s"
 #define TO_MGMTCMDRESULT                    "%s/mgmtCmd-%s/execInstance-%s"
 
-#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req/+/%s"
+#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req_msg/+/%s"
 #define TOPIC_SUBSCRIBE_RES                 "/oneM2M/resp/%s/+"
 #define TOPIC_SUBSCRIBE_SIZE                2
 

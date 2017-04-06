@@ -69,7 +69,7 @@ unsigned int localPort = 8888;  // local port to listen for UDP packets
 #define TO_MGMTCMD                          "%s/mgmtCmd-%s"
 #define TO_MGMTCMDRESULT                    "%s/mgmtCmd-%s/execInstance-%s"
 
-#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req/+/%s"
+#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req_msg/+/%s"
 #define TOPIC_SUBSCRIBE_RES                 "/oneM2M/resp/%s/+"
 #define TOPIC_SUBSCRIBE_SIZE                2
 
@@ -119,7 +119,6 @@ static char mAEID[128] = "";
 static char mNodeLink[23] = "";
 #else
 static char mDeviceKey[128] = "";
-
 static char mNodeLink[23] = "";
 static char mHostCSELink[23] = "";
 static char mRemoteCSEResourceName[128] = "";

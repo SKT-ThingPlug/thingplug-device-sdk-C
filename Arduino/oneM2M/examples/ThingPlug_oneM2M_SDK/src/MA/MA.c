@@ -30,7 +30,7 @@ extern "C" {
 #endif
 
 #ifdef ONEM2M_V1_12
-#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req/%s/%s" 
+#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req/%s/%s"
 #define TOPIC_SUBSCRIBE_RES                 "/oneM2M/resp/%s/%s"
 #define TOPIC_SUBSCRIBE_SIZE                2
 // #define TOPIC_PUBLISH                       "/oneM2M/req/%s/%s"
@@ -49,7 +49,7 @@ extern "C" {
 #define TO_MGMTCMD                          "%s/mgmtCmd-%s"
 #define TO_MGMTCMDRESULT                    "%s/mgmtCmd-%s_%s/execInstance-%s"
 
-#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req/+/%s"
+#define TOPIC_SUBSCRIBE_REQ                 "/oneM2M/req_msg/+/%s"
 #define TOPIC_SUBSCRIBE_RES                 "/oneM2M/resp/%s/+"
 #define TOPIC_SUBSCRIBE_SIZE                2
 #define NAME_MGA                            "MQTT|%s"
