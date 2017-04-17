@@ -10,13 +10,13 @@ mbed (+TLS)
 2. 테스트 환경
  1. Main board
 	+ STMicroelectronics Nucleo-64 F411RE (or L152RE)
-	![NUCLEO-F411RE.jpg](images/NUCLEO-F411RE.jpg "" "width:50%;")
+	![NUCLEO-F411RE.jpg](images/NUCLEO-F411RE.jpg)
 		+ CPU : 100MHz ARM 32-bit Cortex-M4 with FPU
 		+ RAM : 128KB
 		+ Flash memory : 512KB
  2. Ethernet board
 	+ WIZnet W5500
-    ![w5500_ethernet_shield.jpg](images/w5500_ethernet_shield.jpg "" "width:50%;")
+    ![w5500_ethernet_shield.jpg](images/w5500_ethernet_shield.jpg)
 
 Source Tree
 ---
@@ -59,14 +59,14 @@ IDE 설정
 2. 회원 가입 및 로그인
 3. 단말 조회
 	+ 오른쪽 상단의 입력상자에 __'F411RE'__ 입력
-	![mbed_search_device.png](images/mbed_search_device.png "" "width:50%;")
+	![mbed_search_device.png](images/mbed_search_device.png)
 	+ 검색 결과의 'NUCLEO-F411RE | mbed' 선택
 	+ 우측의 'Add to your mbed Compiler' 클릭
-	![mbed_add_device.png](images/mbed_add_device.png "" "width:50%;")
+	![mbed_add_device.png](images/mbed_add_device.png)
 	+ 버튼이 'Open mbed Compiler'로 바뀌면 클릭
 4. Project 생성
 	+ Template을 'Empty Program'으로 선택하고 Program Name에 project명 입력
-	![mbed_create_new_program.png](images/mbed_create_new_program.png "" "width:50%;")
+	![mbed_create_new_program.png](images/mbed_create_new_program.png)
 
 Library import
 ---
@@ -152,13 +152,13 @@ Build & Run
 ---
 1. Build
 	+ 화면 상단의 'Compile' 버튼 클릭
-	![mbed_compile.png](images/mbed_compile.png "" "width:50%;")
+	![mbed_compile.png](images/mbed_compile.png)
 2. Run
 	+ build 후 다운로드 된 .bin 파일을 윈도우 탐색기에서 'NODE_F411RE'로 연결된 device drive에 복사
-	![mbed_run.png](images/mbed_run.png "" "width:50%;")
+	![mbed_run.png](images/mbed_run.png)
 3. 실행 로그 확인
 	+ Serial 통신 프로그램(ex. Putty, Tera Term 등)을 사용해서 프로그램 로그 확인
 	(※ sample code의 ThingPlug_oneM2M_SDK.cpp 파일에서 지정한 speed와 맞춰 환경을 설정해야 글자가 깨져 보이지 않음)
-	![serial_log.png](images/serial_log.png "" "width:50%;")
+	![serial_log.png](images/serial_log.png)
 
 Copyright (c) 2016 SK Telecom Co., Ltd. All Rights Reserved.
