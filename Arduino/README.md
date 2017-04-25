@@ -8,13 +8,13 @@ ARDUINO
 	* RAM : 24KB
 	* Flash memory : 126KB
 2. 테스트 환경
-	+ Arduino 101 (USA ONLY) & Genuino 101 (OUTSIDE USA) ![genuino101.jpg](images/genuino101.jpg "" "width:50%;")
+	+ Arduino 101 (USA ONLY) & Genuino 101 (OUTSIDE USA) ![genuino101.jpg](images/genuino101.jpg)
 		+ CPU : 32MHz Intel Curie
 		+ RAM : 24KB
 		+ Flash memory : 196KB
 3. Ethernet board
 	+ Arduino Ethernet Shield R3 	
-	![ArduinoEthernetShield_R3_Front_450px.jpg](images/ArduinoEthernetShield_R3_Front_450px.jpg "" "width:50%;")
+	![ArduinoEthernetShield_R3_Front_450px.jpg](images/ArduinoEthernetShield_R3_Front_450px.jpg)
 
 Source Tree
 ---
