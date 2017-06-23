@@ -15,7 +15,7 @@ ONEM2M_SDK_OBJS = \
 	./ThingPlug_oneM2M_SDK.o
 
 INC = -I./include -I./ -I./SRA -I./SMA -I./MA 
-LIBS = -L./lib -L/usr/local/lib
+LIBS = -L../lib -L/usr/local/lib
 CFLAGS = -g -c -Wall $(FEATURE)
 CXXFLAGS = -c -Wall -D__STDC_LIMIT_MACROS
 COBJS = $(ONEM2M_SDK_OBJS)
