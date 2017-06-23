@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#include "oneM2M.h"
 #include "MQTT.h"
  
 

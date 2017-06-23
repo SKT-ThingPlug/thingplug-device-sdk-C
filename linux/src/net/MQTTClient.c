@@ -338,6 +338,9 @@ void MQTTAsyncDestroy() {
  * @return true : connected <-> false
  */
 int MQTTAsyncIsConnected() {
-    int rc = MQTTAsync_isConnected(mClient);
+    int rc = 0;
+    if(mClient) {
+        rc = MQTTAsync_isConnected(mClient);
+    }
     return rc;
 }
