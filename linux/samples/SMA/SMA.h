@@ -5,7 +5,9 @@ typedef enum _sma_sensor {
   TEMP_IDX = 1, // 0x01
   HUMI_IDX,     // 0x02
   LIGHT_IDX,    //0x03
-  MOTION_IDX,   // 0x04
+  BATTERYSTATE_IDX,   // 0x04
+  SYS_TOTALMEM_IDX,
+  SYS_FREEMEM_IDX,
   SENSOR_IDX_MAX
 } SMA_SENSOR_IDX;
 

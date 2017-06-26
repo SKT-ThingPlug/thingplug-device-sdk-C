@@ -112,12 +112,26 @@ int CreateContentInstance() {
 	free(ttv);
 	free(output);
 
-	sensorDescription = "motion";
+	sensorDescription = "batterystate";
 	SMAGetData(sensorDescription, &output);
-	SRAGetTTV( &ttv, 0x04, DATATYPE_BOOLEAN, output );
+	SRAGetTTV( &ttv, 0x06, DATATYPE_BOOLEAN, output );
 	tp_v1_14_AddData(ttv, strlen(ttv));
 	free(ttv);
 	free(output);
+
+        sensorDescription = "totalmem";
+        SMAGetData(sensorDescription, &output);
+        SRAGetTTV( &ttv, 0x08, DATATYPE_UINT, output );
+        tp_v1_14_AddData(ttv, strlen(ttv));
+        free(ttv);
+        free(output);
+
+        sensorDescription = "freemem";
+        SMAGetData(sensorDescription, &output);
+        SRAGetTTV( &ttv, 0x0A, DATATYPE_UINT, output );
+        tp_v1_14_AddData(ttv, strlen(ttv));
+        free(ttv);
+        free(output);
 
 	snprintf(to, sizeof(to), TO_CONTAINER, mToStart, ONEM2M_AE_NAME, NAME_CONTAINER);
 	rc = tp_v1_14_Report(mAEID, to, cnf, NULL, 1);
@@ -290,7 +304,7 @@ int MARun() {
         #if defined(WIN32) || defined(WIN64)
             Sleep(100);
         #else
-            usleep(1000000L);
+            usleep(10000000L);
         #endif
     }
     tpSDKDestory();
