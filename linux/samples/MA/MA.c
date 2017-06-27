@@ -293,8 +293,14 @@ int MARun() {
 
     char* st[] = {subscribeTopic[0], subscribeTopic[1]};
 
-	int port = (!MQTT_ENABLE_SERVER_CERT_AUTH ? MQTT_PORT : MQTT_SECURE_PORT);
-    rc = tpSDKCreate(MQTT_HOST, port, MQTT_KEEP_ALIVE, ACCOUNT_USER_ID, ACCOUNT_CREDENTIAL_ID, MQTT_ENABLE_SERVER_CERT_AUTH, st, TOPIC_SUBSCRIBE_SIZE, publishTopic, mClientID);
+#if(MQTT_ENABLE_SERVER_CERT_AUTH)
+	char host[] = MQTT_SECURE_HOST;
+	int port = MQTT_SECURE_PORT;
+#else
+	char host[] = MQTT_HOST;
+	int port = MQTT_PORT;
+#endif
+    rc = tpSDKCreate(host, port, MQTT_KEEP_ALIVE, ACCOUNT_USER_ID, ACCOUNT_CREDENTIAL_ID, MQTT_ENABLE_SERVER_CERT_AUTH, st, TOPIC_SUBSCRIBE_SIZE, publishTopic, mClientID);
     SKTDebugPrint(LOG_LEVEL_INFO, "tpSDKCreate result : %d", rc);
 
     while (mStep < PROCESS_END) {
