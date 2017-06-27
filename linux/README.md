@@ -64,7 +64,7 @@ Configuration 설정(samples/Configuration.h)
 	+ __ACCOUNT_CREDENTIAL_ID__ : ThingPlug 계정 CREDENTIAL-ID (포털 'My page/회원정보'에서 확인가능)
 	
 
-ThingPlug_oneM2M_SDK 빌드(oneM2M/samples/ThingPlug_oneM2M_SDK.c)
+ThingPlug_oneM2M_SDK 빌드(samples/ThingPlug_oneM2M_SDK.c)
 ---
 1. 빌드
 
