@@ -19,9 +19,14 @@ Source Tree
 + __linux__ (ThingPlug SDK root folder)
 	+ __samples__ (Device Middleware lite including makefiles for build)
 		+ __MA__ (ManagementAgent)
-		+ __SMA__ (SensorManagementAgent)
 		+ __SRA__ (ServiceReadyAgent)
+		+ __SMA__ (SensorManagementAgent)
 	+ __lib__ (prebuilt libraries including SDK and paho)
+		+ __armeabi-v7a__ (Raspberry Pi, BeagleBone)
+		+ __arm64-v8a__ (NVIDIA Jetson)
+		+ __x86__ (Intel Edison)
+		+ __x86_64__ (Intel Joule)
+		+ __x86_64_pe__ (cygwin64)
 	+ __include__ (Header files of the ThingPlug SDK)
 	+ __src__ (Source files of the ThingPlug SDK)
 		+ __oneM2M_V1_14__ (Source files of ThingPlug 1.5 oneM2M v1.14 SDK)
@@ -29,19 +34,15 @@ Source Tree
 
 SDK build
 ===
+SDK를 빌드하면 lib/ 폴더에 libtplinuxsdk.a 파일이 생성된다. SDK를 수정할 필요가 없다면 target architecture별로 제공되는 prebuilt library 파일들을 그대로 사용하면 된다. 
+
 1. 빌드
 
 	```
 	# make
 	```
 	
-2. 빌드 클리어
-
-	```
-	# make clean
-	```
-	
-3. SDK 라이브러리(libtplinuxsdk.a) 빌드 확인
+2. SDK 라이브러리(libtplinuxsdk.a) 빌드 확인
 
 	```
 	# ls lib/
@@ -50,6 +51,9 @@ SDK build
 
 Sample App build
 ===
+SDK를 활용해볼 수 있는 Sample App으로서 Device Middleware lite 버전을 제공한다.
+실행시키면 Configuration에 명시된 내용에 따라 자동으로 ThingPlug에 등록시키고,
+가상 센서 데이터(온도, 습도, 조도 등)와 실제 시스템의 여유 메모리량을 ThingPlug로 매 10초마다 전송한다.
 
 Configuration 설정(samples/Configuration.h)
 ---
@@ -69,13 +73,7 @@ ThingPlug_oneM2M_SDK 빌드(oneM2M/samples/ThingPlug_oneM2M_SDK.c)
 	# make
 	```
 	
-2. 빌드 클리어
-
-	```
-	# make clean
-	```
-	
-3. 실행
+2. 실행
 
 	```
 	# output/ThingPlug_oneM2M_SDK
