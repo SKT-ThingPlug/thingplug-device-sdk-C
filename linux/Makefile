@@ -37,5 +37,5 @@ $(TARGET): $(COBJS)
 	
 clean :
 	rm -rf $(ONEM2M_SDK_OBJS)
-	rm -rf $(OUTPUT)
+	rm -rf $(TARGET)
 	
