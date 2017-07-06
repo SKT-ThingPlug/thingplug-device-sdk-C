@@ -121,7 +121,7 @@ typedef struct
     /** description **/
     char* dc;
     /** cmdType **/
-    char* cmt;    
+    char* cmt;
     /** execReqArgs **/
     char* exra;
     /** execTarget **/

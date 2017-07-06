@@ -203,6 +203,15 @@ static void ProcessCMD(char* payload, int payloadLen) {
 	SimpleXmlParser(payload, ATTR_NM, nm, 1);
 	SimpleXmlParser(payload, ATTR_EXRA, exra, 1);
 	SimpleXmlParser(payload, ATTR_RI, resourceId, 1);
+	SKTDebugPrint(LOG_LEVEL_INFO, "mgmtCmd received: %s", exra);
+
+    if(exra[0] == '8' && exra[1] == '7'){   
+        SKTDebugPrint(LOG_LEVEL_INFO, "BUZZER command received");
+    }
+    if(exra[0] == '8' && exra[1] == '8'){   
+		SKTDebugPrint(LOG_LEVEL_INFO, "LED command received");
+    }
+
 	if(!nm[0]){		
 		snprintf(nm, sizeof(nm), TO_MGC, NAME_MGMTCMD_FIRMWARE);
 	}	 

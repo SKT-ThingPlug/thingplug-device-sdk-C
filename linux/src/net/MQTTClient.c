@@ -19,7 +19,7 @@
 #include "SKTtpDebug.h"
 #endif
 
-static MQTTAsync mClient;
+static MQTTAsync mClient = NULL;
 
 static char mUserName[32];
 static char mUserPass[90];

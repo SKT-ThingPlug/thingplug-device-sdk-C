@@ -199,7 +199,7 @@ unsigned int GenerateRequestId() {
  * @param[in] fr : from
  * @param[in] to : target
  * @param[in] pc : other attributes
- * @return int : result code
+ * @return int : rqi when success
  */ 
 int tp_oneM2M_v1_14_Request(int resourceType, int operation, char* fr, char* to, void* pc) {
     int rc = CheckAttributes(resourceType, operation, fr, to, pc);
