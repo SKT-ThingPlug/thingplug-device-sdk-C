@@ -1,77 +1,41 @@
 /**
  * @file Configuration.h
  *
- * @brief Configuration header for The Samples
+ * @brief Configuration V1.14 header for The Samples
  *
- * Copyright (C) 2016. SK Telecom, All Rights Reserved.
- * Written 2016, by SK Telecom
+ * Copyright (C) 2017. SK Telecom, All Rights Reserved.
+ * Written 2017, by SK Telecom
  */
 
 #ifndef _CONFIGURATION_H_
 #define _CONFIGURATION_H_
 
-//#define ONEM2M_V1_12
+#define MAC_ADDRESS            { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 }          // MAC address for NIC
 
-#ifdef ONEM2M_V1_12
-
-#define MQTT_HOST                           "(TBD.)"
+#define MQTT_HOST                           "mqtt.thingplug.net"
+#define MQTT_SECURE_HOST                    "ssl://mqtt.thingplug.net"
 #define MQTT_PORT                           1883
 #define MQTT_SECURE_PORT                    8883
 #define MQTT_KEEP_ALIVE                     120
-#define MQTT_ENABLE_SERVER_CERT_AUTH        0
-
-#define ONEM2M_NODEID                       "(TBD.)"
-#define ONEM2M_AE_RESOURCENAME              "(TBD.)"
-#define ONEM2M_SERVICENAME                  "(TBD.)"
-#define ONEM2M_CB                           "(TBD.)"
-#define ONEM2M_TO                           "(TBD.)"
-#define ONEM2M_RI                           "(TBD.)"
-
-#define ACCOUNT_USER                        "(TBD.)"
-#define ACCOUNT_PASSWORD                    "(TBD.)"
-
-#define APP_AEID                            "(TBD.)"
-
-#define NAME_NODE                           "nod-middleware"
-#define NAME_REMOTECSE                      "csr-middleware"
-#define NAME_CONTAINER                      "cnt-sensor01"
-#define NAME_MGMTCMD                        "mgc-reset"
-#define NAME_LOCATIONPOLICY                 "lcp-middleware"
-#define NAME_ACCESSCONTROLPOLICY            "acp-middleware"
-#else // oneM2M V1
-
-#define MQTT_HOST                           "thingplugtest.sktiot.com"
-#define MQTT_PORT                           1883
-#define MQTT_SECURE_PORT                    8883
-#define MQTT_KEEP_ALIVE                     300
 #define MQTT_ENABLE_SERVER_CERT_AUTH        1
 
-#define ACCOUNT_USER						"(TBD.)"
-#define ACCOUNT_PASSWORD					"(TBD.)"
+#define ONEM2M_AE_NAME                      "(Enter Device ID here)"
+#define ONEM2M_SERVICE_ID                   "(Enter Service ID here)"
+#define ONEM2M_TO                           "/~/%s/v1_0"
+#define ONEM2M_MGA                          "mqtt://%s"
+#define ONEM2M_POA                          "mqtt://oneM2M/req_msg/%s/%s"
+#define ONEM2M_NU                           "mqtt://%s"
 
-#define ONEM2M_CSEBASE                      "ThingPlug"
-#define ONEM2M_NODEID                       "(TBD.)"
-#define ONEM2M_TO                           "/ThingPlug/v1_0" // thingplugtest.sktiot.com
-#define ONEM2M_PASSCODE                     "(TBD.)"
-#define ONEM2M_RI                           "1234"
+#define ACCOUNT_USER_ID                     "(Enter ThingPlug ID here)"
+#define ACCOUNT_CREDENTIAL_ID               "(Enter ThingPlug Credential ID here)"
 
-#define NAME_CONTAINER                      "LoRa"
-#define NAME_MGMTCMD                        "%s_%s"
-#define NAME_AREANWKINFO                    "%s_areaNwkInfo_01"
-#define NAME_LOCATIONPOLICY                 "%s_locationPolicy_01"
-#define NAME_AE                             "%s_AE_01"
-#endif // ONEM2M_V1_12
+#define NAME_CONTAINER                      "TTV"
+#define NAME_SUBSCRIPTION                   "SDK"
 
-// common
-#define CMT_DEVRESET						"DevReset"
-#define CMT_REPPERCHANGE					"RepPerChange"
-#define CMT_REPIMMEDIATE					"RepImmediate"
-#define CMT_TAKEPHOTO						"TakePhoto"
-#define CMT_LEDCONTROL						"LEDControl"
-
-#define TOPIC_PUBLISH                       "/oneM2M/req/%s/%s"
-
-#define ONEM2M_CLIENTID                     "(TBD.)"  // mac address ends
+#define NAME_MGMTCMD                        "(Enter Device ID here)"
+#define NAME_MGMTCMD_FIRMWARE               "(Enter Device ID here)_firmware"
+#define CMT_MGMTCMD                         "1"
+#define CMT_MGMTCMD_FIRMWARE                "902"
 
 #endif // _CONFIGURATION_H_
 

@@ -20,7 +20,6 @@ extern "C" {
 }
 #endif
 
-#include "oneM2MConfig.h"
 #include "MQTTClient_handler.h"
 
 #include "oneM2M.h"

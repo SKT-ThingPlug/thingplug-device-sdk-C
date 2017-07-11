@@ -1,13 +1,14 @@
 #if !defined(MQTTCLIENT_HANDLER_H)
 #define MQTTCLIENT_HANDLER_H
 
-#include "oneM2MConfig.h"
 #include "MQTTClient.h"
 #ifdef IMPORT_TLS_LIB
 #include "MQTTEthernetTLS.h"
 #else
 #include "MQTTEthernetExt.h"
 #endif
+
+#include "oneM2MConfig.h"
 
 namespace MQTT
 {

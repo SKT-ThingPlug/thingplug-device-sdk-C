@@ -1,6 +1,5 @@
 #include "EthernetInterface.h"
-
-#include "oneM2MConfig.h"
+#include "../../../Src/Configuration.h"
 
 EthernetInterface::EthernetInterface()
 : m_eth(D11, D12, D13, D10, D9)		// mosi, miso, sclk, cs, reset

@@ -19,8 +19,6 @@ extern "C" {
 }
 #endif
 
-extern int SDKVerificationMain();
-
 Serial pc(USBTX, USBRX);
 
 /**
@@ -30,8 +28,6 @@ Serial pc(USBTX, USBRX);
  */
 int main(int argc, char **argv) {
 	pc.baud(115200);
-
-//	SDKVerificationMain();
 	MARun();
     return 0;
 }

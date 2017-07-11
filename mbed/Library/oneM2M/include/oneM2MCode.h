@@ -108,7 +108,7 @@
 #define RSC_SERVICESUBSCRIBEDNODE "svsn"
 #define RSC_STATSCOLLECT "stcl"
 #define RSC_STATSCONFIG "stcg"
-#define RSC_SUBSCRIPTION "sub"
+#define ATTR_SUB "sub"                  // resource subscription
 #define RSC_FIRMWARE "fwr"
 #define RSC_SOFTWARE "swr"
 #define RSC_MEMORY "mem"
@@ -270,9 +270,9 @@
 #define ATTR_STATSRULESTATUS "srs"
 #define ATTR_STATMODEL "sm"
 #define ATTR_COLLECTPERIOD "cp"
-#define ATTR_EVENTNOTIFICATIONCRITERIA "enc"
+#define ATTR_ENC "enc"                      // eventNotificationCriteria
 #define ATTR_EXPIRATIONCOUNTER "exc"
-#define ATTR_NOTIFICATIONURI "nu"
+#define ATTR_NU "nu"                        // notificationURI
 #define ATTR_NOTIFICATIONFORWARDINGURI "nfu"
 #define ATTR_BATCHNOTIFY "bn"
 #define ATTR_RATELIMIT "rl"
@@ -280,7 +280,7 @@
 #define ATTR_PENDINGNOTIFICATION "pn"
 #define ATTR_NOTIFICATIONSTORAGEPRIORITY "nsp"
 #define ATTR_LATESTNOTIFY "ln"
-#define ATTR_NOTIFICATIONCONTENTTYPE "nct"
+#define ATTR_NCT "nct"                      // notificationContentType
 #define ATTR_NOTIFICATIONEVENTCAT "nec"
 #define ATTR_SUBSCRIBERURI "su"
 #define ATTR_VERSION "vr"
@@ -380,7 +380,7 @@ enum RESOURCE_TYPE {
     serviceSubscribedNode,
     statsCollect,
     statsConfig,
-    subscription,
+    subscription = 23,
     accessControlPolicyAnnc = 10001,
     AEAnnc,
     containerAnnc,
