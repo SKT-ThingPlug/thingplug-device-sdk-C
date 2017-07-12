@@ -99,29 +99,30 @@ int CreateContentInstance() {
     char *output = NULL;
     Stream_print_str(NULL, "PROCESS_CONTENTINSTANCE_CREATE");
     SMAGetData(sensorDescription, &output);
-    SRAGetTTV( &ttv, 0x12, DATATYPE_FLOAT, output );
+    SRAGetTTV( &ttv, 0x11, DATATYPE_FLOAT, output );
     tp_v1_14_AddData(ttv, strlen(ttv));
     free(ttv);
     free(output);
 
     sensorDescription = "humidity";
     SMAGetData(sensorDescription, &output);
-    SRAGetTTV( &ttv, 0x33, DATATYPE_UINT, output );
+    SRAGetTTV( &ttv, 0x12, DATATYPE_FLOAT, output );
     tp_v1_14_AddData(ttv, strlen(ttv));
     free(ttv);
     free(output);
 
     sensorDescription = "light";
     SMAGetData(sensorDescription, &output);
-    SRAGetTTV( &ttv, 0x31, DATATYPE_USHORT, output );
+    SRAGetTTV( &ttv, 0x25, DATATYPE_USHORT, output );
     tp_v1_14_AddData(ttv, strlen(ttv));
     free(ttv);
     free(output);
 
-    sensorDescription = "motion";
+    sensorDescription = "proximity";
     SMAGetData(sensorDescription, &output);
-    SRAGetTTV( &ttv, 0x01, DATATYPE_BOOLEAN, output );
+    SRAGetTTV( &ttv, 0x31, DATATYPE_USHORT, output );
     tp_v1_14_AddData(ttv, strlen(ttv));
+	Stream_print_str(NULL, output);
     free(ttv);
     free(output);
 
@@ -163,32 +164,13 @@ static int SimpleXmlParser(char* payload, char* name, char* value, int isPC) {
     return rc;
 }
 
-// static char* strnstr(char *s, char *text, size_t slen) {
-//  char c, sc;
-//  size_t len;
-
-//  if ((c = *text++) != '\0') {
-//      len = strlen(text);
-//      do {
-//          do {
-//              if ((sc = *s++) == '\0' || slen-- < 1)
-//                  return (NULL);
-//          } while (sc != c);
-//          if (len > slen)
-//              return (NULL);
-//      } while (strncmp(s, text, len) != 0);
-//      s--;
-//  }
-//  return ((char *)s);
-// }
-
 static int IsCMD(char* payload) {
     char* request = strstr(payload, "<m2m:rqp");
     char* exin = strstr(payload, "<exin");
     return request && exin;
 
 }
-
+int led = 0;
 static void ProcessCMD(char* payload, int payloadLen) {
     Stream_print_str(NULL, "ProcessCMD");
     Stream_print_str(NULL, "payload->");
@@ -202,6 +184,22 @@ static void ProcessCMD(char* payload, int payloadLen) {
     SimpleXmlParser(payload, ATTR_NM, nm, 1);
     SimpleXmlParser(payload, ATTR_EXRA, exra, 1);
     SimpleXmlParser(payload, ATTR_RI, resourceId, 1);
+
+    if(exra[0] == '8' && exra[1] == '8'){   
+        SMASetLED(LED_PIN,led);
+        led = !led;
+    }
+    if(exra[0] == '8' && exra[1] == '9'){   
+        char str[13] = {0};
+        int i;
+        for( i = 0; i < 12; i++){
+            char tmp[3]={0};
+            memcpy(tmp, &exra[4+i*2],2);
+            str[i] = strtol( tmp, 0, 16);
+        }
+        SMASetLCD(0, 1, str, 1);
+    }
+
     if(!nm[0]){
         snprintf(nm, sizeof(nm), TO_MGC, NAME_MGMTCMD_FIRMWARE);
     }
@@ -306,6 +304,9 @@ int MARun() {
         sprintf(str,"tpMQTTCreate result : %d", rc);
         Stream_print_str(NULL, str);
     }
+	SMAInitLCD(16, 2);
+	SMASetLCD(0, 1, "Hello World!", 1);
+	SMASetLCDRGB(255,255,255);
     if(rc == 0) {
         while (mStep < PROCESS_END) {  
 			{
@@ -317,7 +318,7 @@ int MARun() {
 				Stream_print_str(NULL, "mStep = PROCESS_CONTENTINSTANCE_CREATE");				
                 CreateContentInstance();
             }
-			tpMQTTYield(5000);
+			tpMQTTYield(10000);
         }
         Stream_print_str(NULL,"disconn");
         tpMQTTDisconnect();
