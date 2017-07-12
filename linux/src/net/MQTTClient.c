@@ -186,7 +186,7 @@ int MQTTAsyncCreate(char* host, int port, int keepalive, char* userName, char* p
     MQTTAsync_create(&mClient, server, clientID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
     conn_opts.keepAliveInterval = keepalive;
     conn_opts.cleansession = cleanSession;
-    conn_opts.automaticReconnect = 1;
+    conn_opts.automaticReconnect = 0;
 	conn_opts.onSuccess = OnConnect;
     conn_opts.onFailure = OnConnectFailure;
     conn_opts.context = mClient;

@@ -17,6 +17,7 @@
 #include "SMA.h"
 
 #include "MQTT.h"
+#include "oneM2M.h"
 #include "oneM2M_V1_14.h"
 #include "Configuration.h"
 #include "SKTtpDebug.h"
@@ -53,10 +54,19 @@ static enum PROCESS_STEP
     PROCESS_END
 } mStep;
 
+static enum CONNECTION_STATUS
+{
+    DISCONNECTED,
+    CONNECTING,    
+    CONNECTED
+} mConnectionStatus;
+
 static char mToStart[128] = "";
 static char mAEID[128] = "";
 static char mNodeLink[23] = "";
 static char mClientID[24] = "";
+
+void start();
 
 int CreateAE() {
 	mStep = PROCESS_AE_CREATE;
@@ -119,19 +129,19 @@ int CreateContentInstance() {
 	free(ttv);
 	free(output);
 
-        sensorDescription = "totalmem";
-        SMAGetData(sensorDescription, &output);
-        SRAGetTTV( &ttv, 0x08, DATATYPE_UINT, output );
-        tp_v1_14_AddData(ttv, strlen(ttv));
-        free(ttv);
-        free(output);
+    sensorDescription = "totalmem";
+    SMAGetData(sensorDescription, &output);
+    SRAGetTTV( &ttv, 0x08, DATATYPE_UINT, output );
+    tp_v1_14_AddData(ttv, strlen(ttv));
+    free(ttv);
+    free(output);
 
-        sensorDescription = "freemem";
-        SMAGetData(sensorDescription, &output);
-        SRAGetTTV( &ttv, 0x0A, DATATYPE_UINT, output );
-        tp_v1_14_AddData(ttv, strlen(ttv));
-        free(ttv);
-        free(output);
+    sensorDescription = "freemem";
+    SMAGetData(sensorDescription, &output);
+    SRAGetTTV( &ttv, 0x0A, DATATYPE_UINT, output );
+    tp_v1_14_AddData(ttv, strlen(ttv));
+    free(ttv);
+    free(output);
 
 	snprintf(to, sizeof(to), TO_CONTAINER, mToStart, ONEM2M_AE_NAME, NAME_CONTAINER);
 	rc = tp_v1_14_Report(mAEID, to, cnf, NULL, 1);
@@ -219,7 +229,14 @@ static void ProcessCMD(char* payload, int payloadLen) {
 }
 
 void MQTTConnected(int result) {
-    SKTDebugPrint(LOG_LEVEL_INFO, "MQTTConnected result : %d", result);    
+    SKTDebugPrint(LOG_LEVEL_INFO, "MQTTConnected result : %d", result);
+    // if connection failed
+    if(result) {
+        mConnectionStatus = DISCONNECTED;
+    } else {
+        mConnectionStatus = CONNECTED;
+    }
+    SKTDebugPrint(LOG_LEVEL_INFO, "CONNECTION_STATUS : %d", mConnectionStatus);
 }
 
 void MQTTSubscribed(int result) {
@@ -233,6 +250,7 @@ void MQTTDisconnected(int result) {
 
 void MQTTConnectionLost(char* cause) {
     SKTDebugPrint(LOG_LEVEL_INFO, "MQTTConnectionLost result : %s", cause);
+    mConnectionStatus = DISCONNECTED;
 }
 
 void MQTTMessageDelivered(int token) {
@@ -280,10 +298,10 @@ void MQTTMessageArrived(char* topic, char* msg, int msgLen) {
     }
 }
 
-int MARun() {
-    SKTDebugInit(1, LOG_LEVEL_INFO, NULL);
-	SKTDebugPrint(LOG_LEVEL_INFO, "ThingPlug_oneM2M_SDK(oneM2M v1.14)");
+void start() {
     int rc;
+
+    mConnectionStatus = CONNECTING;
 
     // set callbacks    
     rc = tpMQTTSetCallbacks(MQTTConnected, MQTTSubscribed, MQTTDisconnected, MQTTConnectionLost, MQTTMessageDelivered, MQTTMessageArrived);
@@ -311,17 +329,27 @@ int MARun() {
 #endif
     rc = tpSDKCreate(host, port, MQTT_KEEP_ALIVE, ACCOUNT_USER_ID, ACCOUNT_CREDENTIAL_ID, MQTT_ENABLE_SERVER_CERT_AUTH, st, TOPIC_SUBSCRIBE_SIZE, publishTopic, mClientID);
     SKTDebugPrint(LOG_LEVEL_INFO, "tpSDKCreate result : %d", rc);
+}
+
+int MARun() {
+    SKTDebugInit(1, LOG_LEVEL_INFO, NULL);
+	SKTDebugPrint(LOG_LEVEL_INFO, "ThingPlug_oneM2M_SDK(oneM2M v1.14)");
+    start();
 
     while (mStep < PROCESS_END) {
-		if(MQTTAsyncIsConnected() && mStep == PROCESS_CONTENTINSTANCE_CREATE) {
+		if(tpMQTTIsConnected() && mStep == PROCESS_CONTENTINSTANCE_CREATE) {
 			CreateContentInstance();
-		}
+		} else if(mConnectionStatus == DISCONNECTED) {
+            tpSDKDestroy();
+            start();
+        }
+
         #if defined(WIN32) || defined(WIN64)
             Sleep(100);
         #else
             usleep(10000000L);
         #endif
     }
-    tpSDKDestory();
+    tpSDKDestroy();
     return 0;
 }

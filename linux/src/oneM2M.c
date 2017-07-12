@@ -69,7 +69,7 @@ int tpMQTTDisconnect() {
 /**
  * @brief destroy
  */
-void tpSDKDestory() {
+void tpSDKDestroy() {
     MQTTAsyncDestroy();
 }
 

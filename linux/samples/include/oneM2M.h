@@ -56,7 +56,7 @@ int tpMQTTIsConnected();
 
 int tpMQTTDisconnect();
 
-void tpSDKDestory();
+void tpSDKDestroy();
 
 #endif //_oneM2M_H_
 
