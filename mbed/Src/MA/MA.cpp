@@ -172,6 +172,8 @@ static void ProcessCMD(char* payload, int payloadLen) {
 	SimpleXmlParser(payload, ATTR_NM, nm, 1);
 	SimpleXmlParser(payload, ATTR_EXRA, exra, 1);
 	SimpleXmlParser(payload, ATTR_RI, resourceId, 1);
+	SKTDebugPrint(LOG_LEVEL_INFO, "mgmtCmd received: %s", exra);
+
 	if(!nm[0]){		
 		snprintf(nm, sizeof(nm), TO_MGC, NAME_MGMTCMD_FIRMWARE);
 	}	 
@@ -276,7 +278,7 @@ int MARun() {
 		if(tpMQTTIsConnected() && mStep == PROCESS_CONTENTINSTANCE_CREATE) {
 			CreateContentInstance();
 		}
-        tpMQTTYield(4000);
+        tpMQTTYield(10000);
     }
     tpMQTTDestory();
     return 0;

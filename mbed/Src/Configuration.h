@@ -17,7 +17,7 @@
 #define MQTT_PORT                           1883
 #define MQTT_SECURE_PORT                    8883
 #define MQTT_KEEP_ALIVE                     120
-#define MQTT_ENABLE_SERVER_CERT_AUTH        1
+#define MQTT_ENABLE_SERVER_CERT_AUTH        0
 
 #define ONEM2M_AE_NAME                      "(Enter Device ID here)"
 #define ONEM2M_SERVICE_ID                   "(Enter Service ID here)"
