@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <module display="X-Ware|NetX Duo|Protocols|NetX Duo BSD Support" id="module.el.nxd_bsd" version="1" common="100">
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_bsd.requires.nx.ip" interface="interface.el.nxd.ip" display="Add NetX Duo IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+        </requires>
+        <requires id="module.el.nx_bsd.requires.nx.packet_pool" interface="interface.el.nxd.packet_pool" display="Add NetX Duo Packet Pool" />
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_bsd" />
+        <!-- NetX Only -->
+        <provides interface="interface.el.nxd_bsd" />        
+        <property default="2048" display="Internal thread stack size (bytes)" id="module.el.nx_bsd.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_bsd.stack_size}")  &amp;&amp; (("${module.el.nx_bsd.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <property default="3" display="Internal thread priority" id="module.el.nx_bsd.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${module.el.nx_bsd.priority}")  &amp;&amp; ("${module.el.nx_bsd.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <header>
+            void nx_bsd_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nxd_bsd.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            uint8_t         nx_bsd_stack_memory[${module.el.nx_bsd.stack_size}];
+            #if defined(__ICCARM__)
+            #define nx_bsd_err_callback_WEAK_ATTRIBUTE
+            #pragma weak nx_bsd_err_callback  = nx_bsd_err_callback_internal
+            #elif defined(__GNUC__)
+            #define nx_bsd_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("nx_bsd_err_callback_internal")))
+            #endif
+            void nx_bsd_err_callback(void * p_instance, void * p_data) nx_bsd_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void nx_bsd_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void nx_bsd_err_callback_internal(void * p_instance, void * p_data);
+            void nx_bsd_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }              
+        </declarations>
+        <init>
+            INT nx_bsd_err;
+            /* Initialize BSD Support for NetX Duo. */
+            nx_bsd_err = bsd_initialize(&amp;${module.el.nx_bsd.requires.nx.ip::module.el.nx.ip.name},
+                                        &amp;${module.el.nx_bsd.requires.nx.packet_pool::module.el.nx.packet_pool.name},
+                                        &amp;nx_bsd_stack_memory[0],
+                                        ${module.el.nx_bsd.stack_size},
+                                        ${module.el.nx_bsd.priority});
+            if (NX_SUCCESS != nx_bsd_err)
+            {
+                nx_bsd_err_callback((void *)NULL,&amp;nx_bsd_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

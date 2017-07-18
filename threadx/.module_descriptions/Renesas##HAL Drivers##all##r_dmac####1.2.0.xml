@@ -1,0 +1,498 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.dmac" path="ssp_cfg/driver/r_dmac_cfg.h" version="0">
+        <property default="config.driver.dmac.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.dmac.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.dmac.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.dmac.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.dmac.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define DMAC_CFG_PARAM_CHECKING_ENABLE ${config.driver.dmac.param_checking_enable}
+</content>
+    </config>
+    <module config="config.driver.dmac" display="Driver|Transfer|${module.driver.transfer.name} Transfer Driver on r_dmac ${module.driver.transfer.activation_source}" id="module.driver.transfer_on_dmac" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.transfer.${module.driver.transfer.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.transfer" />
+        <provides interface="interface.driver.transfer_on_dmac" />
+        <provides interface="interface.driver.transfer.${module.driver.transfer.name}" />
+        <provides interface="interface.driver.transfer_on_dmac.${module.driver.transfer.channel}" />
+        <property default="g_transfer${_instance}" display="Name" id="module.driver.transfer.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.transfer.name}")</constraint>
+        </property>
+        <property default="${_instance}" display="Channel" id="module.driver.transfer.channel">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.transfer.channel}")  &amp;&amp; ("${module.driver.transfer.channel}" &gt;= 0)</constraint>
+        </property>
+        <property default="module.driver.transfer.mode.mode_normal" display="Mode" id="module.driver.transfer.mode">
+            <option display="Normal" id="module.driver.transfer.mode.mode_normal" value="TRANSFER_MODE_NORMAL"/>
+            <option display="Repeat" id="module.driver.transfer.mode.mode_repeat" value="TRANSFER_MODE_REPEAT"/>
+            <option display="Block" id="module.driver.transfer.mode.mode_block" value="TRANSFER_MODE_BLOCK"/>
+        </property>        
+        <property default="module.driver.transfer.size.size_2_byte" display="Transfer Size" id="module.driver.transfer.size">
+            <option display="1 Byte" id="module.driver.transfer.size.size_1_byte" value="TRANSFER_SIZE_1_BYTE"/>
+            <option display="2 Bytes" id="module.driver.transfer.size.size_2_byte" value="TRANSFER_SIZE_2_BYTE"/>
+            <option display="4 Bytes" id="module.driver.transfer.size.size_4_byte" value="TRANSFER_SIZE_4_BYTE"/>
+        </property>        
+        <property default="module.driver.transfer.dest_addr_mode.addr_mode_fixed" display="Destination Address Mode" id="module.driver.transfer.dest_addr_mode">
+            <option display="Fixed" id="module.driver.transfer.dest_addr_mode.addr_mode_fixed" value="TRANSFER_ADDR_MODE_FIXED"/>
+            <option display="Incremented" id="module.driver.transfer.dest_addr_mode.addr_mode_incremented" value="TRANSFER_ADDR_MODE_INCREMENTED"/>
+            <option display="Decremented" id="module.driver.transfer.dest_addr_mode.addr_mode_decremented" value="TRANSFER_ADDR_MODE_DECREMENTED"/>
+        </property>
+        <property default="module.driver.transfer.src_addr_mode.addr_mode_fixed" display="Source Address Mode" id="module.driver.transfer.src_addr_mode">
+            <option display="Fixed" id="module.driver.transfer.src_addr_mode.addr_mode_fixed" value="TRANSFER_ADDR_MODE_FIXED"/>
+            <option display="Incremented" id="module.driver.transfer.src_addr_mode.addr_mode_incremented" value="TRANSFER_ADDR_MODE_INCREMENTED"/>
+            <option display="Decremented" id="module.driver.transfer.src_addr_mode.addr_mode_decremented" value="TRANSFER_ADDR_MODE_DECREMENTED"/>
+        </property>        
+        <property default="module.driver.transfer.repeat_area.repeat_area_source" display="Repeat Area (Unused in Normal Mode)" id="module.driver.transfer.repeat_area">
+            <option display="Destination" id="module.driver.transfer.repeat_area.repeat_area_destination" value="TRANSFER_REPEAT_AREA_DESTINATION"/>
+            <option display="Source" id="module.driver.transfer.repeat_area.repeat_area_source" value="TRANSFER_REPEAT_AREA_SOURCE"/>
+        </property>
+        <property default="NULL" display="Destination Pointer" id="module.driver.transfer.p_dest"/>
+        <property default="NULL" display="Source Pointer" id="module.driver.transfer.p_src"/>
+        <property default="0" display="Number of Transfers" id="module.driver.transfer.length">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.transfer.length}")  &amp;&amp; ("${module.driver.transfer.length}" &gt;= 0)</constraint>
+           </property>
+        <property default="0" display="Number of Blocks (Valid only in Block Mode)" id="module.driver.transfer.num_blocks">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.transfer.num_blocks}")  &amp;&amp; ("${module.driver.transfer.num_blocks}" &gt;= 0)</constraint>
+           </property>
+        <property default="module.driver.transfer.event.event_elc_software_event_0" display="Activation Source" id="module.driver.transfer.activation_source">
+            <option display="Software Activation" id="module.driver.transfer.event.event_elc_software_event_0" value="ELC_EVENT_ELC_SOFTWARE_EVENT_0" />
+            <option display="Event ADC0 COMPARE MATCH" id="module.driver.transfer.event.event_adc0_compare_match" value="ELC_EVENT_ADC0_COMPARE_MATCH" />
+            <option display="Event ADC0 COMPARE MISMATCH" id="module.driver.transfer.event.event_adc0_compare_mismatch" value="ELC_EVENT_ADC0_COMPARE_MISMATCH" />
+            <option display="Event ADC0 SCAN END" id="module.driver.transfer.event.event_adc0_scan_end" value="ELC_EVENT_ADC0_SCAN_END" />
+            <option display="Event ADC0 SCAN END B" id="module.driver.transfer.event.event_adc0_scan_end_b" value="ELC_EVENT_ADC0_SCAN_END_B" />
+            <option display="Event ADC0 WINDOW A" id="module.driver.transfer.event.event_adc0_window_a" value="ELC_EVENT_ADC0_WINDOW_A" />
+            <option display="Event ADC0 WINDOW B" id="module.driver.transfer.event.event_adc0_window_b" value="ELC_EVENT_ADC0_WINDOW_B" />
+            <option display="Event ADC1 COMPARE MATCH" id="module.driver.transfer.event.event_adc1_compare_match" value="ELC_EVENT_ADC1_COMPARE_MATCH" />
+            <option display="Event ADC1 COMPARE MISMATCH" id="module.driver.transfer.event.event_adc1_compare_mismatch" value="ELC_EVENT_ADC1_COMPARE_MISMATCH" />
+            <option display="Event ADC1 SCAN END" id="module.driver.transfer.event.event_adc1_scan_end" value="ELC_EVENT_ADC1_SCAN_END" />
+            <option display="Event ADC1 SCAN END B" id="module.driver.transfer.event.event_adc1_scan_end_b" value="ELC_EVENT_ADC1_SCAN_END_B" />
+            <option display="Event ADC1 WINDOW A" id="module.driver.transfer.event.event_adc1_window_a" value="ELC_EVENT_ADC1_WINDOW_A" />
+            <option display="Event ADC1 WINDOW B" id="module.driver.transfer.event.event_adc1_window_b" value="ELC_EVENT_ADC1_WINDOW_B" />
+            <option display="Event AGT0 COMPARE A" id="module.driver.transfer.event.event_agt0_compare_a" value="ELC_EVENT_AGT0_COMPARE_A" />
+            <option display="Event AGT0 COMPARE B" id="module.driver.transfer.event.event_agt0_compare_b" value="ELC_EVENT_AGT0_COMPARE_B" />
+            <option display="Event AGT0 INT" id="module.driver.transfer.event.event_agt0_int" value="ELC_EVENT_AGT0_INT" />
+            <option display="Event AGT1 COMPARE A" id="module.driver.transfer.event.event_agt1_compare_a" value="ELC_EVENT_AGT1_COMPARE_A" />
+            <option display="Event AGT1 COMPARE B" id="module.driver.transfer.event.event_agt1_compare_b" value="ELC_EVENT_AGT1_COMPARE_B" />
+            <option display="Event AGT1 INT" id="module.driver.transfer.event.event_agt1_int" value="ELC_EVENT_AGT1_INT" />
+            <option display="Event CAC FREQUENCY ERROR" id="module.driver.transfer.event.event_cac_frequency_error" value="ELC_EVENT_CAC_FREQUENCY_ERROR" />
+            <option display="Event CAC MEASUREMENT END" id="module.driver.transfer.event.event_cac_measurement_end" value="ELC_EVENT_CAC_MEASUREMENT_END" />
+            <option display="Event CAC OVERFLOW" id="module.driver.transfer.event.event_cac_overflow" value="ELC_EVENT_CAC_OVERFLOW" />
+            <option display="Event CAN0 ERROR" id="module.driver.transfer.event.event_can0_error" value="ELC_EVENT_CAN0_ERROR" />
+            <option display="Event CAN0 FIFO RX" id="module.driver.transfer.event.event_can0_fifo_rx" value="ELC_EVENT_CAN0_FIFO_RX" />
+            <option display="Event CAN0 FIFO TX" id="module.driver.transfer.event.event_can0_fifo_tx" value="ELC_EVENT_CAN0_FIFO_TX" />
+            <option display="Event CAN0 MAILBOX RX" id="module.driver.transfer.event.event_can0_mailbox_rx" value="ELC_EVENT_CAN0_MAILBOX_RX" />
+            <option display="Event CAN0 MAILBOX TX" id="module.driver.transfer.event.event_can0_mailbox_tx" value="ELC_EVENT_CAN0_MAILBOX_TX" />
+            <option display="Event CAN1 ERROR" id="module.driver.transfer.event.event_can1_error" value="ELC_EVENT_CAN1_ERROR" />
+            <option display="Event CAN1 FIFO RX" id="module.driver.transfer.event.event_can1_fifo_rx" value="ELC_EVENT_CAN1_FIFO_RX" />
+            <option display="Event CAN1 FIFO TX" id="module.driver.transfer.event.event_can1_fifo_tx" value="ELC_EVENT_CAN1_FIFO_TX" />
+            <option display="Event CAN1 MAILBOX RX" id="module.driver.transfer.event.event_can1_mailbox_rx" value="ELC_EVENT_CAN1_MAILBOX_RX" />
+            <option display="Event CAN1 MAILBOX TX" id="module.driver.transfer.event.event_can1_mailbox_tx" value="ELC_EVENT_CAN1_MAILBOX_TX" />
+            <option display="Event CGC MOSC STOP" id="module.driver.transfer.event.event_cgc_mosc_stop" value="ELC_EVENT_CGC_MOSC_STOP" />
+            <option display="Event COMP HS 0" id="module.driver.transfer.event.event_comp_hs_0" value="ELC_EVENT_COMP_HS_0" />
+            <option display="Event COMP HS 1" id="module.driver.transfer.event.event_comp_hs_1" value="ELC_EVENT_COMP_HS_1" />
+            <option display="Event COMP HS 2" id="module.driver.transfer.event.event_comp_hs_2" value="ELC_EVENT_COMP_HS_2" />
+            <option display="Event COMP HS 3" id="module.driver.transfer.event.event_comp_hs_3" value="ELC_EVENT_COMP_HS_3" />
+            <option display="Event COMP HS 4" id="module.driver.transfer.event.event_comp_hs_4" value="ELC_EVENT_COMP_HS_4" />
+            <option display="Event COMP HS 5" id="module.driver.transfer.event.event_comp_hs_5" value="ELC_EVENT_COMP_HS_5" />
+            <option display="Event COMP LP 0" id="module.driver.transfer.event.event_comp_lp_0" value="ELC_EVENT_COMP_LP_0" />
+            <option display="Event COMP LP 1" id="module.driver.transfer.event.event_comp_lp_1" value="ELC_EVENT_COMP_LP_1" />
+            <option display="Event CTSU END" id="module.driver.transfer.event.event_ctsu_end" value="ELC_EVENT_CTSU_END" />
+            <option display="Event CTSU READ" id="module.driver.transfer.event.event_ctsu_read" value="ELC_EVENT_CTSU_READ" />
+            <option display="Event CTSU WRITE" id="module.driver.transfer.event.event_ctsu_write" value="ELC_EVENT_CTSU_WRITE" />
+            <option display="Event DMAC0 INT" id="module.driver.transfer.event.event_dmac0_int" value="ELC_EVENT_DMAC0_INT" />
+            <option display="Event DMAC1 INT" id="module.driver.transfer.event.event_dmac1_int" value="ELC_EVENT_DMAC1_INT" />
+            <option display="Event DMAC2 INT" id="module.driver.transfer.event.event_dmac2_int" value="ELC_EVENT_DMAC2_INT" />
+            <option display="Event DMAC3 INT" id="module.driver.transfer.event.event_dmac3_int" value="ELC_EVENT_DMAC3_INT" />
+            <option display="Event DMAC4 INT" id="module.driver.transfer.event.event_dmac4_int" value="ELC_EVENT_DMAC4_INT" />
+            <option display="Event DMAC5 INT" id="module.driver.transfer.event.event_dmac5_int" value="ELC_EVENT_DMAC5_INT" />
+            <option display="Event DMAC6 INT" id="module.driver.transfer.event.event_dmac6_int" value="ELC_EVENT_DMAC6_INT" />
+            <option display="Event DMAC7 INT" id="module.driver.transfer.event.event_dmac7_int" value="ELC_EVENT_DMAC7_INT" />
+            <option display="Event DOC INT" id="module.driver.transfer.event.event_doc_int" value="ELC_EVENT_DOC_INT" />
+            <option display="Event DRW INT" id="module.driver.transfer.event.event_drw_int" value="ELC_EVENT_DRW_INT" />
+            <option display="Event DTC COMPLETE" id="module.driver.transfer.event.event_dtc_complete" value="ELC_EVENT_DTC_COMPLETE" />
+            <option display="Event DTC END" id="module.driver.transfer.event.event_dtc_end" value="ELC_EVENT_DTC_END" />
+            <option display="Event EDMAC0 EINT" id="module.driver.transfer.event.event_edmac0_eint" value="ELC_EVENT_EDMAC0_EINT" />
+            <option display="Event EDMAC1 EINT" id="module.driver.transfer.event.event_edmac1_eint" value="ELC_EVENT_EDMAC1_EINT" />
+            <option display="Event EPTPC IPLS" id="module.driver.transfer.event.event_eptpc_ipls" value="ELC_EVENT_EPTPC_IPLS" />
+            <option display="Event EPTPC MINT" id="module.driver.transfer.event.event_eptpc_mint" value="ELC_EVENT_EPTPC_MINT" />
+            <option display="Event EPTPC PINT" id="module.driver.transfer.event.event_eptpc_pint" value="ELC_EVENT_EPTPC_PINT" />
+            <option display="Event EPTPC TIMER0 FALL" id="module.driver.transfer.event.event_eptpc_timer0_fall" value="ELC_EVENT_EPTPC_TIMER0_FALL" />
+            <option display="Event EPTPC TIMER0 RISE" id="module.driver.transfer.event.event_eptpc_timer0_rise" value="ELC_EVENT_EPTPC_TIMER0_RISE" />
+            <option display="Event EPTPC TIMER1 FALL" id="module.driver.transfer.event.event_eptpc_timer1_fall" value="ELC_EVENT_EPTPC_TIMER1_FALL" />
+            <option display="Event EPTPC TIMER1 RISE" id="module.driver.transfer.event.event_eptpc_timer1_rise" value="ELC_EVENT_EPTPC_TIMER1_RISE" />
+            <option display="Event EPTPC TIMER2 FALL" id="module.driver.transfer.event.event_eptpc_timer2_fall" value="ELC_EVENT_EPTPC_TIMER2_FALL" />
+            <option display="Event EPTPC TIMER2 RISE" id="module.driver.transfer.event.event_eptpc_timer2_rise" value="ELC_EVENT_EPTPC_TIMER2_RISE" />
+            <option display="Event EPTPC TIMER3 FALL" id="module.driver.transfer.event.event_eptpc_timer3_fall" value="ELC_EVENT_EPTPC_TIMER3_FALL" />
+            <option display="Event EPTPC TIMER3 RISE" id="module.driver.transfer.event.event_eptpc_timer3_rise" value="ELC_EVENT_EPTPC_TIMER3_RISE" />
+            <option display="Event EPTPC TIMER4 FALL" id="module.driver.transfer.event.event_eptpc_timer4_fall" value="ELC_EVENT_EPTPC_TIMER4_FALL" />
+            <option display="Event EPTPC TIMER4 RISE" id="module.driver.transfer.event.event_eptpc_timer4_rise" value="ELC_EVENT_EPTPC_TIMER4_RISE" />
+            <option display="Event EPTPC TIMER5 FALL" id="module.driver.transfer.event.event_eptpc_timer5_fall" value="ELC_EVENT_EPTPC_TIMER5_FALL" />
+            <option display="Event EPTPC TIMER5 RISE" id="module.driver.transfer.event.event_eptpc_timer5_rise" value="ELC_EVENT_EPTPC_TIMER5_RISE" />
+            <option display="Event FCU FIFERR" id="module.driver.transfer.event.event_fcu_fiferr" value="ELC_EVENT_FCU_FIFERR" />
+            <option display="Event FCU FRDYI" id="module.driver.transfer.event.event_fcu_frdyi" value="ELC_EVENT_FCU_FRDYI" />
+            <option display="Event GLCDC LINE DETECT" id="module.driver.transfer.event.event_glcdc_line_detect" value="ELC_EVENT_GLCDC_LINE_DETECT" />
+            <option display="Event GLCDC UNDERFLOW 1" id="module.driver.transfer.event.event_glcdc_underflow_1" value="ELC_EVENT_GLCDC_UNDERFLOW_1" />
+            <option display="Event GLCDC UNDERFLOW 2" id="module.driver.transfer.event.event_glcdc_underflow_2" value="ELC_EVENT_GLCDC_UNDERFLOW_2" />
+            <option display="Event GPT0 AD TRIG A" id="module.driver.transfer.event.event_gpt0_ad_trig_a" value="ELC_EVENT_GPT0_AD_TRIG_A" />
+            <option display="Event GPT0 AD TRIG B" id="module.driver.transfer.event.event_gpt0_ad_trig_b" value="ELC_EVENT_GPT0_AD_TRIG_B" />
+            <option display="Event GPT0 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt0_capture_compare_a" value="ELC_EVENT_GPT0_CAPTURE_COMPARE_A" />
+            <option display="Event GPT0 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt0_capture_compare_b" value="ELC_EVENT_GPT0_CAPTURE_COMPARE_B" />
+            <option display="Event GPT0 COMPARE C" id="module.driver.transfer.event.event_gpt0_compare_c" value="ELC_EVENT_GPT0_COMPARE_C" />
+            <option display="Event GPT0 COMPARE D" id="module.driver.transfer.event.event_gpt0_compare_d" value="ELC_EVENT_GPT0_COMPARE_D" />
+            <option display="Event GPT0 COMPARE E" id="module.driver.transfer.event.event_gpt0_compare_e" value="ELC_EVENT_GPT0_COMPARE_E" />
+            <option display="Event GPT0 COMPARE F" id="module.driver.transfer.event.event_gpt0_compare_f" value="ELC_EVENT_GPT0_COMPARE_F" />
+            <option display="Event GPT0 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt0_counter_overflow" value="ELC_EVENT_GPT0_COUNTER_OVERFLOW" />
+            <option display="Event GPT0 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt0_counter_underflow" value="ELC_EVENT_GPT0_COUNTER_UNDERFLOW" />
+            <option display="Event GPT1 AD TRIG A" id="module.driver.transfer.event.event_gpt1_ad_trig_a" value="ELC_EVENT_GPT1_AD_TRIG_A" />
+            <option display="Event GPT1 AD TRIG B" id="module.driver.transfer.event.event_gpt1_ad_trig_b" value="ELC_EVENT_GPT1_AD_TRIG_B" />
+            <option display="Event GPT1 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt1_capture_compare_a" value="ELC_EVENT_GPT1_CAPTURE_COMPARE_A" />
+            <option display="Event GPT1 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt1_capture_compare_b" value="ELC_EVENT_GPT1_CAPTURE_COMPARE_B" />
+            <option display="Event GPT1 COMPARE C" id="module.driver.transfer.event.event_gpt1_compare_c" value="ELC_EVENT_GPT1_COMPARE_C" />
+            <option display="Event GPT1 COMPARE D" id="module.driver.transfer.event.event_gpt1_compare_d" value="ELC_EVENT_GPT1_COMPARE_D" />
+            <option display="Event GPT1 COMPARE E" id="module.driver.transfer.event.event_gpt1_compare_e" value="ELC_EVENT_GPT1_COMPARE_E" />
+            <option display="Event GPT1 COMPARE F" id="module.driver.transfer.event.event_gpt1_compare_f" value="ELC_EVENT_GPT1_COMPARE_F" />
+            <option display="Event GPT1 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt1_counter_overflow" value="ELC_EVENT_GPT1_COUNTER_OVERFLOW" />
+            <option display="Event GPT1 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt1_counter_underflow" value="ELC_EVENT_GPT1_COUNTER_UNDERFLOW" />
+            <option display="Event GPT10 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt10_capture_compare_a" value="ELC_EVENT_GPT10_CAPTURE_COMPARE_A" />
+            <option display="Event GPT10 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt10_capture_compare_b" value="ELC_EVENT_GPT10_CAPTURE_COMPARE_B" />
+            <option display="Event GPT10 COMPARE C" id="module.driver.transfer.event.event_gpt10_compare_c" value="ELC_EVENT_GPT10_COMPARE_C" />
+            <option display="Event GPT10 COMPARE D" id="module.driver.transfer.event.event_gpt10_compare_d" value="ELC_EVENT_GPT10_COMPARE_D" />
+            <option display="Event GPT10 COMPARE E" id="module.driver.transfer.event.event_gpt10_compare_e" value="ELC_EVENT_GPT10_COMPARE_E" />
+            <option display="Event GPT10 COMPARE F" id="module.driver.transfer.event.event_gpt10_compare_f" value="ELC_EVENT_GPT10_COMPARE_F" />
+            <option display="Event GPT10 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt10_counter_overflow" value="ELC_EVENT_GPT10_COUNTER_OVERFLOW" />
+            <option display="Event GPT10 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt10_counter_underflow" value="ELC_EVENT_GPT10_COUNTER_UNDERFLOW" />
+            <option display="Event GPT11 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt11_capture_compare_a" value="ELC_EVENT_GPT11_CAPTURE_COMPARE_A" />
+            <option display="Event GPT11 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt11_capture_compare_b" value="ELC_EVENT_GPT11_CAPTURE_COMPARE_B" />
+            <option display="Event GPT11 COMPARE C" id="module.driver.transfer.event.event_gpt11_compare_c" value="ELC_EVENT_GPT11_COMPARE_C" />
+            <option display="Event GPT11 COMPARE D" id="module.driver.transfer.event.event_gpt11_compare_d" value="ELC_EVENT_GPT11_COMPARE_D" />
+            <option display="Event GPT11 COMPARE E" id="module.driver.transfer.event.event_gpt11_compare_e" value="ELC_EVENT_GPT11_COMPARE_E" />
+            <option display="Event GPT11 COMPARE F" id="module.driver.transfer.event.event_gpt11_compare_f" value="ELC_EVENT_GPT11_COMPARE_F" />
+            <option display="Event GPT11 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt11_counter_overflow" value="ELC_EVENT_GPT11_COUNTER_OVERFLOW" />
+            <option display="Event GPT11 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt11_counter_underflow" value="ELC_EVENT_GPT11_COUNTER_UNDERFLOW" />
+            <option display="Event GPT12 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt12_capture_compare_a" value="ELC_EVENT_GPT12_CAPTURE_COMPARE_A" />
+            <option display="Event GPT12 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt12_capture_compare_b" value="ELC_EVENT_GPT12_CAPTURE_COMPARE_B" />
+            <option display="Event GPT12 COMPARE C" id="module.driver.transfer.event.event_gpt12_compare_c" value="ELC_EVENT_GPT12_COMPARE_C" />
+            <option display="Event GPT12 COMPARE D" id="module.driver.transfer.event.event_gpt12_compare_d" value="ELC_EVENT_GPT12_COMPARE_D" />
+            <option display="Event GPT12 COMPARE E" id="module.driver.transfer.event.event_gpt12_compare_e" value="ELC_EVENT_GPT12_COMPARE_E" />
+            <option display="Event GPT12 COMPARE F" id="module.driver.transfer.event.event_gpt12_compare_f" value="ELC_EVENT_GPT12_COMPARE_F" />
+            <option display="Event GPT12 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt12_counter_overflow" value="ELC_EVENT_GPT12_COUNTER_OVERFLOW" />
+            <option display="Event GPT12 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt12_counter_underflow" value="ELC_EVENT_GPT12_COUNTER_UNDERFLOW" />
+            <option display="Event GPT13 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt13_capture_compare_a" value="ELC_EVENT_GPT13_CAPTURE_COMPARE_A" />
+            <option display="Event GPT13 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt13_capture_compare_b" value="ELC_EVENT_GPT13_CAPTURE_COMPARE_B" />
+            <option display="Event GPT13 COMPARE C" id="module.driver.transfer.event.event_gpt13_compare_c" value="ELC_EVENT_GPT13_COMPARE_C" />
+            <option display="Event GPT13 COMPARE D" id="module.driver.transfer.event.event_gpt13_compare_d" value="ELC_EVENT_GPT13_COMPARE_D" />
+            <option display="Event GPT13 COMPARE E" id="module.driver.transfer.event.event_gpt13_compare_e" value="ELC_EVENT_GPT13_COMPARE_E" />
+            <option display="Event GPT13 COMPARE F" id="module.driver.transfer.event.event_gpt13_compare_f" value="ELC_EVENT_GPT13_COMPARE_F" />
+            <option display="Event GPT13 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt13_counter_overflow" value="ELC_EVENT_GPT13_COUNTER_OVERFLOW" />
+            <option display="Event GPT13 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt13_counter_underflow" value="ELC_EVENT_GPT13_COUNTER_UNDERFLOW" />
+            <option display="Event GPT2 AD TRIG A" id="module.driver.transfer.event.event_gpt2_ad_trig_a" value="ELC_EVENT_GPT2_AD_TRIG_A" />
+            <option display="Event GPT2 AD TRIG B" id="module.driver.transfer.event.event_gpt2_ad_trig_b" value="ELC_EVENT_GPT2_AD_TRIG_B" />
+            <option display="Event GPT2 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt2_capture_compare_a" value="ELC_EVENT_GPT2_CAPTURE_COMPARE_A" />
+            <option display="Event GPT2 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt2_capture_compare_b" value="ELC_EVENT_GPT2_CAPTURE_COMPARE_B" />
+            <option display="Event GPT2 COMPARE C" id="module.driver.transfer.event.event_gpt2_compare_c" value="ELC_EVENT_GPT2_COMPARE_C" />
+            <option display="Event GPT2 COMPARE D" id="module.driver.transfer.event.event_gpt2_compare_d" value="ELC_EVENT_GPT2_COMPARE_D" />
+            <option display="Event GPT2 COMPARE E" id="module.driver.transfer.event.event_gpt2_compare_e" value="ELC_EVENT_GPT2_COMPARE_E" />
+            <option display="Event GPT2 COMPARE F" id="module.driver.transfer.event.event_gpt2_compare_f" value="ELC_EVENT_GPT2_COMPARE_F" />
+            <option display="Event GPT2 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt2_counter_overflow" value="ELC_EVENT_GPT2_COUNTER_OVERFLOW" />
+            <option display="Event GPT2 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt2_counter_underflow" value="ELC_EVENT_GPT2_COUNTER_UNDERFLOW" />
+            <option display="Event GPT3 AD TRIG A" id="module.driver.transfer.event.event_gpt3_ad_trig_a" value="ELC_EVENT_GPT3_AD_TRIG_A" />
+            <option display="Event GPT3 AD TRIG B" id="module.driver.transfer.event.event_gpt3_ad_trig_b" value="ELC_EVENT_GPT3_AD_TRIG_B" />
+            <option display="Event GPT3 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt3_capture_compare_a" value="ELC_EVENT_GPT3_CAPTURE_COMPARE_A" />
+            <option display="Event GPT3 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt3_capture_compare_b" value="ELC_EVENT_GPT3_CAPTURE_COMPARE_B" />
+            <option display="Event GPT3 COMPARE C" id="module.driver.transfer.event.event_gpt3_compare_c" value="ELC_EVENT_GPT3_COMPARE_C" />
+            <option display="Event GPT3 COMPARE D" id="module.driver.transfer.event.event_gpt3_compare_d" value="ELC_EVENT_GPT3_COMPARE_D" />
+            <option display="Event GPT3 COMPARE E" id="module.driver.transfer.event.event_gpt3_compare_e" value="ELC_EVENT_GPT3_COMPARE_E" />
+            <option display="Event GPT3 COMPARE F" id="module.driver.transfer.event.event_gpt3_compare_f" value="ELC_EVENT_GPT3_COMPARE_F" />
+            <option display="Event GPT3 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt3_counter_overflow" value="ELC_EVENT_GPT3_COUNTER_OVERFLOW" />
+            <option display="Event GPT3 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt3_counter_underflow" value="ELC_EVENT_GPT3_COUNTER_UNDERFLOW" />
+            <option display="Event GPT4 AD TRIG A" id="module.driver.transfer.event.event_gpt4_ad_trig_a" value="ELC_EVENT_GPT4_AD_TRIG_A" />
+            <option display="Event GPT4 AD TRIG B" id="module.driver.transfer.event.event_gpt4_ad_trig_b" value="ELC_EVENT_GPT4_AD_TRIG_B" />
+            <option display="Event GPT4 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt4_capture_compare_a" value="ELC_EVENT_GPT4_CAPTURE_COMPARE_A" />
+            <option display="Event GPT4 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt4_capture_compare_b" value="ELC_EVENT_GPT4_CAPTURE_COMPARE_B" />
+            <option display="Event GPT4 COMPARE C" id="module.driver.transfer.event.event_gpt4_compare_c" value="ELC_EVENT_GPT4_COMPARE_C" />
+            <option display="Event GPT4 COMPARE D" id="module.driver.transfer.event.event_gpt4_compare_d" value="ELC_EVENT_GPT4_COMPARE_D" />
+            <option display="Event GPT4 COMPARE E" id="module.driver.transfer.event.event_gpt4_compare_e" value="ELC_EVENT_GPT4_COMPARE_E" />
+            <option display="Event GPT4 COMPARE F" id="module.driver.transfer.event.event_gpt4_compare_f" value="ELC_EVENT_GPT4_COMPARE_F" />
+            <option display="Event GPT4 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt4_counter_overflow" value="ELC_EVENT_GPT4_COUNTER_OVERFLOW" />
+            <option display="Event GPT4 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt4_counter_underflow" value="ELC_EVENT_GPT4_COUNTER_UNDERFLOW" />
+            <option display="Event GPT5 AD TRIG A" id="module.driver.transfer.event.event_gpt5_ad_trig_a" value="ELC_EVENT_GPT5_AD_TRIG_A" />
+            <option display="Event GPT5 AD TRIG B" id="module.driver.transfer.event.event_gpt5_ad_trig_b" value="ELC_EVENT_GPT5_AD_TRIG_B" />
+            <option display="Event GPT5 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt5_capture_compare_a" value="ELC_EVENT_GPT5_CAPTURE_COMPARE_A" />
+            <option display="Event GPT5 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt5_capture_compare_b" value="ELC_EVENT_GPT5_CAPTURE_COMPARE_B" />
+            <option display="Event GPT5 COMPARE C" id="module.driver.transfer.event.event_gpt5_compare_c" value="ELC_EVENT_GPT5_COMPARE_C" />
+            <option display="Event GPT5 COMPARE D" id="module.driver.transfer.event.event_gpt5_compare_d" value="ELC_EVENT_GPT5_COMPARE_D" />
+            <option display="Event GPT5 COMPARE E" id="module.driver.transfer.event.event_gpt5_compare_e" value="ELC_EVENT_GPT5_COMPARE_E" />
+            <option display="Event GPT5 COMPARE F" id="module.driver.transfer.event.event_gpt5_compare_f" value="ELC_EVENT_GPT5_COMPARE_F" />
+            <option display="Event GPT5 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt5_counter_overflow" value="ELC_EVENT_GPT5_COUNTER_OVERFLOW" />
+            <option display="Event GPT5 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt5_counter_underflow" value="ELC_EVENT_GPT5_COUNTER_UNDERFLOW" />
+            <option display="Event GPT6 AD TRIG A" id="module.driver.transfer.event.event_gpt6_ad_trig_a" value="ELC_EVENT_GPT6_AD_TRIG_A" />
+            <option display="Event GPT6 AD TRIG B" id="module.driver.transfer.event.event_gpt6_ad_trig_b" value="ELC_EVENT_GPT6_AD_TRIG_B" />
+            <option display="Event GPT6 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt6_capture_compare_a" value="ELC_EVENT_GPT6_CAPTURE_COMPARE_A" />
+            <option display="Event GPT6 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt6_capture_compare_b" value="ELC_EVENT_GPT6_CAPTURE_COMPARE_B" />
+            <option display="Event GPT6 COMPARE C" id="module.driver.transfer.event.event_gpt6_compare_c" value="ELC_EVENT_GPT6_COMPARE_C" />
+            <option display="Event GPT6 COMPARE D" id="module.driver.transfer.event.event_gpt6_compare_d" value="ELC_EVENT_GPT6_COMPARE_D" />
+            <option display="Event GPT6 COMPARE E" id="module.driver.transfer.event.event_gpt6_compare_e" value="ELC_EVENT_GPT6_COMPARE_E" />
+            <option display="Event GPT6 COMPARE F" id="module.driver.transfer.event.event_gpt6_compare_f" value="ELC_EVENT_GPT6_COMPARE_F" />
+            <option display="Event GPT6 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt6_counter_overflow" value="ELC_EVENT_GPT6_COUNTER_OVERFLOW" />
+            <option display="Event GPT6 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt6_counter_underflow" value="ELC_EVENT_GPT6_COUNTER_UNDERFLOW" />
+            <option display="Event GPT7 AD TRIG A" id="module.driver.transfer.event.event_gpt7_ad_trig_a" value="ELC_EVENT_GPT7_AD_TRIG_A" />
+            <option display="Event GPT7 AD TRIG B" id="module.driver.transfer.event.event_gpt7_ad_trig_b" value="ELC_EVENT_GPT7_AD_TRIG_B" />
+            <option display="Event GPT7 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt7_capture_compare_a" value="ELC_EVENT_GPT7_CAPTURE_COMPARE_A" />
+            <option display="Event GPT7 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt7_capture_compare_b" value="ELC_EVENT_GPT7_CAPTURE_COMPARE_B" />
+            <option display="Event GPT7 COMPARE C" id="module.driver.transfer.event.event_gpt7_compare_c" value="ELC_EVENT_GPT7_COMPARE_C" />
+            <option display="Event GPT7 COMPARE D" id="module.driver.transfer.event.event_gpt7_compare_d" value="ELC_EVENT_GPT7_COMPARE_D" />
+            <option display="Event GPT7 COMPARE E" id="module.driver.transfer.event.event_gpt7_compare_e" value="ELC_EVENT_GPT7_COMPARE_E" />
+            <option display="Event GPT7 COMPARE F" id="module.driver.transfer.event.event_gpt7_compare_f" value="ELC_EVENT_GPT7_COMPARE_F" />
+            <option display="Event GPT7 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt7_counter_overflow" value="ELC_EVENT_GPT7_COUNTER_OVERFLOW" />
+            <option display="Event GPT7 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt7_counter_underflow" value="ELC_EVENT_GPT7_COUNTER_UNDERFLOW" />
+            <option display="Event GPT8 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt8_capture_compare_a" value="ELC_EVENT_GPT8_CAPTURE_COMPARE_A" />
+            <option display="Event GPT8 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt8_capture_compare_b" value="ELC_EVENT_GPT8_CAPTURE_COMPARE_B" />
+            <option display="Event GPT8 COMPARE C" id="module.driver.transfer.event.event_gpt8_compare_c" value="ELC_EVENT_GPT8_COMPARE_C" />
+            <option display="Event GPT8 COMPARE D" id="module.driver.transfer.event.event_gpt8_compare_d" value="ELC_EVENT_GPT8_COMPARE_D" />
+            <option display="Event GPT8 COMPARE E" id="module.driver.transfer.event.event_gpt8_compare_e" value="ELC_EVENT_GPT8_COMPARE_E" />
+            <option display="Event GPT8 COMPARE F" id="module.driver.transfer.event.event_gpt8_compare_f" value="ELC_EVENT_GPT8_COMPARE_F" />
+            <option display="Event GPT8 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt8_counter_overflow" value="ELC_EVENT_GPT8_COUNTER_OVERFLOW" />
+            <option display="Event GPT8 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt8_counter_underflow" value="ELC_EVENT_GPT8_COUNTER_UNDERFLOW" />
+            <option display="Event GPT9 CAPTURE COMPARE A" id="module.driver.transfer.event.event_gpt9_capture_compare_a" value="ELC_EVENT_GPT9_CAPTURE_COMPARE_A" />
+            <option display="Event GPT9 CAPTURE COMPARE B" id="module.driver.transfer.event.event_gpt9_capture_compare_b" value="ELC_EVENT_GPT9_CAPTURE_COMPARE_B" />
+            <option display="Event GPT9 COMPARE C" id="module.driver.transfer.event.event_gpt9_compare_c" value="ELC_EVENT_GPT9_COMPARE_C" />
+            <option display="Event GPT9 COMPARE D" id="module.driver.transfer.event.event_gpt9_compare_d" value="ELC_EVENT_GPT9_COMPARE_D" />
+            <option display="Event GPT9 COMPARE E" id="module.driver.transfer.event.event_gpt9_compare_e" value="ELC_EVENT_GPT9_COMPARE_E" />
+            <option display="Event GPT9 COMPARE F" id="module.driver.transfer.event.event_gpt9_compare_f" value="ELC_EVENT_GPT9_COMPARE_F" />
+            <option display="Event GPT9 COUNTER OVERFLOW" id="module.driver.transfer.event.event_gpt9_counter_overflow" value="ELC_EVENT_GPT9_COUNTER_OVERFLOW" />
+            <option display="Event GPT9 COUNTER UNDERFLOW" id="module.driver.transfer.event.event_gpt9_counter_underflow" value="ELC_EVENT_GPT9_COUNTER_UNDERFLOW" />
+            <option display="Event ICU IRQ0" id="module.driver.transfer.event.event_icu_irq0" value="ELC_EVENT_ICU_IRQ0" />
+            <option display="Event ICU IRQ1" id="module.driver.transfer.event.event_icu_irq1" value="ELC_EVENT_ICU_IRQ1" />
+            <option display="Event ICU IRQ10" id="module.driver.transfer.event.event_icu_irq10" value="ELC_EVENT_ICU_IRQ10" />
+            <option display="Event ICU IRQ11" id="module.driver.transfer.event.event_icu_irq11" value="ELC_EVENT_ICU_IRQ11" />
+            <option display="Event ICU IRQ12" id="module.driver.transfer.event.event_icu_irq12" value="ELC_EVENT_ICU_IRQ12" />
+            <option display="Event ICU IRQ13" id="module.driver.transfer.event.event_icu_irq13" value="ELC_EVENT_ICU_IRQ13" />
+            <option display="Event ICU IRQ14" id="module.driver.transfer.event.event_icu_irq14" value="ELC_EVENT_ICU_IRQ14" />
+            <option display="Event ICU IRQ15" id="module.driver.transfer.event.event_icu_irq15" value="ELC_EVENT_ICU_IRQ15" />
+            <option display="Event ICU IRQ2" id="module.driver.transfer.event.event_icu_irq2" value="ELC_EVENT_ICU_IRQ2" />
+            <option display="Event ICU IRQ3" id="module.driver.transfer.event.event_icu_irq3" value="ELC_EVENT_ICU_IRQ3" />
+            <option display="Event ICU IRQ4" id="module.driver.transfer.event.event_icu_irq4" value="ELC_EVENT_ICU_IRQ4" />
+            <option display="Event ICU IRQ5" id="module.driver.transfer.event.event_icu_irq5" value="ELC_EVENT_ICU_IRQ5" />
+            <option display="Event ICU IRQ6" id="module.driver.transfer.event.event_icu_irq6" value="ELC_EVENT_ICU_IRQ6" />
+            <option display="Event ICU IRQ7" id="module.driver.transfer.event.event_icu_irq7" value="ELC_EVENT_ICU_IRQ7" />
+            <option display="Event ICU IRQ8" id="module.driver.transfer.event.event_icu_irq8" value="ELC_EVENT_ICU_IRQ8" />
+            <option display="Event ICU IRQ9" id="module.driver.transfer.event.event_icu_irq9" value="ELC_EVENT_ICU_IRQ9" />
+            <option display="Event ICU SNOOZE CANCEL" id="module.driver.transfer.event.event_icu_snooze_cancel" value="ELC_EVENT_ICU_SNOOZE_CANCEL" />
+            <option display="Event IIC0 ERI" id="module.driver.transfer.event.event_iic0_eri" value="ELC_EVENT_IIC0_ERI" />
+            <option display="Event IIC0 RXI" id="module.driver.transfer.event.event_iic0_rxi" value="ELC_EVENT_IIC0_RXI" />
+            <option display="Event IIC0 TEI" id="module.driver.transfer.event.event_iic0_tei" value="ELC_EVENT_IIC0_TEI" />
+            <option display="Event IIC0 TXI" id="module.driver.transfer.event.event_iic0_txi" value="ELC_EVENT_IIC0_TXI" />
+            <option display="Event IIC0 WUI" id="module.driver.transfer.event.event_iic0_wui" value="ELC_EVENT_IIC0_WUI" />
+            <option display="Event IIC1 ERI" id="module.driver.transfer.event.event_iic1_eri" value="ELC_EVENT_IIC1_ERI" />
+            <option display="Event IIC1 RXI" id="module.driver.transfer.event.event_iic1_rxi" value="ELC_EVENT_IIC1_RXI" />
+            <option display="Event IIC1 TEI" id="module.driver.transfer.event.event_iic1_tei" value="ELC_EVENT_IIC1_TEI" />
+            <option display="Event IIC1 TXI" id="module.driver.transfer.event.event_iic1_txi" value="ELC_EVENT_IIC1_TXI" />
+            <option display="Event IIC2 ERI" id="module.driver.transfer.event.event_iic2_eri" value="ELC_EVENT_IIC2_ERI" />
+            <option display="Event IIC2 RXI" id="module.driver.transfer.event.event_iic2_rxi" value="ELC_EVENT_IIC2_RXI" />
+            <option display="Event IIC2 TEI" id="module.driver.transfer.event.event_iic2_tei" value="ELC_EVENT_IIC2_TEI" />
+            <option display="Event IIC2 TXI" id="module.driver.transfer.event.event_iic2_txi" value="ELC_EVENT_IIC2_TXI" />
+            <option display="Event IOPORT EVENT 1" id="module.driver.transfer.event.event_ioport_event_1" value="ELC_EVENT_IOPORT_EVENT_1" />
+            <option display="Event IOPORT EVENT 2" id="module.driver.transfer.event.event_ioport_event_2" value="ELC_EVENT_IOPORT_EVENT_2" />
+            <option display="Event IOPORT EVENT 3" id="module.driver.transfer.event.event_ioport_event_3" value="ELC_EVENT_IOPORT_EVENT_3" />
+            <option display="Event IOPORT EVENT 4" id="module.driver.transfer.event.event_ioport_event_4" value="ELC_EVENT_IOPORT_EVENT_4" />
+            <option display="Event IWDT UNDERFLOW" id="module.driver.transfer.event.event_iwdt_underflow" value="ELC_EVENT_IWDT_UNDERFLOW" />
+            <option display="Event JPEG JDTI" id="module.driver.transfer.event.event_jpeg_jdti" value="ELC_EVENT_JPEG_JDTI" />
+            <option display="Event JPEG JEDI" id="module.driver.transfer.event.event_jpeg_jedi" value="ELC_EVENT_JPEG_JEDI" />
+            <option display="Event KEY INT" id="module.driver.transfer.event.event_key_int" value="ELC_EVENT_KEY_INT" />
+            <option display="Event LPM SNOOZE REQUEST" id="module.driver.transfer.event.event_lpm_snooze_request" value="ELC_EVENT_LPM_SNOOZE_REQUEST" />
+            <option display="Event LVD LVD1" id="module.driver.transfer.event.event_lvd_lvd1" value="ELC_EVENT_LVD_LVD1" />
+            <option display="Event LVD LVD2" id="module.driver.transfer.event.event_lvd_lvd2" value="ELC_EVENT_LVD_LVD2" />
+            <option display="Event OPS UVW EDGE" id="module.driver.transfer.event.event_ops_uvw_edge" value="ELC_EVENT_OPS_UVW_EDGE" />
+            <option display="Event PDC FRAME END" id="module.driver.transfer.event.event_pdc_frame_end" value="ELC_EVENT_PDC_FRAME_END" />
+            <option display="Event PDC INT" id="module.driver.transfer.event.event_pdc_int" value="ELC_EVENT_PDC_INT" />
+            <option display="Event PDC RECEIVE DATA READY" id="module.driver.transfer.event.event_pdc_receive_data_ready" value="ELC_EVENT_PDC_RECEIVE_DATA_READY" />
+            <option display="Event POEG0 EVENT" id="module.driver.transfer.event.event_poeg0_event" value="ELC_EVENT_POEG0_EVENT" />
+            <option display="Event POEG1 EVENT" id="module.driver.transfer.event.event_poeg1_event" value="ELC_EVENT_POEG1_EVENT" />
+            <option display="Event POEG2 EVENT" id="module.driver.transfer.event.event_poeg2_event" value="ELC_EVENT_POEG2_EVENT" />
+            <option display="Event POEG3 EVENT" id="module.driver.transfer.event.event_poeg3_event" value="ELC_EVENT_POEG3_EVENT" />
+            <option display="Event QSPI INT" id="module.driver.transfer.event.event_qspi_int" value="ELC_EVENT_QSPI_INT" />
+            <option display="Event RTC ALARM" id="module.driver.transfer.event.event_rtc_alarm" value="ELC_EVENT_RTC_ALARM" />
+            <option display="Event RTC CARRY" id="module.driver.transfer.event.event_rtc_carry" value="ELC_EVENT_RTC_CARRY" />
+            <option display="Event RTC PERIOD" id="module.driver.transfer.event.event_rtc_period" value="ELC_EVENT_RTC_PERIOD" />
+            <option display="Event SCE INTEGRATE RDRDY" id="module.driver.transfer.event.event_sce_integrate_rdrdy" value="ELC_EVENT_SCE_INTEGRATE_RDRDY" />
+            <option display="Event SCE INTEGRATE WRRDY" id="module.driver.transfer.event.event_sce_integrate_wrrdy" value="ELC_EVENT_SCE_INTEGRATE_WRRDY" />
+            <option display="Event SCE LONG PLG" id="module.driver.transfer.event.event_sce_long_plg" value="ELC_EVENT_SCE_LONG_PLG" />
+            <option display="Event SCE PROC BUSY" id="module.driver.transfer.event.event_sce_proc_busy" value="ELC_EVENT_SCE_PROC_BUSY" />
+            <option display="Event SCE RDRDY 0" id="module.driver.transfer.event.event_sce_rdrdy_0" value="ELC_EVENT_SCE_RDRDY_0" />
+            <option display="Event SCE RDRDY 1" id="module.driver.transfer.event.event_sce_rdrdy_1" value="ELC_EVENT_SCE_RDRDY_1" />
+            <option display="Event SCE ROMOK" id="module.driver.transfer.event.event_sce_romok" value="ELC_EVENT_SCE_ROMOK" />
+            <option display="Event SCE TEST BUSY" id="module.driver.transfer.event.event_sce_test_busy" value="ELC_EVENT_SCE_TEST_BUSY" />
+            <option display="Event SCE WRRDY 0" id="module.driver.transfer.event.event_sce_wrrdy_0" value="ELC_EVENT_SCE_WRRDY_0" />
+            <option display="Event SCE WRRDY 1" id="module.driver.transfer.event.event_sce_wrrdy_1" value="ELC_EVENT_SCE_WRRDY_1" />
+            <option display="Event SCE WRRDY 4" id="module.driver.transfer.event.event_sce_wrrdy_4" value="ELC_EVENT_SCE_WRRDY_4" />
+            <option display="Event SCI0 AM" id="module.driver.transfer.event.event_sci0_am" value="ELC_EVENT_SCI0_AM" />
+            <option display="Event SCI0 ERI" id="module.driver.transfer.event.event_sci0_eri" value="ELC_EVENT_SCI0_ERI" />
+            <option display="Event SCI0 RXI" id="module.driver.transfer.event.event_sci0_rxi" value="ELC_EVENT_SCI0_RXI" />
+            <option display="Event SCI0 RXI OR ERI" id="module.driver.transfer.event.event_sci0_rxi_or_eri" value="ELC_EVENT_SCI0_RXI_OR_ERI" />
+            <option display="Event SCI0 TEI" id="module.driver.transfer.event.event_sci0_tei" value="ELC_EVENT_SCI0_TEI" />
+            <option display="Event SCI0 TXI" id="module.driver.transfer.event.event_sci0_txi" value="ELC_EVENT_SCI0_TXI" />
+            <option display="Event SCI1 AM" id="module.driver.transfer.event.event_sci1_am" value="ELC_EVENT_SCI1_AM" />
+            <option display="Event SCI1 ERI" id="module.driver.transfer.event.event_sci1_eri" value="ELC_EVENT_SCI1_ERI" />
+            <option display="Event SCI1 RXI" id="module.driver.transfer.event.event_sci1_rxi" value="ELC_EVENT_SCI1_RXI" />
+            <option display="Event SCI1 TEI" id="module.driver.transfer.event.event_sci1_tei" value="ELC_EVENT_SCI1_TEI" />
+            <option display="Event SCI1 TXI" id="module.driver.transfer.event.event_sci1_txi" value="ELC_EVENT_SCI1_TXI" />
+            <option display="Event SCI2 AM" id="module.driver.transfer.event.event_sci2_am" value="ELC_EVENT_SCI2_AM" />
+            <option display="Event SCI2 ERI" id="module.driver.transfer.event.event_sci2_eri" value="ELC_EVENT_SCI2_ERI" />
+            <option display="Event SCI2 RXI" id="module.driver.transfer.event.event_sci2_rxi" value="ELC_EVENT_SCI2_RXI" />
+            <option display="Event SCI2 TEI" id="module.driver.transfer.event.event_sci2_tei" value="ELC_EVENT_SCI2_TEI" />
+            <option display="Event SCI2 TXI" id="module.driver.transfer.event.event_sci2_txi" value="ELC_EVENT_SCI2_TXI" />
+            <option display="Event SCI3 AM" id="module.driver.transfer.event.event_sci3_am" value="ELC_EVENT_SCI3_AM" />
+            <option display="Event SCI3 ERI" id="module.driver.transfer.event.event_sci3_eri" value="ELC_EVENT_SCI3_ERI" />
+            <option display="Event SCI3 RXI" id="module.driver.transfer.event.event_sci3_rxi" value="ELC_EVENT_SCI3_RXI" />
+            <option display="Event SCI3 TEI" id="module.driver.transfer.event.event_sci3_tei" value="ELC_EVENT_SCI3_TEI" />
+            <option display="Event SCI3 TXI" id="module.driver.transfer.event.event_sci3_txi" value="ELC_EVENT_SCI3_TXI" />
+            <option display="Event SCI4 AM" id="module.driver.transfer.event.event_sci4_am" value="ELC_EVENT_SCI4_AM" />
+            <option display="Event SCI4 ERI" id="module.driver.transfer.event.event_sci4_eri" value="ELC_EVENT_SCI4_ERI" />
+            <option display="Event SCI4 RXI" id="module.driver.transfer.event.event_sci4_rxi" value="ELC_EVENT_SCI4_RXI" />
+            <option display="Event SCI4 TEI" id="module.driver.transfer.event.event_sci4_tei" value="ELC_EVENT_SCI4_TEI" />
+            <option display="Event SCI4 TXI" id="module.driver.transfer.event.event_sci4_txi" value="ELC_EVENT_SCI4_TXI" />
+            <option display="Event SCI5 AM" id="module.driver.transfer.event.event_sci5_am" value="ELC_EVENT_SCI5_AM" />
+            <option display="Event SCI5 ERI" id="module.driver.transfer.event.event_sci5_eri" value="ELC_EVENT_SCI5_ERI" />
+            <option display="Event SCI5 RXI" id="module.driver.transfer.event.event_sci5_rxi" value="ELC_EVENT_SCI5_RXI" />
+            <option display="Event SCI5 TEI" id="module.driver.transfer.event.event_sci5_tei" value="ELC_EVENT_SCI5_TEI" />
+            <option display="Event SCI5 TXI" id="module.driver.transfer.event.event_sci5_txi" value="ELC_EVENT_SCI5_TXI" />
+            <option display="Event SCI6 AM" id="module.driver.transfer.event.event_sci6_am" value="ELC_EVENT_SCI6_AM" />
+            <option display="Event SCI6 ERI" id="module.driver.transfer.event.event_sci6_eri" value="ELC_EVENT_SCI6_ERI" />
+            <option display="Event SCI6 RXI" id="module.driver.transfer.event.event_sci6_rxi" value="ELC_EVENT_SCI6_RXI" />
+            <option display="Event SCI6 TEI" id="module.driver.transfer.event.event_sci6_tei" value="ELC_EVENT_SCI6_TEI" />
+            <option display="Event SCI6 TXI" id="module.driver.transfer.event.event_sci6_txi" value="ELC_EVENT_SCI6_TXI" />
+            <option display="Event SCI7 AM" id="module.driver.transfer.event.event_sci7_am" value="ELC_EVENT_SCI7_AM" />
+            <option display="Event SCI7 ERI" id="module.driver.transfer.event.event_sci7_eri" value="ELC_EVENT_SCI7_ERI" />
+            <option display="Event SCI7 RXI" id="module.driver.transfer.event.event_sci7_rxi" value="ELC_EVENT_SCI7_RXI" />
+            <option display="Event SCI7 TEI" id="module.driver.transfer.event.event_sci7_tei" value="ELC_EVENT_SCI7_TEI" />
+            <option display="Event SCI7 TXI" id="module.driver.transfer.event.event_sci7_txi" value="ELC_EVENT_SCI7_TXI" />
+            <option display="Event SCI8 AM" id="module.driver.transfer.event.event_sci8_am" value="ELC_EVENT_SCI8_AM" />
+            <option display="Event SCI8 ERI" id="module.driver.transfer.event.event_sci8_eri" value="ELC_EVENT_SCI8_ERI" />
+            <option display="Event SCI8 RXI" id="module.driver.transfer.event.event_sci8_rxi" value="ELC_EVENT_SCI8_RXI" />
+            <option display="Event SCI8 TEI" id="module.driver.transfer.event.event_sci8_tei" value="ELC_EVENT_SCI8_TEI" />
+            <option display="Event SCI8 TXI" id="module.driver.transfer.event.event_sci8_txi" value="ELC_EVENT_SCI8_TXI" />
+            <option display="Event SCI9 AM" id="module.driver.transfer.event.event_sci9_am" value="ELC_EVENT_SCI9_AM" />
+            <option display="Event SCI9 ERI" id="module.driver.transfer.event.event_sci9_eri" value="ELC_EVENT_SCI9_ERI" />
+            <option display="Event SCI9 RXI" id="module.driver.transfer.event.event_sci9_rxi" value="ELC_EVENT_SCI9_RXI" />
+            <option display="Event SCI9 TEI" id="module.driver.transfer.event.event_sci9_tei" value="ELC_EVENT_SCI9_TEI" />
+            <option display="Event SCI9 TXI" id="module.driver.transfer.event.event_sci9_txi" value="ELC_EVENT_SCI9_TXI" />
+            <option display="Event SDHIMMC0 ACCS" id="module.driver.transfer.event.event_sdhimmc0_accs" value="ELC_EVENT_SDHIMMC0_ACCS" />
+            <option display="Event SDHIMMC0 CARD" id="module.driver.transfer.event.event_sdhimmc0_card" value="ELC_EVENT_SDHIMMC0_CARD" />
+            <option display="Event SDHIMMC0 DMA REQ" id="module.driver.transfer.event.event_sdhimmc0_dma_req" value="ELC_EVENT_SDHIMMC0_DMA_REQ" />
+            <option display="Event SDHIMMC0 SDIO" id="module.driver.transfer.event.event_sdhimmc0_sdio" value="ELC_EVENT_SDHIMMC0_SDIO" />
+            <option display="Event SDHIMMC1 ACCS" id="module.driver.transfer.event.event_sdhimmc1_accs" value="ELC_EVENT_SDHIMMC1_ACCS" />
+            <option display="Event SDHIMMC1 CARD" id="module.driver.transfer.event.event_sdhimmc1_card" value="ELC_EVENT_SDHIMMC1_CARD" />
+            <option display="Event SDHIMMC1 DMA REQ" id="module.driver.transfer.event.event_sdhimmc1_dma_req" value="ELC_EVENT_SDHIMMC1_DMA_REQ" />
+            <option display="Event SDHIMMC1 SDIO" id="module.driver.transfer.event.event_sdhimmc1_sdio" value="ELC_EVENT_SDHIMMC1_SDIO" />
+            <option display="Event SPI0 ERI" id="module.driver.transfer.event.event_spi0_eri" value="ELC_EVENT_SPI0_ERI" />
+            <option display="Event SPI0 IDLE" id="module.driver.transfer.event.event_spi0_idle" value="ELC_EVENT_SPI0_IDLE" />
+            <option display="Event SPI0 RXI" id="module.driver.transfer.event.event_spi0_rxi" value="ELC_EVENT_SPI0_RXI" />
+            <option display="Event SPI0 TEI" id="module.driver.transfer.event.event_spi0_tei" value="ELC_EVENT_SPI0_TEI" />
+            <option display="Event SPI0 TXI" id="module.driver.transfer.event.event_spi0_txi" value="ELC_EVENT_SPI0_TXI" />
+            <option display="Event SPI1 ERI" id="module.driver.transfer.event.event_spi1_eri" value="ELC_EVENT_SPI1_ERI" />
+            <option display="Event SPI1 IDLE" id="module.driver.transfer.event.event_spi1_idle" value="ELC_EVENT_SPI1_IDLE" />
+            <option display="Event SPI1 RXI" id="module.driver.transfer.event.event_spi1_rxi" value="ELC_EVENT_SPI1_RXI" />
+            <option display="Event SPI1 TEI" id="module.driver.transfer.event.event_spi1_tei" value="ELC_EVENT_SPI1_TEI" />
+            <option display="Event SPI1 TXI" id="module.driver.transfer.event.event_spi1_txi" value="ELC_EVENT_SPI1_TXI" />
+            <option display="Event SRC CONVERSION END" id="module.driver.transfer.event.event_src_conversion_end" value="ELC_EVENT_SRC_CONVERSION_END" />
+            <option display="Event SRC INPUT FIFO EMPTY" id="module.driver.transfer.event.event_src_input_fifo_empty" value="ELC_EVENT_SRC_INPUT_FIFO_EMPTY" />
+            <option display="Event SRC OUTPUT FIFO FULL" id="module.driver.transfer.event.event_src_output_fifo_full" value="ELC_EVENT_SRC_OUTPUT_FIFO_FULL" />
+            <option display="Event SRC OUTPUT FIFO OVERFLOW" id="module.driver.transfer.event.event_src_output_fifo_overflow" value="ELC_EVENT_SRC_OUTPUT_FIFO_OVERFLOW" />
+            <option display="Event SRC OUTPUT FIFO UNDERFLOW" id="module.driver.transfer.event.event_src_output_fifo_underflow" value="ELC_EVENT_SRC_OUTPUT_FIFO_UNDERFLOW" />
+            <option display="Event SSI0 INT" id="module.driver.transfer.event.event_ssi0_int" value="ELC_EVENT_SSI0_INT" />
+            <option display="Event SSI0 RXI" id="module.driver.transfer.event.event_ssi0_rxi" value="ELC_EVENT_SSI0_RXI" />
+            <option display="Event SSI0 TXI" id="module.driver.transfer.event.event_ssi0_txi" value="ELC_EVENT_SSI0_TXI" />
+            <option display="Event SSI1 INT" id="module.driver.transfer.event.event_ssi1_int" value="ELC_EVENT_SSI1_INT" />
+            <option display="Event SSI1 TXI RXI" id="module.driver.transfer.event.event_ssi1_txi_rxi" value="ELC_EVENT_SSI1_TXI_RXI" />
+            <option display="Event USBFS FIFO 0" id="module.driver.transfer.event.event_usbfs_fifo_0" value="ELC_EVENT_USBFS_FIFO_0" />
+            <option display="Event USBFS FIFO 1" id="module.driver.transfer.event.event_usbfs_fifo_1" value="ELC_EVENT_USBFS_FIFO_1" />
+            <option display="Event USBFS INT" id="module.driver.transfer.event.event_usbfs_int" value="ELC_EVENT_USBFS_INT" />
+            <option display="Event USBFS RESUME" id="module.driver.transfer.event.event_usbfs_resume" value="ELC_EVENT_USBFS_RESUME" />
+            <option display="Event USBHS FIFO 0" id="module.driver.transfer.event.event_usbhs_fifo_0" value="ELC_EVENT_USBHS_FIFO_0" />
+            <option display="Event USBHS FIFO 1" id="module.driver.transfer.event.event_usbhs_fifo_1" value="ELC_EVENT_USBHS_FIFO_1" />
+            <option display="Event USBHS USB INT RESUME" id="module.driver.transfer.event.event_usbhs_usb_int_resume" value="ELC_EVENT_USBHS_USB_INT_RESUME" />
+            <option display="Event VBATT LVD" id="module.driver.transfer.event.event_vbatt_lvd" value="ELC_EVENT_VBATT_LVD" />
+            <option display="Event WDT UNDERFLOW" id="module.driver.transfer.event.event_wdt_underflow" value="ELC_EVENT_WDT_UNDERFLOW" />
+        </property>
+        <property default="module.driver.transfer.auto_enable.true" display="Auto Enable" id="module.driver.transfer.auto_enable">
+            <option display="True" id="module.driver.transfer.auto_enable.true" value="true"/>
+            <option display="False" id="module.driver.transfer.auto_enable.false" value="false"/>
+        </property>
+        <property default="NULL" display="Callback" id="module.driver.transfer.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.transfer.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Interrupt Priority" id="module.driver.transfer.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <header>
+            /* Transfer on DMAC Instance. */
+            extern const transfer_instance_t ${module.driver.transfer.name};
+#ifndef ${module.driver.transfer.p_callback}
+void ${module.driver.transfer.p_callback}(transfer_callback_args_t * p_args);
+#endif
+        </header>
+        <includes>#include &quot;r_dmac.h&quot;
+#include &quot;r_transfer_api.h&quot;</includes>
+        <declarations>
+#if ${module.driver.transfer.irq_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.transfer.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_DMAC${module.driver.transfer.activation_source})
+SSP_VECTOR_DEFINE_CHAN(dmac_int_isr, DMAC, INT, ${module.driver.transfer.channel});
+#endif
+#endif
+dmac_instance_ctrl_t ${module.driver.transfer.name}_ctrl;
+transfer_info_t ${module.driver.transfer.name}_info =
+{
+    .dest_addr_mode      = ${module.driver.transfer.dest_addr_mode},
+    .repeat_area         = ${module.driver.transfer.repeat_area},
+    .irq                 = TRANSFER_IRQ_EACH,
+    .chain_mode          = TRANSFER_CHAIN_MODE_DISABLED,
+    .src_addr_mode       = ${module.driver.transfer.src_addr_mode},
+    .size                = ${module.driver.transfer.size},
+    .mode                = ${module.driver.transfer.mode},
+    .p_dest              = (void *) ${module.driver.transfer.p_dest},
+    .p_src               = (void const *) ${module.driver.transfer.p_src},
+    .num_blocks          = ${module.driver.transfer.num_blocks},
+    .length              = ${module.driver.transfer.length},
+};
+const transfer_on_dmac_cfg_t ${module.driver.transfer.name}_extend = 
+{
+    .channel             = ${module.driver.transfer.channel},
+};
+const transfer_cfg_t ${module.driver.transfer.name}_cfg =
+{
+    .p_info              = &amp;${module.driver.transfer.name}_info,
+    .activation_source   = ${module.driver.transfer.activation_source},
+    .auto_enable         = ${module.driver.transfer.auto_enable},
+    .p_callback          = ${module.driver.transfer.p_callback},
+    .p_context           = &amp;${module.driver.transfer.name},
+    .irq_ipl             = ${module.driver.transfer.irq_ipl},
+    .p_extend            = &amp;${module.driver.transfer.name}_extend,
+};
+/* Instance structure to use this module. */
+const transfer_instance_t ${module.driver.transfer.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.transfer.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.transfer.name}_cfg,
+    .p_api         = &amp;g_transfer_on_dmac
+};
+
+</declarations>
+    </module>
+</synergyModuleDescription>

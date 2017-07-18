@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.ssi" path="ssp_cfg/driver/r_ssi_cfg.h" version="0">
+        <property default="config.driver.ssi.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.ssi.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.ssi.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.ssi.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.ssi.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>
+            #define SSI_CFG_PARAM_CHECKING_ENABLE ${config.driver.ssi.param_checking_enable}
+        </content>
+    </config>
+    <module config="config.driver.ssi" display="Driver|Connectivity|${module.driver.i2s.name} I2S Driver on r_ssi" id="module.driver.i2s_on_ssi" version="1">
+        <constraint display="Requires Transmit Interrupt (TXI) enabled or Receive Interrupt (RXI) enabled">
+            "0" != "${module.driver.i2s.channel}" || (("${module.driver.i2s.rxi_ipl}" != "board.icu.common.irq.disabled") || ("${module.driver.i2s.txi_ipl}" != "board.icu.common.irq.disabled"))
+        </constraint>
+        <constraint display="Receive and Transmit interrupts cannot both be enabled on channel 1">
+            "1" != "${module.driver.i2s.channel}" || (("${module.driver.i2s.rxi_ipl}" == "board.icu.common.irq.disabled") || ("${module.driver.i2s.txi_ipl}" == "board.icu.common.irq.disabled"))
+        </constraint>
+		<constraint display="Requires Idle/Error Interrupt (INT) enabled">
+            "${module.driver.i2s.idle_err_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+		<constraint display="Unique name required for each instance">
+            "${interface.driver.i2s.${module.driver.i2s.name}}" === "1"
+	    </constraint>
+        <requires id="module.driver.i2s_on_ssi.requires.transfer_tx" interface="interface.driver.transfer_on_dtc" display="Add DTC Driver for Transmission [Recommended but optional]">
+			<override property="module.driver.transfer.size" value="module.driver.transfer.size.size_4_byte"/>
+			<override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+			<override property="module.driver.transfer.p_dest" value="NULL"/>
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="0"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="0"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+			<override property="module.driver.transfer.event" value="module.driver.transfer.event.event_ssi${module.driver.i2s.channel}_txi"/>
+		</requires>
+        <requires id="module.driver.i2s_on_ssi.requires.transfer_rx" interface="interface.driver.transfer_on_dtc" display="Add DTC Driver for Reception [Recommended but optional]">
+			<override property="module.driver.transfer.size" value="module.driver.transfer.size.size_4_byte"/>
+			<override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_fixed"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_destination"/>
+			<override property="module.driver.transfer.p_dest" value="NULL"/>
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="0"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="0"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+			<override property="module.driver.transfer.event" value="module.driver.transfer.event.event_ssi${module.driver.i2s.channel}_rxi"/>
+		</requires>
+        <requires id="module.driver.i2s_on_ssi.requires.timer" interface="interface.driver.timer" display="Add Timer Driver" >
+			<override property="module.driver.timer.mode" value="module.driver.timer.mode.mode_periodic"/>
+			<override property="module.driver.timer.period" value="${module.driver.i2s.audio_clk_freq_hz} * 2"/>
+			<override property="module.driver.timer.unit" value="module.driver.timer.unit.unit_frequency_hz"/>
+			<override property="module.driver.timer.p_callback" value="NULL"/>
+			<override property="module.driver.timer.autostart" value="module.driver.timer.autostart.false"/>
+		</requires>
+        <provides interface="interface.driver.i2s" />
+        <provides interface="interface.driver.i2s_on_ssi" />
+        <provides interface="interface.driver.i2s.${module.driver.i2s.name}" />
+        <property default="g_i2s${_instance}" display="Name" id="module.driver.i2s.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.i2s.name}")</constraint>
+        </property>
+        
+        <!-- I2S interface configuration -->
+        <property default="0" display="Channel" id="module.driver.i2s.channel">
+            <constraint display="Value must be an integer between 0 and 1">testInteger("${module.driver.i2s.channel}")  &amp;&amp; ("${module.driver.i2s.channel}" &gt;= 0) &amp;&amp; ("${module.driver.i2s.channel}" &lt;= 1)</constraint>
+        </property>
+        <property default="2822400" display="Audio Clock Frequency (Hertz)" id="module.driver.i2s.audio_clk_freq_hz">
+            <constraint display="Value must be an integer">testInteger("${module.driver.i2s.audio_clk_freq_hz}")</constraint>
+        </property>
+        <property default="44100" display="Sampling Frequency (Hertz)" id="module.driver.i2s.sampling_freq_hz">
+            <constraint display="Value must be an integer">testInteger("${module.driver.i2s.sampling_freq_hz}")</constraint>
+        </property>
+        <property default="module.driver.i2s.pcm_width.pcm_width_16" display="Data Bits" id="module.driver.i2s.pcm_width">
+            <option display="8 Bits" id="module.driver.i2s.pcm_width.pcm_width_8" value="I2S_PCM_WIDTH_8_BITS"/>
+            <option display="16 Bits" id="module.driver.i2s.pcm_width.pcm_width_16" value="I2S_PCM_WIDTH_16_BITS"/>
+            <option display="18 Bits" id="module.driver.i2s.pcm_width.pcm_width_18" value="I2S_PCM_WIDTH_18_BITS"/>
+            <option display="20 Bits" id="module.driver.i2s.pcm_width.pcm_width_20" value="I2S_PCM_WIDTH_20_BITS"/>
+            <option display="22 Bits" id="module.driver.i2s.pcm_width.pcm_width_22" value="I2S_PCM_WIDTH_22_BITS"/>
+            <option display="24 Bits" id="module.driver.i2s.pcm_width.pcm_width_24" value="I2S_PCM_WIDTH_24_BITS"/>
+        </property>
+        <property default="module.driver.i2s.word_length.word_length_16" display="Word Length" id="module.driver.i2s.word_length">
+            <option display="8 Bits" id="module.driver.i2s.word_length.word_length_8" value="I2S_WORD_LENGTH_8_BITS"/>
+            <option display="16 Bits" id="module.driver.i2s.word_length.word_length_16" value="I2S_WORD_LENGTH_16_BITS"/>
+            <option display="24 Bits" id="module.driver.i2s.word_length.word_length_24" value="I2S_WORD_LENGTH_24_BITS"/>
+            <option display="32 Bits" id="module.driver.i2s.word_length.word_length_32" value="I2S_WORD_LENGTH_32_BITS"/>
+        </property>
+        <property default="module.driver.i2s.ws_continue.ws_continue_off" display="WS Continue Mode" id="module.driver.i2s.ws_continue" description="Enable WS continue mode to output the word select (WS) pin even when transmission is idle.">
+            <option display="Enabled" id="module.driver.i2s.ws_continue.ws_continue_on" value="I2S_WS_CONTINUE_ON"/>
+            <option display="Disabled" id="module.driver.i2s.ws_continue.ws_continue_off" value="I2S_WS_CONTINUE_OFF"/>
+        </property>
+        <!-- External defined callback function -->
+        <property default="NULL" display="Name of I2S callback function to be defined by user" id="module.driver.i2s.callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.i2s.callback}")</constraint>
+        </property>
+
+        <property default="board.icu.common.irq.disabled" display="Transmit Interrupt Priority" id="module.driver.i2s.txi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Receive Interrupt Priority" id="module.driver.i2s.rxi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Idle/Error Interrupt Priority" id="module.driver.i2s.idle_err_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+
+        <header>
+            /** UART on SCI Instance. */
+            extern const i2s_instance_t      ${module.driver.i2s.name};
+#ifndef ${module.driver.i2s.callback}
+void ${module.driver.i2s.callback}(i2s_callback_args_t * p_args);
+#endif
+        </header>
+        <includes>
+            #include &quot;r_i2s_api.h&quot;
+            #include &quot;r_ssi.h&quot;
+        </includes>
+        <declarations>
+#if ${module.driver.i2s.txi_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.i2s.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SSI)
+#if 1 == ${module.driver.i2s.channel}  // Channel 1 has one event for TXI or RXI
+SSP_VECTOR_DEFINE_CHAN(ssi_txi_isr, SSI, TXI_RXI, ${module.driver.i2s.channel});
+#else
+SSP_VECTOR_DEFINE_CHAN(ssi_txi_isr, SSI, TXI, ${module.driver.i2s.channel});
+#endif
+#endif
+#endif
+#if ${module.driver.i2s.rxi_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.i2s.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SSI)
+#if 1 == ${module.driver.i2s.channel}  // Channel 1 has one event for TXI or RXI
+SSP_VECTOR_DEFINE_CHAN(ssi_rxi_isr, SSI, TXI_RXI, ${module.driver.i2s.channel});
+#else
+SSP_VECTOR_DEFINE_CHAN(ssi_rxi_isr, SSI, RXI, ${module.driver.i2s.channel});
+#endif
+#endif
+#endif
+#if ${module.driver.i2s.idle_err_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.i2s.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SSI)
+SSP_VECTOR_DEFINE_CHAN(ssi_int_isr, SSI, INT, ${module.driver.i2s.channel});
+#endif
+#endif
+            ssi_instance_ctrl_t     ${module.driver.i2s.name}_ctrl;
+			
+            /** I2S interface configuration */
+            const i2s_cfg_t ${module.driver.i2s.name}_cfg =
+            {
+                .channel             = ${module.driver.i2s.channel},
+                .pcm_width           = ${module.driver.i2s.pcm_width},
+                .audio_clk_freq_hz   = ${module.driver.i2s.audio_clk_freq_hz},
+                .sampling_freq_hz    = ${module.driver.i2s.sampling_freq_hz},
+                .word_length         = ${module.driver.i2s.word_length},
+                .ws_continue         = ${module.driver.i2s.ws_continue},
+                .p_callback          = ${module.driver.i2s.callback},
+                .p_context           = &amp;${module.driver.i2s.name},
+                .p_extend            = NULL,
+                .txi_ipl             = ${module.driver.i2s.txi_ipl},
+                .rxi_ipl             = ${module.driver.i2s.rxi_ipl},
+                .idle_err_ipl        = ${module.driver.i2s.idle_err_ipl},
+#define SYNERGY_NOT_DEFINED (1)
+#if (SYNERGY_NOT_DEFINED == ${module.driver.i2s_on_ssi.requires.transfer_tx::module.driver.transfer.name})
+                .p_transfer_tx       = NULL,
+#else
+                .p_transfer_tx       = &amp;${module.driver.i2s_on_ssi.requires.transfer_tx::module.driver.transfer.name},
+#endif
+#if (SYNERGY_NOT_DEFINED == ${module.driver.i2s_on_ssi.requires.transfer_rx::module.driver.transfer.name})
+                .p_transfer_rx       = NULL,
+#else
+                .p_transfer_rx       = &amp;${module.driver.i2s_on_ssi.requires.transfer_rx::module.driver.transfer.name},
+#endif
+#if (SYNERGY_NOT_DEFINED == ${module.driver.i2s_on_ssi.requires.timer::module.driver.timer.name})
+                .p_timer             = NULL,
+#else
+                .p_timer             = &amp;${module.driver.i2s_on_ssi.requires.timer::module.driver.timer.name},
+#endif
+#undef SYNERGY_NOT_DEFINED            
+            };
+
+/* Instance structure to use this module. */
+const i2s_instance_t ${module.driver.i2s.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.i2s.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.i2s.name}_cfg,
+    .p_api         = &amp;g_i2s_on_ssi
+};
+        </declarations>
+    </module>
+</synergyModuleDescription>

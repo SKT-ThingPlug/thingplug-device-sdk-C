@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_tes_2d_drw" path="ssp_cfg/framework/sf_tes_2d_drw_cfg.h" version="0">
+        <property default="32768" display="Work memory size for display lists in bytes" id="module.framework.sf_tes_2d_drw.work_memory_size">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.framework.sf_tes_2d_drw.work_memory_size}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="DRW Interrupt Priority" id="config.framework.sf_tes_2d_drw.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <content>
+            #define SF_TES_2D_DRW_D1_HEAP_SIZE (${module.framework.sf_tes_2d_drw.work_memory_size})
+            #define SF_TES_2D_DRW_CFG_IRQ_IPL  (${config.framework.sf_tes_2d_drw.irq_ipl})
+        </content>
+    </config>
+    <module config="config.framework.sf_tes_2d_drw" display="Framework|Graphics|D/AVE 2D Port on sf_tes_2d_drw" id="module.framework.sf_tes_2d_drw" common="1" version="1">
+        <constraint display="Requires TWOD ENGINE (DRW) IRQ enabled">
+            "${config.framework.sf_tes_2d_drw.irq_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <requires interface="_rtos" />
+        <provides interface="interface.framework.sf_tes_2d_drw" />
+        <declarations>
+#if ${config.framework.sf_tes_2d_drw.irq_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_DRW)
+SSP_VECTOR_DEFINE(drw_int_isr, DRW, INT);
+#endif
+#endif
+        </declarations>
+    </module>
+</synergyModuleDescription>
+

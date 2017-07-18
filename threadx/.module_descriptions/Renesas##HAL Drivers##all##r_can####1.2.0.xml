@@ -1,0 +1,814 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+
+   <!-- CAN XML START here-->
+
+    <config id="config.driver.can" path="ssp_cfg/driver/r_can_cfg.h" version="0">
+        <property default="config.driver.can.param_checking_enable.bsp" display="Parameter Checking Enable" id="config.driver.can.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.can.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.can.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.can.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define CAN_CFG_PARAM_CHECKING_ENABLE ${config.driver.can.param_checking_enable}
+</content>
+    </config>
+    <module config="config.driver.can" display="Driver|Connectivity|${module.driver.can.name} CAN Driver on r_can" id="module.driver.can_on_can" version="1">
+        <constraint display="Requires CAN Receive Interrupt enabled">
+          "${module.driver.can.mailbox_rx_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires CAN Transmit Interrupt enabled">
+          "${module.driver.can.mailbox_tx_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires CAN Error Interrupt enabled">
+          "${module.driver.can.error_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires CAN callback to be an application function name (not NULL).">
+          "${module.driver.can.p_callback}" != "NULL"
+        </constraint>
+        <constraint display="Only one driver instance is allowed per CAN channel">
+            "${interface.driver.can.${module.driver.can.channel}}" === "1"
+        </constraint>
+        <constraint display="Driver instances must have unique names">
+            "${interface.driver.can.${module.driver.can.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.can" />
+        <provides interface="interface.driver.can_on_can" />
+        <provides interface="interface.driver.can.${module.driver.can.name}" />
+        <provides interface="interface.driver.can.${module.driver.can.channel}" />
+        <property default="g_can${_instance}" display="Name" id="module.driver.can.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.can.name}")</constraint>
+        </property>
+        <property default="0" display="Channel" id="module.driver.can.channel">
+        <constraint display="Value must be a non-negative integer">testInteger("${module.driver.can.channel}")  &amp;&amp; (("${module.driver.can.channel}" &gt;= 0) &amp;&amp; ("${module.driver.can.channel}" &lt; 2))</constraint>
+        </property> 
+          <!-- CAN Bit Rate configuration-->
+        <property default="5" display="Baud Rate Prescaler" id="module.driver.can.baud_rate_prescaler">
+            <constraint display="Value must be a non-negative integer between 0 and 1023.">testInteger("${module.driver.can.baud_rate_prescaler}")  &amp;&amp; (("${module.driver.can.baud_rate_prescaler}" &gt;= 0) &amp;&amp; ("${module.driver.can.baud_rate_prescaler}" &lt; 1024))</constraint>
+        </property>
+        <property default="module.driver.can.time_segment_1.tq15" display="Time Segment 1" id="module.driver.can.time_segment_1">
+            <option display="4 Time Quanta" id="module.driver.can.time_segment_1.tq4" value="CAN_TIME_SEGMENT1_TQ4"/>
+            <option display="5 Time Quanta" id="module.driver.can.time_segment_1.tq5" value="CAN_TIME_SEGMENT1_TQ5"/>
+            <option display="6 Time Quanta" id="module.driver.can.time_segment_1.tq6" value="CAN_TIME_SEGMENT1_TQ6"/>
+            <option display="7 Time Quanta" id="module.driver.can.time_segment_1.tq7" value="CAN_TIME_SEGMENT1_TQ7"/>
+            <option display="8 Time Quanta" id="module.driver.can.time_segment_1.tq8" value="CAN_TIME_SEGMENT1_TQ8"/>
+            <option display="9 Time Quanta" id="module.driver.can.time_segment_1.tq9" value="CAN_TIME_SEGMENT1_TQ9"/>
+            <option display="10 Time Quanta" id="module.driver.can.time_segment_1.tq10" value="CAN_TIME_SEGMENT1_TQ10"/>
+            <option display="11 Time Quanta" id="module.driver.can.time_segment_1.tq11" value="CAN_TIME_SEGMENT1_TQ11"/>
+            <option display="12 Time Quanta" id="module.driver.can.time_segment_1.tq12" value="CAN_TIME_SEGMENT1_TQ12"/>
+            <option display="13 Time Quanta" id="module.driver.can.time_segment_1.tq13" value="CAN_TIME_SEGMENT1_TQ13"/>
+            <option display="14 Time Quanta" id="module.driver.can.time_segment_1.tq14" value="CAN_TIME_SEGMENT1_TQ14"/>
+            <option display="15 Time Quanta" id="module.driver.can.time_segment_1.tq15" value="CAN_TIME_SEGMENT1_TQ15"/>
+            <option display="16 Time Quanta" id="module.driver.can.time_segment_1.tq16" value="CAN_TIME_SEGMENT1_TQ16"/>
+        </property>
+        <property default="module.driver.can.time_segment_2.tq8" display="Time Segment 2" id="module.driver.can.time_segment_2">
+            <option display="2 Time Quanta" id="module.driver.can.time_segment_2.tq2" value="CAN_TIME_SEGMENT2_TQ2"/>
+            <option display="3 Time Quanta" id="module.driver.can.time_segment_2.tq3" value="CAN_TIME_SEGMENT2_TQ3"/>
+            <option display="4 Time Quanta" id="module.driver.can.time_segment_2.tq4" value="CAN_TIME_SEGMENT2_TQ4"/>
+            <option display="5 Time Quanta" id="module.driver.can.time_segment_2.tq5" value="CAN_TIME_SEGMENT2_TQ5"/>
+            <option display="6 Time Quanta" id="module.driver.can.time_segment_2.tq6" value="CAN_TIME_SEGMENT2_TQ6"/>
+            <option display="7 Time Quanta" id="module.driver.can.time_segment_2.tq7" value="CAN_TIME_SEGMENT2_TQ7"/>
+            <option display="8 Time Quanta" id="module.driver.can.time_segment_2.tq8" value="CAN_TIME_SEGMENT2_TQ8"/>
+        </property>
+        <property default="module.driver.can.sync_jump_width.tq2" display="Synchronization Jump Width" id="module.driver.can.sync_jump_width">
+            <option display="1 Time Quanta" id="module.driver.can.sync_jump_width.tq1" value="CAN_SYNC_JUMP_WIDTH_TQ1"/>
+            <option display="2 Time Quanta" id="module.driver.can.sync_jump_width.tq2" value="CAN_SYNC_JUMP_WIDTH_TQ2"/>
+            <option display="3 Time Quanta" id="module.driver.can.sync_jump_width.tq3" value="CAN_SYNC_JUMP_WIDTH_TQ3"/>
+            <option display="4 Time Quanta" id="module.driver.can.sync_jump_width.tq4" value="CAN_SYNC_JUMP_WIDTH_TQ4"/>
+        </property>
+        <!-- CAN Clock Source configuration-->
+        <property default="module.driver.can.clock_source.canmclk" display="Clock Source" id="module.driver.can.clock_source">
+            <option display="PCLKB (S7G2 and S3A7 only)" id="module.driver.can.clock_source.pclkb" value="CAN_CLOCK_SOURCE_PCLKB"/>
+            <option display="CAN MCLK" id="module.driver.can.clock_source.canmclk" value="CAN_CLOCK_SOURCE_CANMCLK"/>
+        </property>
+
+        <!-- CAN callback configuration-->
+
+        <property default="NULL" display="Callback" id="module.driver.can.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.can.p_callback}")</constraint>
+        </property>
+
+                <!-- CAN Mailbox Message mode configuration-->
+        <property default="module.driver.can.message_mode.overwrite" display="Overwrite/Overrrun Mode" id="module.driver.can.message_mode">
+            <option display="Overwrite Mode" id="module.driver.can.id_mode.standard" value="CAN_MESSAGE_MODE_OVERWRITE"/>
+            <option display="Overrrun Mode" id="module.driver.can.id_mode.extended" value="CAN_MESSAGE_MODE_OVERRUN"/>
+        </property> 
+
+        <!-- CAN Mailbox ID mode configuration-->
+        <property default="module.driver.can.id_mode.standard" display="Standard or Extended ID Mode" id="module.driver.can.id_mode">
+            <option display="Standard ID Mode" id="module.driver.can.id_mode.standard" value="CAN_ID_MODE_STANDARD"/>
+            <option display="Extended ID Mode" id="module.driver.can.id_mode.extended" value="CAN_ID_MODE_EXTENDED"/>
+        </property> 
+        
+        <!-- CAN Mailbox Number configuration-->
+        <property default="module.driver.can.mailbox_count.32" display="Number of Mailboxes" id="module.driver.can.mailbox_count">
+            <option display="4 Mailboxes" id="module.driver.can.mailbox_count.4" value="4"/>
+            <option display="8 Mailboxes" id="module.driver.can.mailbox_count.8" value="8"/>
+            <option display="16 Mailboxes" id="module.driver.can.mailbox_count.16" value="16"/>
+            <option display="32 Mailboxes" id="module.driver.can.mailbox_count.32" value="32"/>
+        </property> 
+        
+        
+        <!-- CAN Mailbox ID configuration-->
+
+        <property default="0" display="Mailbox 0 ID" id="module.driver.can.mailbox0_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox0_id}")  &amp;&amp; (("${module.driver.can.mailbox0_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox0_id}" &lt; 0x20000000))</constraint>
+        </property> 
+         <property default="1" display="Mailbox 1 ID" id="module.driver.can.mailbox1_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox1_id}")  &amp;&amp; (("${module.driver.can.mailbox1_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox1_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="2" display="Mailbox 2 ID" id="module.driver.can.mailbox2_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox2_id}")  &amp;&amp; (("${module.driver.can.mailbox2_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox2_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="3" display="Mailbox 3 ID" id="module.driver.can.mailbox3_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox3_id}")  &amp;&amp; (("${module.driver.can.mailbox3_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox3_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="4" display="Mailbox 4 ID" id="module.driver.can.mailbox4_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox4_id}")  &amp;&amp; (("${module.driver.can.mailbox4_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox4_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="5" display="Mailbox 5 ID" id="module.driver.can.mailbox5_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox5_id}")  &amp;&amp; (("${module.driver.can.mailbox5_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox5_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="6" display="Mailbox 6 ID" id="module.driver.can.mailbox6_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox6_id}")  &amp;&amp; (("${module.driver.can.mailbox6_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox6_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="7" display="Mailbox 7 ID" id="module.driver.can.mailbox7_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox7_id}")  &amp;&amp; (("${module.driver.can.mailbox7_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox7_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="8" display="Mailbox 8 ID" id="module.driver.can.mailbox8_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox8_id}")  &amp;&amp; (("${module.driver.can.mailbox8_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox8_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="9" display="Mailbox 9 ID" id="module.driver.can.mailbox9_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox9_id}")  &amp;&amp; (("${module.driver.can.mailbox9_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox9_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="10" display="Mailbox 10 ID" id="module.driver.can.mailbox10_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox10_id}")  &amp;&amp; (("${module.driver.can.mailbox10_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox10_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="11" display="Mailbox 11 ID" id="module.driver.can.mailbox11_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox11_id}")  &amp;&amp; (("${module.driver.can.mailbox11_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox11_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="12" display="Mailbox 12 ID" id="module.driver.can.mailbox12_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox12_id}")  &amp;&amp; (("${module.driver.can.mailbox12_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox12_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="13" display="Mailbox 13 ID" id="module.driver.can.mailbox13_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox13_id}")  &amp;&amp; (("${module.driver.can.mailbox13_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox13_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="14" display="Mailbox 14 ID" id="module.driver.can.mailbox14_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox14_id}")  &amp;&amp; (("${module.driver.can.mailbox14_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox14_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="15" display="Mailbox 15 ID" id="module.driver.can.mailbox15_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox15_id}")  &amp;&amp; (("${module.driver.can.mailbox15_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox15_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="16" display="Mailbox 16 ID" id="module.driver.can.mailbox16_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox16_id}")  &amp;&amp; (("${module.driver.can.mailbox16_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox16_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="17" display="Mailbox 17 ID" id="module.driver.can.mailbox17_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox17_id}")  &amp;&amp; (("${module.driver.can.mailbox17_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox17_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="18" display="Mailbox 18 ID" id="module.driver.can.mailbox18_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox18_id}")  &amp;&amp; (("${module.driver.can.mailbox18_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox18_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="19" display="Mailbox 19 ID" id="module.driver.can.mailbox19_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox19_id}")  &amp;&amp; (("${module.driver.can.mailbox19_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox19_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="20" display="Mailbox 20 ID" id="module.driver.can.mailbox20_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox20_id}")  &amp;&amp; (("${module.driver.can.mailbox20_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox20_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="21" display="Mailbox 21 ID" id="module.driver.can.mailbox21_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox21_id}")  &amp;&amp; (("${module.driver.can.mailbox21_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox21_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="22" display="Mailbox 22 ID" id="module.driver.can.mailbox22_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox22_id}")  &amp;&amp; (("${module.driver.can.mailbox22_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox22_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="23" display="Mailbox 23 ID" id="module.driver.can.mailbox23_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox23_id}")  &amp;&amp; (("${module.driver.can.mailbox23_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox23_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="24" display="Mailbox 24 ID" id="module.driver.can.mailbox24_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox24_id}")  &amp;&amp; (("${module.driver.can.mailbox24_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox24_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="25" display="Mailbox 25 ID" id="module.driver.can.mailbox25_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox25_id}")  &amp;&amp; (("${module.driver.can.mailbox25_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox25_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="26" display="Mailbox 26 ID" id="module.driver.can.mailbox26_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox26_id}")  &amp;&amp; (("${module.driver.can.mailbox26_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox26_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="27" display="Mailbox 27 ID" id="module.driver.can.mailbox27_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox27_id}")  &amp;&amp; (("${module.driver.can.mailbox27_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox27_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="28" display="Mailbox 28 ID" id="module.driver.can.mailbox28_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox28_id}")  &amp;&amp; (("${module.driver.can.mailbox28_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox28_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="29" display="Mailbox 29 ID" id="module.driver.can.mailbox29_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox29_id}")  &amp;&amp; (("${module.driver.can.mailbox29_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox29_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="30" display="Mailbox 30 ID" id="module.driver.can.mailbox30_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox30_id}")  &amp;&amp; (("${module.driver.can.mailbox30_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox30_id}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="31" display="Mailbox 31 ID" id="module.driver.can.mailbox31_id">
+            <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox31_id}")  &amp;&amp; (("${module.driver.can.mailbox31_id}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox31_id}" &lt; 0x20000000))</constraint>
+        </property> 
+
+                <!-- CAN Mailbox Type configuration-->
+
+        <property default="module.driver.can.mailbox0_type.transmit" display="Mailbox 0 Type" id="module.driver.can.mailbox0_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox0_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox0_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+        <property default="module.driver.can.mailbox1_type.receive" display="Mailbox 1 Type" id="module.driver.can.mailbox1_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox1_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox1_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+        <property default="module.driver.can.mailbox2_type.receive" display="Mailbox 2 Type" id="module.driver.can.mailbox2_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox2_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox2_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+        <property default="module.driver.can.mailbox3_type.receive" display="Mailbox 3 Type" id="module.driver.can.mailbox3_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox3_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox3_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox4_type.receive" display="Mailbox 4 Type" id="module.driver.can.mailbox4_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox4_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox4_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox5_type.receive" display="Mailbox 5 Type" id="module.driver.can.mailbox5_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox5_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox5_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox6_type.receive" display="Mailbox 6 Type" id="module.driver.can.mailbox6_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox6_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox6_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox7_type.receive" display="Mailbox 7 Type" id="module.driver.can.mailbox7_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox7_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox7_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox8_type.receive" display="Mailbox 8 Type" id="module.driver.can.mailbox8_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox8_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox8_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox9_type.receive" display="Mailbox 9 Type" id="module.driver.can.mailbox9_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox9_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox9_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox10_type.receive" display="Mailbox 10 Type" id="module.driver.can.mailbox10_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox10_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox10_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+        <property default="module.driver.can.mailbox11_type.receive" display="Mailbox 11 Type" id="module.driver.can.mailbox11_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox11_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox11_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+        <property default="module.driver.can.mailbox12_type.receive" display="Mailbox 12 Type" id="module.driver.can.mailbox12_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox12_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox12_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox13_type.receive" display="Mailbox 13 Type" id="module.driver.can.mailbox13_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox13_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox13_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox14_type.receive" display="Mailbox 14 Type" id="module.driver.can.mailbox14_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox14_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox14_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox15_type.receive" display="Mailbox 15 Type" id="module.driver.can.mailbox15_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox15_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox15_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox16_type.receive" display="Mailbox 16 Type" id="module.driver.can.mailbox16_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox16_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox16_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox17_type.receive" display="Mailbox 17 Type" id="module.driver.can.mailbox17_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox17_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox17_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox18_type.receive" display="Mailbox 18 Type" id="module.driver.can.mailbox18_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox18_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox18_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox19_type.receive" display="Mailbox 19 Type" id="module.driver.can.mailbox19_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox19_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox19_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox20_type.receive" display="Mailbox 20 Type" id="module.driver.can.mailbox20_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox20_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox20_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+        <property default="module.driver.can.mailbox21_type.receive" display="Mailbox 21 Type" id="module.driver.can.mailbox21_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox21_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox21_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+        <property default="module.driver.can.mailbox22_type.receive" display="Mailbox 22 Type" id="module.driver.can.mailbox22_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox22_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox22_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox23_type.receive" display="Mailbox 23 Type" id="module.driver.can.mailbox23_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox23_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox23_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox24_type.receive" display="Mailbox 24 Type" id="module.driver.can.mailbox24_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox24_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox24_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox25_type.receive" display="Mailbox 25 Type" id="module.driver.can.mailbox25_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox25_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox25_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox26_type.receive" display="Mailbox 26 Type" id="module.driver.can.mailbox26_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox26_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox26_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox27_type.receive" display="Mailbox 27 Type" id="module.driver.can.mailbox27_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox27_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox27_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox28_type.receive" display="Mailbox 28 Type" id="module.driver.can.mailbox28_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox28_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox28_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox29_type.receive" display="Mailbox 29 Type" id="module.driver.can.mailbox29_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox29_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox29_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+         <property default="module.driver.can.mailbox30_type.receive" display="Mailbox 30 Type" id="module.driver.can.mailbox30_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox30_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox30_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+        <property default="module.driver.can.mailbox31_type.receive" display="Mailbox 31 Type" id="module.driver.can.mailbox31_type">
+            <option display="Receive Mailbox" id="module.driver.can.mailbox31_type.receive" value="CAN_MAILBOX_RECEIVE"/>
+            <option display="Transmit Mailbox" id="module.driver.can.mailbox31_type.transmit" value="CAN_MAILBOX_TRANSMIT"/>
+        </property> 
+
+                <!-- CAN Mailbox Frame Type configuration-->
+
+        <property default="module.driver.can.mailbox0_frame_type.remote" display="Mailbox 0 Frame Type" id="module.driver.can.mailbox0_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox0_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox0_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox1_frame_type.data" display="Mailbox 1 Frame Type" id="module.driver.can.mailbox1_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox1_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox1_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+        <property default="module.driver.can.mailbox2_frame_type.data" display="Mailbox 2 Frame Type" id="module.driver.can.mailbox2_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox2_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox2_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox3_frame_type.data" display="Mailbox 3 Frame Type" id="module.driver.can.mailbox3_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox3_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox3_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox4_frame_type.data" display="Mailbox 4 Frame Type" id="module.driver.can.mailbox4_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox4_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox4_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox5_frame_type.data" display="Mailbox 5 Frame Type" id="module.driver.can.mailbox5_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox5_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox5_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox6_frame_type.data" display="Mailbox 6 Frame Type" id="module.driver.can.mailbox6_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox6_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox6_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox7_frame_type.data" display="Mailbox 7 Frame Type" id="module.driver.can.mailbox7_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox7_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox7_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox8_frame_type.data" display="Mailbox 8 Frame Type" id="module.driver.can.mailbox8_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox8_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox8_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox9_frame_type.data" display="Mailbox 9 Frame Type" id="module.driver.can.mailbox9_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox9_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox9_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox10_frame_type.data" display="Mailbox 10 Frame Type" id="module.driver.can.mailbox10_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox10_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox10_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+        <property default="module.driver.can.mailbox11_frame_type.data" display="Mailbox 11 Frame Type" id="module.driver.can.mailbox11_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox11_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox11_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+        <property default="module.driver.can.mailbox12_frame_type.data" display="Mailbox 12 Frame Type" id="module.driver.can.mailbox12_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox12_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox12_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox13_frame_type.data" display="Mailbox 13 Frame Type" id="module.driver.can.mailbox13_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox13_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox13_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox14_frame_type.data" display="Mailbox 14 Frame Type" id="module.driver.can.mailbox14_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox14_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox14_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox15_frame_type.data" display="Mailbox 15 Frame Type" id="module.driver.can.mailbox15_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox15_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox15_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox16_frame_type.data" display="Mailbox 16 Frame Type" id="module.driver.can.mailbox16_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox16_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox16_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox17_frame_type.data" display="Mailbox 17 Frame Type" id="module.driver.can.mailbox17_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox17_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox17_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox18_frame_type.data" display="Mailbox 18 Frame Type" id="module.driver.can.mailbox18_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox18_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox18_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox19_frame_type.data" display="Mailbox 19 Frame Type" id="module.driver.can.mailbox19_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox19_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox19_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox20_frame_type.data" display="Mailbox 20 Frame Type" id="module.driver.can.mailbox20_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox20_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox20_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+        <property default="module.driver.can.mailbox21_frame_type.data" display="Mailbox 21 Frame Type" id="module.driver.can.mailbox21_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox21_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox21_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+        <property default="module.driver.can.mailbox22_frame_type.data" display="Mailbox 22 Frame Type" id="module.driver.can.mailbox22_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox22_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox22_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox23_frame_type.data" display="Mailbox 23 Frame Type" id="module.driver.can.mailbox23_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox23_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox23_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox24_frame_type.data" display="Mailbox 24 Frame Type" id="module.driver.can.mailbox24_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox24_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox24_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox25_frame_type.data" display="Mailbox 25 Frame Type" id="module.driver.can.mailbox25_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox25_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox25_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox26_frame_type.data" display="Mailbox 26 Frame Type" id="module.driver.can.mailbox26_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox26_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox26_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox27_frame_type.data" display="Mailbox 27 Frame Type" id="module.driver.can.mailbox27_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox27_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox27_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox28_frame_type.data" display="Mailbox 28 Frame Type" id="module.driver.can.mailbox28_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox28_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox28_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox29_frame_type.data" display="Mailbox 29 Frame Type" id="module.driver.can.mailbox29_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox29_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox29_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+         <property default="module.driver.can.mailbox30_frame_type.data" display="Mailbox 30 Frame Type" id="module.driver.can.mailbox30_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox30_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox30_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+        <property default="module.driver.can.mailbox31_frame_type.data" display="Mailbox 31 Frame Type" id="module.driver.can.mailbox31_frame_type">
+            <option display="Data Mailbox" id="module.driver.can.mailbox31_frame_type.data" value="CAN_FRAME_TYPE_DATA"/>
+            <option display="Remote Mailbox" id="module.driver.can.mailbox31_frame_type.remote" value="CAN_FRAME_TYPE_REMOTE"/>
+        </property> 
+        
+        <!-- CAN Mailbox Mask configuration-->
+
+        <property default="0x1FFFFFFF" display="Mailbox 0-3 Group Mask" id="module.driver.can.mailbox_0_to_3_group_mask">
+        <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox_0_to_3_group_mask}")  &amp;&amp; (("${module.driver.can.mailbox_0_to_3_group_mask}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox_0_to_3_group_mask}" &lt; 0x20000000))</constraint>
+               </property>  
+        <property default="0x1FFFFFFF" display="Mailbox 4-7 Group Mask" id="module.driver.can.mailbox_4_to_7_group_mask">
+        <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox_4_to_7_group_mask}")  &amp;&amp; (("${module.driver.can.mailbox_4_to_7_group_mask}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox_4_to_7_group_mask}" &lt; 0x20000000))</constraint>
+        </property> 
+         <property default="0x1FFFFFFF" display="Mailbox 8-11 Group Mask" id="module.driver.can.mailbox_8_to_11_group_mask">
+        <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox_8_to_11_group_mask}")  &amp;&amp; (("${module.driver.can.mailbox_8_to_11_group_mask}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox_8_to_11_group_mask}" &lt; 0x20000000))</constraint>
+        </property> 
+         <property default="0x1FFFFFFF" display="Mailbox 12-15 Group Mask" id="module.driver.can.mailbox_12_to_15_group_mask">
+        <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox_12_to_15_group_mask}")  &amp;&amp; (("${module.driver.can.mailbox_12_to_15_group_mask}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox_12_to_15_group_mask}" &lt; 0x20000000))</constraint>
+        </property> 
+         <property default="0x1FFFFFFF" display="Mailbox 16-19 Group Mask" id="module.driver.can.mailbox_16_to_19_group_mask">
+        <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox_16_to_19_group_mask}")  &amp;&amp; (("${module.driver.can.mailbox_16_to_19_group_mask}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox_16_to_19_group_mask}" &lt; 0x20000000))</constraint>
+        </property> 
+         <property default="0x1FFFFFFF" display="Mailbox 20-23 Group Mask" id="module.driver.can.mailbox_20_to_23_group_mask">
+        <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox_20_to_23_group_mask}")  &amp;&amp; (("${module.driver.can.mailbox_20_to_23_group_mask}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox_20_to_23_group_mask}" &lt; 0x20000000))</constraint>
+        </property> 
+         <property default="0x1FFFFFFF" display="Mailbox 24-27 Group Mask" id="module.driver.can.mailbox_24_to_27_group_mask">
+        <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox_24_to_27_group_mask}")  &amp;&amp; (("${module.driver.can.mailbox_24_to_27_group_mask}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox_24_to_27_group_mask}" &lt; 0x20000000))</constraint>
+        </property> 
+         <property default="0x1FFFFFFF" display="Mailbox 28-31 Group Mask" id="module.driver.can.mailbox_28_to_31_group_mask">
+        <constraint display="Value must be decimal or HEX integer of 0x1FFFFFFF or less.">testInteger("${module.driver.can.mailbox_28_to_31_group_mask}")  &amp;&amp; (("${module.driver.can.mailbox_28_to_31_group_mask}" &gt;= 0) &amp;&amp; ("${module.driver.can.mailbox_28_to_31_group_mask}" &lt; 0x20000000))</constraint>
+        </property> 
+        <property default="board.icu.common.irq.disabled" display="Error Interrupt Priority" id="module.driver.can.error_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Receive Mailbox Interrupt Priority" id="module.driver.can.mailbox_rx_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Transmit Mailbox Interrupt Priority" id="module.driver.can.mailbox_tx_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <header>
+            /** CAN on CAN Instance. */
+            extern const can_instance_t ${module.driver.can.name};           
+#ifndef ${module.driver.can.p_callback}
+void ${module.driver.can.p_callback}(can_callback_args_t * p_args);
+#endif
+#define CAN_NO_OF_MAILBOXES_${module.driver.can.name} (${module.driver.can.mailbox_count})
+        </header>
+        <includes>#include &quot;r_can.h&quot;
+#include &quot;r_can_api.h&quot;</includes>
+
+        <declarations>
+        
+can_bit_timing_cfg_t ${module.driver.can.name}_bit_timing_cfg =
+{
+    .baud_rate_prescaler = ${module.driver.can.baud_rate_prescaler},
+    .time_segment_1 = ${module.driver.can.time_segment_1},
+    .time_segment_2 = ${module.driver.can.time_segment_2},
+    .synchronization_jump_width = ${module.driver.can.sync_jump_width},
+};      
+
+uint32_t ${module.driver.can.name}_mailbox_mask[CAN_NO_OF_MAILBOXES_${module.driver.can.name}/4] =
+{
+${module.driver.can.mailbox_0_to_3_group_mask},
+#if CAN_NO_OF_MAILBOXES_${module.driver.can.name} > 4
+${module.driver.can.mailbox_4_to_7_group_mask},
+#endif
+#if CAN_NO_OF_MAILBOXES_${module.driver.can.name} > 8
+${module.driver.can.mailbox_8_to_11_group_mask},
+${module.driver.can.mailbox_12_to_15_group_mask},
+#endif
+#if CAN_NO_OF_MAILBOXES_${module.driver.can.name} > 16
+${module.driver.can.mailbox_16_to_19_group_mask},
+${module.driver.can.mailbox_20_to_23_group_mask},
+${module.driver.can.mailbox_24_to_27_group_mask},
+${module.driver.can.mailbox_28_to_31_group_mask},
+#endif
+};
+
+static const can_extended_cfg_t ${module.driver.can.name}_extended_cfg =
+{
+   .clock_source            = ${module.driver.can.clock_source},
+   .p_mailbox_mask           = ${module.driver.can.name}_mailbox_mask,
+};
+
+can_mailbox_t ${module.driver.can.name}_mailbox[CAN_NO_OF_MAILBOXES_${module.driver.can.name}] =
+{
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox0_id},
+        .mailbox_type            =  ${module.driver.can.mailbox0_type},
+        .frame_type              =  ${module.driver.can.mailbox0_frame_type}
+	},
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox1_id},
+        .mailbox_type            =  ${module.driver.can.mailbox1_type},
+        .frame_type              =  ${module.driver.can.mailbox1_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox2_id},
+        .mailbox_type            =  ${module.driver.can.mailbox2_type},
+        .frame_type              =  ${module.driver.can.mailbox2_frame_type},
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox3_id},
+        .mailbox_type            =  ${module.driver.can.mailbox3_type},
+        .frame_type              =  ${module.driver.can.mailbox3_frame_type}
+    },
+#if CAN_NO_OF_MAILBOXES_${module.driver.can.name} > 4
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox4_id},
+        .mailbox_type            =  ${module.driver.can.mailbox4_type},
+        .frame_type              =  ${module.driver.can.mailbox4_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox5_id},
+        .mailbox_type            =  ${module.driver.can.mailbox5_type},
+        .frame_type              =  ${module.driver.can.mailbox5_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox6_id},
+        .mailbox_type            =  ${module.driver.can.mailbox6_type},
+        .frame_type              =  ${module.driver.can.mailbox6_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox7_id},
+        .mailbox_type            =  ${module.driver.can.mailbox7_type},
+        .frame_type              =  ${module.driver.can.mailbox7_frame_type}
+    },
+#endif
+#if CAN_NO_OF_MAILBOXES_${module.driver.can.name} > 8
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox8_id},
+        .mailbox_type            =  ${module.driver.can.mailbox8_type},
+        .frame_type              =  ${module.driver.can.mailbox8_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox9_id},
+        .mailbox_type            =  ${module.driver.can.mailbox9_type},
+        .frame_type              =  ${module.driver.can.mailbox9_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox10_id},
+        .mailbox_type            =  ${module.driver.can.mailbox10_type},
+        .frame_type              =  ${module.driver.can.mailbox10_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox11_id},
+        .mailbox_type            =  ${module.driver.can.mailbox11_type},
+        .frame_type              =  ${module.driver.can.mailbox11_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox12_id},
+        .mailbox_type            =  ${module.driver.can.mailbox12_type},
+        .frame_type              =  ${module.driver.can.mailbox12_frame_type},
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox13_id},
+        .mailbox_type            =  ${module.driver.can.mailbox13_type},
+        .frame_type              =  ${module.driver.can.mailbox13_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox14_id},
+        .mailbox_type            =  ${module.driver.can.mailbox14_type},
+        .frame_type              =  ${module.driver.can.mailbox14_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox15_id},
+        .mailbox_type            =  ${module.driver.can.mailbox15_type},
+        .frame_type              =  ${module.driver.can.mailbox15_frame_type}
+    },
+#endif  
+#if CAN_NO_OF_MAILBOXES_${module.driver.can.name} > 16
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox16_id},
+        .mailbox_type            =  ${module.driver.can.mailbox16_type},
+        .frame_type              =  ${module.driver.can.mailbox16_frame_type}
+    },
+    
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox17_id},
+        .mailbox_type            =  ${module.driver.can.mailbox17_type},
+        .frame_type              =  ${module.driver.can.mailbox17_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox18_id},
+        .mailbox_type            =  ${module.driver.can.mailbox18_type},
+        .frame_type              =  ${module.driver.can.mailbox18_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox19_id},
+        .mailbox_type            =  ${module.driver.can.mailbox19_type},
+        .frame_type              =  ${module.driver.can.mailbox19_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox20_id},
+        .mailbox_type            =  ${module.driver.can.mailbox20_type},
+        .frame_type              =  ${module.driver.can.mailbox20_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox21_id},
+        .mailbox_type            =  ${module.driver.can.mailbox21_type},
+        .frame_type              =  ${module.driver.can.mailbox21_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox22_id},
+        .mailbox_type            =  ${module.driver.can.mailbox22_type},
+        .frame_type              =  ${module.driver.can.mailbox22_frame_type},
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox23_id},
+        .mailbox_type            =  ${module.driver.can.mailbox23_type},
+        .frame_type              =  ${module.driver.can.mailbox23_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox24_id},
+        .mailbox_type            =  ${module.driver.can.mailbox24_type},
+        .frame_type              =  ${module.driver.can.mailbox24_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox25_id},
+        .mailbox_type            =  ${module.driver.can.mailbox25_type},
+        .frame_type              =  ${module.driver.can.mailbox25_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox26_id},
+        .mailbox_type            =  ${module.driver.can.mailbox26_type},
+        .frame_type              =  ${module.driver.can.mailbox26_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox27_id},
+        .mailbox_type            =  ${module.driver.can.mailbox27_type},
+        .frame_type              =  ${module.driver.can.mailbox27_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox28_id},
+        .mailbox_type            =  ${module.driver.can.mailbox28_type},
+        .frame_type              =  ${module.driver.can.mailbox28_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox29_id},
+        .mailbox_type            =  ${module.driver.can.mailbox29_type},
+        .frame_type              =  ${module.driver.can.mailbox29_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox30_id},
+        .mailbox_type            =  ${module.driver.can.mailbox30_type},
+        .frame_type              =  ${module.driver.can.mailbox30_frame_type}
+    },
+    {
+        .mailbox_id              =  ${module.driver.can.mailbox31_id},
+        .mailbox_type            =  ${module.driver.can.mailbox31_type},
+        .frame_type              =  ${module.driver.can.mailbox31_frame_type}
+    }
+#endif  
+};
+
+#if ${module.driver.can.error_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.can.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CAN${module.driver.can.channel})
+SSP_VECTOR_DEFINE_CHAN(can_error_isr, CAN, ERROR, ${module.driver.can.channel});
+#endif
+#endif
+#if ${module.driver.can.mailbox_rx_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.can.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CAN${module.driver.can.channel})
+SSP_VECTOR_DEFINE_CHAN(can_mailbox_rx_isr, CAN, MAILBOX_RX, ${module.driver.can.channel});
+#endif
+#endif
+#if ${module.driver.can.mailbox_tx_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.can.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CAN${module.driver.can.channel})
+SSP_VECTOR_DEFINE_CHAN(can_mailbox_tx_isr, CAN, MAILBOX_TX, ${module.driver.can.channel});
+#endif
+#endif
+
+static can_instance_ctrl_t ${module.driver.can.name}_ctrl;
+static const can_cfg_t ${module.driver.can.name}_cfg =
+{
+    .channel                = ${module.driver.can.channel},
+    .p_bit_timing           = &amp;${module.driver.can.name}_bit_timing_cfg,
+    .id_mode                = ${module.driver.can.id_mode},
+    .mailbox_count          = CAN_NO_OF_MAILBOXES_${module.driver.can.name},
+    .p_mailbox              = ${module.driver.can.name}_mailbox,    
+    .message_mode           = ${module.driver.can.message_mode} ,
+    .p_callback             = ${module.driver.can.p_callback},
+    .p_extend               = &amp;${module.driver.can.name}_extended_cfg,
+    .p_context              = &amp;${module.driver.can.name},
+    .error_ipl              = ${module.driver.can.error_ipl},
+    .mailbox_tx_ipl         = ${module.driver.can.mailbox_tx_ipl},
+    .mailbox_rx_ipl         = ${module.driver.can.mailbox_rx_ipl},
+};
+/* Instance structure to use this module. */
+const can_instance_t ${module.driver.can.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.can.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.can.name}_cfg,
+    .p_api         = &amp;g_can_on_can
+};
+
+</declarations>
+    </module>
+
+</synergyModuleDescription>

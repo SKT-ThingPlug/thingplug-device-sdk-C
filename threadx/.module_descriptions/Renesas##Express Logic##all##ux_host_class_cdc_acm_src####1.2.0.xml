@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_host_class_cdc_acm_src" path="ssp_cfg/framework/el/ux_host_class_cdc_acm_src_user.h" version="0">
+        <content>
+        </content>
+    </config>
+    <module config="config.el.ux_host_class_cdc_acm_src" display="X-Ware|USBX|Host|Classes|CDC-ACM|USBX Host Class CDC-ACM Source" common="1" id="module.el.ux_host_class_cdc_acm_src" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.ux_host_class_cdc_acm_src.linkage_warning}" === "module.el.ux_host_class_cdc_acm_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_host_class_cdc_acm_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.ux_host_class_cdc_acm_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.ux_host_class_cdc_acm_src.linkage_warning">
+            <option display="Enabled" id="module.el.ux_host_class_cdc_acm_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.ux_host_class_cdc_acm_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

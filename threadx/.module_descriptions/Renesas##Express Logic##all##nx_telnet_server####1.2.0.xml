@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Liquid XML 2015 Designer Edition 13.2.2.6003 (http://www.liquid-technologies.com) -->
+<synergyModuleDescription>
+    <config id="config.el.nx_telnet_server_v2" path="ssp_cfg/framework/el/nx_telnet_server_cfg.h" version="0">
+        <property default="16" display="Internal thread priority" id="config.el.nx_telnet_server_v2.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_telnet_server_v2.priority}")  &amp;&amp; ("${config.el.nx_telnet_server_v2.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="4" display="Maximum clients to serve simultaneously" id="config.el.nx_telnet_server_v2.max_client">
+            <constraint display="Value must be in range ( 0 &lt;= value &lt;= 31 )">
+                testInteger("${config.el.nx_telnet_server_v2.max_client}")  &amp;&amp; ("${config.el.nx_telnet_server_v2.max_client}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2048" display="Socket window size (bytes)" id="config.el.nx_telnet_server_v2.control_window_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_telnet_server_v2.control_window_size}")  &amp;&amp; ("${config.el.nx_telnet_server_v2.control_window_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Server time out (seconds)" id="config.el.nx_telnet_server_v2.server_timeout" description="Duration internal services will suspend for">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_telnet_server_v2.server_timeout}")  &amp;&amp; ("${config.el.nx_telnet_server_v2.server_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="600" display="Client inactivity timeout (seconds)" id="config.el.nx_telnet_server_v2.server_activity_timeout" description="Client inactivity duration for disconnection">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_telnet_server_v2.server_activity_timeout}")  &amp;&amp; ("${config.el.nx_telnet_server_v2.server_activity_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="600" display="Timeout check period (seconds)" id="config.el.nx_telnet_server_v2.server_timeout_period" description="Client activity timeout check interval">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_telnet_server_v2.server_timeout_period}")  &amp;&amp; ("${config.el.nx_telnet_server_v2.server_timeout_period}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nx_telnet_server_v2.telnet_server_option.enable" display="Òption negotiation" id="config.el.nx_telnet_server_v2.telnet_server_option">
+            <option display="Disable" id="config.el.nx_telnet_server_v2.telnet_server_option.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_telnet_server_v2.telnet_server_option.enable" value="1"/>
+        </property>
+        <property default="config.el.nx_telnet_server_v2.user_create_packet_pool.disable" display="Use application packet pool" id="config.el.nx_telnet_server_v2.user_create_packet_pool">
+            <option display="Disable" id="config.el.nx_telnet_server_v2.user_create_packet_pool.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_telnet_server_v2.user_create_packet_pool.enable" value="1"/>
+        </property>
+        <property default="300" display="Packet size in the pool (bytes)"  id="config.el.nx_telnet_server_v2.packet_payload" description="Telnet Server only creates this packet pool if 'Òption negotiation' is enabled">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_telnet_server_v2.packet_payload}")  &amp;&amp; ("${config.el.nx_telnet_server_v2.packet_payload}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2048" display="Total packet pool size (bytes)"  id="config.el.nx_telnet_server_v2.packet_pool_size" description="Telnet Server only creates this packet pool if NX_TELNET_SERVER_OPTION_DISABLE">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_telnet_server_v2.packet_pool_size}")  &amp;&amp; ("${config.el.nx_telnet_server_v2.packet_pool_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #if (!${config.el.nx_telnet_server_v2.telnet_server_option})
+            #define NX_TELNET_SERVER_OPTION_DISABLE
+            #endif
+            #if (${config.el.nx_telnet_server_v2.user_create_packet_pool})
+            #define NX_TELNET_SERVER_USER_CREATE_PACKET_POOL
+            #endif
+            #define NX_TELNET_SERVER_PRIORITY                           (${config.el.nx_telnet_server_v2.priority})
+            #define NX_TELNET_MAX_CLIENTS                               (${config.el.nx_telnet_server_v2.max_client})
+            #define NX_TELNET_SERVER_WINDOW_SIZE                        (${config.el.nx_telnet_server_v2.control_window_size})
+            #define NX_TELNET_SERVER_TIMEOUT                            (${config.el.nx_telnet_server_v2.server_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_TELNET_ACTIVITY_TIMEOUT                          (${config.el.nx_telnet_server_v2.server_activity_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_TELNET_TIMEOUT_PERIOD                            (${config.el.nx_telnet_server_v2.server_timeout_period} * NX_IP_PERIODIC_RATE)
+            #define NX_TELNET_SERVER_PACKET_PAYLOAD                     (${config.el.nx_telnet_server_v2.packet_payload})
+            #define NX_TELNET_SERVER_PACKET_POOL_SIZE                   (${config.el.nx_telnet_server_v2.packet_pool_size})
+        </content>
+    </config>
+    <module config="config.el.nx_telnet_server_v2" display="X-Ware|NetX|Protocols|${module.el.nx_telnet_server_v2.name} NetX Telnet Server" id="module.el.nx_telnet_server_v2" version="2">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_telnet_server_v2.${module.el.nx_telnet_server_v2.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_telnet_server_v2.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.tcp" value="module.el.nx.ip.tcp.enable" />
+        </requires>
+        <requires id="module.el.nx_telnet_server_v2.requires.nx_telnet_common" interface="interface.el.nx_telnet_common" display="Add Telnet Common" />
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_telnet_server_v2" />
+        <provides interface="interface.el.nx_telnet_server_v2.${module.el.nx_telnet_server_v2.name}" />
+        <!-- NetX Only -->
+        <provides interface="interface.el.nx_original_telnet_server_v2" />
+        <provides interface="interface.el.nx_original_telnet_server_v2.${module.el.nx_telnet_server_v2.name}" />  
+        <property default="g_telnet_server${_instance}" display="Name" id="module.el.nx_telnet_server_v2.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_telnet_server_v2.name}")
+            </constraint>
+        </property>
+        <property default="2048" display="Internal thread stack size (bytes)" id="module.el.nx_telnet_server_v2.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_telnet_server_v2.stack_size}")  &amp;&amp; (("${module.el.nx_telnet_server_v2.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <property default="telnet_client_connect" display="Name of Client Connect Callback Function" id="module.el.nx_telnet_server_v2.client_connect_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_telnet_server_v2.client_connect_function}")
+            </constraint>
+        </property>
+        <property default="telnet_receive_data" display="Name of Recieve Data Callback Function" id="module.el.nx_telnet_server_v2.receive_data_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_telnet_server_v2.receive_data_function}")
+            </constraint>
+        </property>
+        <property default="telnet_client_disconnect" display="Name of Client Disconnect Callback Function" id="module.el.nx_telnet_server_v2.client_disconnect_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_telnet_server_v2.client_disconnect_function}")
+            </constraint>
+        </property>
+        <header>
+            extern NX_TELNET_SERVER ${module.el.nx_telnet_server_v2.name};
+            #if !defined(${module.el.nx_telnet_server_v2.client_connect_function})
+            void ${module.el.nx_telnet_server_v2.client_connect_function}(struct NX_TELNET_SERVER_STRUCT * telnet_server_ptr, UINT logical_connection);
+            #endif
+            #if !defined(${module.el.nx_telnet_server_v2.receive_data_function})
+            void ${module.el.nx_telnet_server_v2.receive_data_function}(struct NX_TELNET_SERVER_STRUCT * telnet_server_ptr, UINT logical_connection, NX_PACKET *packet_ptr);
+            #endif
+            #if !defined(${module.el.nx_telnet_server_v2.client_disconnect_function})
+            void ${module.el.nx_telnet_server_v2.client_disconnect_function}(struct NX_TELNET_SERVER_STRUCT * telnet_server_ptr, UINT logical_connection);
+            #endif
+            void ${module.el.nx_telnet_server_v2.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_telnet_server.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_telnet_server_v2.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_telnet_server_v2.name}_err_callback  = ${module.el.nx_telnet_server_v2.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_telnet_server_v2.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_telnet_server_v2.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_telnet_server_v2.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_telnet_server_v2.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_TELNET_SERVER   ${module.el.nx_telnet_server_v2.name};
+            uint8_t            ${module.el.nx_telnet_server_v2.name}_stack_memory[${module.el.nx_telnet_server_v2.stack_size}];
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.el.nx_telnet_server_v2.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_telnet_server_v2.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_telnet_server_v2.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_telnet_server_v2.name}_err;
+            /* Create Telnet Server. */
+            ${module.el.nx_telnet_server_v2.name}_err = nx_telnet_server_create(&amp;${module.el.nx_telnet_server_v2.name},
+                                                                             "${module.el.nx_telnet_server_v2.name} Telnet Server",
+                                                                             &amp;${module.el.nx_telnet_server_v2.requires.nx.ip::module.el.nx.ip.name},
+                                                                             &amp;${module.el.nx_telnet_server_v2.name}_stack_memory[0],
+                                                                             ${module.el.nx_telnet_server_v2.stack_size},
+                                                                             ${module.el.nx_telnet_server_v2.client_connect_function},
+                                                                             ${module.el.nx_telnet_server_v2.receive_data_function},
+                                                                             ${module.el.nx_telnet_server_v2.client_disconnect_function});
+            if (NX_SUCCESS != ${module.el.nx_telnet_server_v2.name}_err)
+            {
+                ${module.el.nx_telnet_server_v2.name}_err_callback((void *)&amp;${module.el.nx_telnet_server_v2.name},&amp;${module.el.nx_telnet_server_v2.name}_err);
+            }
+        </init>
+    </module>
+    <module display="Framework|Networking|[DEPRECATED] ${module.el.nx_telnet_server.name} NetX Telnet Server on nx_telnet_server" id="module.el.nx_telnet_server" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_telnet_server.${module.el.nx_telnet_server.name}}" === "1"
+        </constraint>
+        <constraint display="This module has been deprecated. Please consider moving to the updated NetX Telnet Server implementation found under X-Ware/NetX/Protocols/NetX Telnet Server.">         
+            "${module.el.nx_telnet_server.deprecation_warning}" === "module.el.nx_telnet_server.deprecation_warning.disabled"      
+        </constraint>     
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_telnet_server.requires.nx" interface="interface.el.nx" display="Add NetX" />       
+        <provides interface="interface.el.nx_telnet_server" />
+        <provides interface="interface.el.nx_telnet_server.${module.el.nx_telnet_server.name}" />
+        <property default="g_nx_telnet_server${_instance}" display="Name" id="module.el.nx_telnet_server.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_telnet_server.name}")</constraint>
+        </property>
+        <property default="module.el.nx_telnet_server.deprecation_warning.enabled" display="Show deprecation warning" id="module.el.nx_telnet_server.deprecation_warning">
+            <option display="Enabled" id="module.el.nx_telnet_server.deprecation_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.nx_telnet_server.deprecation_warning.disabled" value="1"/>
+        </property>
+    </module>    
+</synergyModuleDescription>

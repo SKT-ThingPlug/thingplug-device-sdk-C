@@ -1,0 +1,755 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+
+    <config id="config.framework.sf_el_ux" path="ssp_cfg/framework/sf_el_ux_cfg.h" version="0">
+        <property default="config.framework.sf_el_ux.VBUSENpin_logic.active_high" display="VBUSEN pin Signal Logic" id="config.framework.sf_el_ux.VBUSENpin_logic">
+            <option display="Active Low"  id="config.framework.sf_el_ux.VBUSENpin_logic.active_low"  value="(1)"/>
+            <option display="Active High" id="config.framework.sf_el_ux.VBUSENpin_logic.active_high" value="(0)"/>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="High Speed Interrupt Priority" id="config.framework.sf_el_ux.hs_irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Full Speed Interrupt Priority" id="config.framework.sf_el_ux.fs_irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <content>
+            #if ${config.framework.sf_el_ux.VBUSENpin_logic}
+            #if !defined(UX_HOST_VBUS_ENABLE_LOW)
+            #define UX_HOST_VBUS_ENABLE_LOW
+            #endif
+            #if defined(BSP_BOARD_S7G2_SK)
+            #ifndef UX_HOST_VBUS_ENABLE_LOW
+            #define UX_HOST_VBUS_ENABLE_LOW
+            #endif
+            #endif
+            #endif
+
+            #if (${config.framework.sf_el_ux.hs_irq_ipl} != BSP_IRQ_DISABLED)
+            #define UX_HCD_SYNERY_USE_USBHS
+            #define UX_DCD_SYNERY_USE_USBHS
+            #endif
+
+            #define SF_EL_UX_HCD_CFG_HS_IRQ_IPL      ${config.framework.sf_el_ux.hs_irq_ipl}
+            #define SF_EL_UX_DCD_CFG_HS_IRQ_IPL      ${config.framework.sf_el_ux.hs_irq_ipl}
+            #define SF_EL_UX_HCD_CFG_FS_IRQ_IPL      ${config.framework.sf_el_ux.fs_irq_ipl}
+            #define SF_EL_UX_DCD_CFG_FS_IRQ_IPL      ${config.framework.sf_el_ux.fs_irq_ipl}
+            
+        </content>
+    </config>
+    <module config="config.framework.sf_el_ux" display="Framework|USB|[DEPRECATED] ${module.framework.sf_el_ux.name} USBX Port HS and FS on sf_el_ux" id="module.framework.sf_el_ux" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_ux.${module.framework.sf_el_ux.name}}" === "1"
+        </constraint>
+        <constraint display="Requires USBX Interrupt (USBFS USBI or USBHS USBIR) enabled">
+            ("${board.icu.usbfs.int}" != "board.icu.common.irq.disabled") || ("${board.icu.usbhs.usb_int_resume}" != "board.icu.common.irq.disabled")
+        </constraint>
+        <constraint display="This module has been deprecated. Please consider moving to the updated USBX Port on sf_el_ux implementation found under X-Ware/USBX/Host/Synergy Port/ or /Device/Synergy Port/.">
+            "${module.framework.sf_el_ux.deprecation_warning}" === "module.framework.sf_el_ux.deprecation_warning.disabled"
+        </constraint>
+        <requires interface="_rtos" />
+        <provides interface="interface.framework.sf_el_ux" />
+        <provides interface="interface.framework.sf_el_ux_on_sf_el_ux" />
+        <provides interface="interface.framework.sf_el_ux.${module.framework.sf_el_ux.name}" />
+        <property default="g_sf_el_ux" display="Name" id="module.framework.sf_el_ux.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_ux.name}")</constraint>
+        </property>
+        <property default="module.framework.sf_el_ux.deprecation_warning.enabled" display="Show deprecation warning" id="module.framework.sf_el_ux.deprecation_warning">
+            <option display="Enabled" id="module.framework.sf_el_ux.deprecation_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.framework.sf_el_ux.deprecation_warning.disabled" value="1"/>
+        </property>
+        <interrupt node="board.icu.usbfs.int" />
+        <interrupt node="board.icu.usbhs.usb_int_resume" />
+        <header>
+            #include "sf_el_ux_cfg.h"
+        </header>
+        <declarations>
+            #if (SF_EL_UX_HCD_CFG_HS_IRQ_IPL != BSP_IRQ_DISABLED)
+            /* USBHS ISR vector registering. */
+            #if !defined(SSP_SUPPRESS_ISR_${module.framework.sf_el_ux.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_USB)
+            SSP_VECTOR_DEFINE_UNIT(usbhs_usb_int_resume_isr, USB, HS, USB_INT_RESUME, 0);
+            #endif
+            #endif
+            #if (SF_EL_UX_HCD_CFG_FS_IRQ_IPL != BSP_IRQ_DISABLED)
+            /* USBFS ISR vector registering. */
+            #if !defined(SSP_SUPPRESS_ISR_${module.framework.sf_el_ux.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_USB)
+            SSP_VECTOR_DEFINE_UNIT(usbfs_int_isr, USB, FS, INT, 0);
+            #endif
+            #endif
+        </declarations>
+    </module>
+
+    <config id="config.framework.sf_el_ux_hcd_hs" path="ssp_cfg/framework/sf_el_ux_hcd_hs_cfg.h" version="0">
+        <property default="board.icu.common.irq.disabled" display="High Speed Interrupt Priority" id="config.framework.sf_el_ux_hcd_hs.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="config.framework.sf_el_ux_hcd_hs.fifo_size.normal" display="FIFO size for Bulk Pipes" id="config.framework.sf_el_ux_hcd_hs.fifo_size">
+            <option display="512 bytes(default)" id="config.framework.sf_el_ux_hcd_hs.fifo_size.normal" value="(0)"/>
+            <option display="1024 bytes"         id="config.framework.sf_el_ux_hcd_hs.fifo_size.double" value="(1024)"/>
+            <option display="1536 bytes"         id="config.framework.sf_el_ux_hcd_hs.fifo_size.triple" value="(1536)"/>
+            <option display="2048 bytes"         id="config.framework.sf_el_ux_hcd_hs.fifo_size.max"    value="(2048)"/>
+        </property>
+        <property default="config.framework.sf_el_ux_hcd_hs.VBUSENpin_logic.active_high" display="VBUSEN pin Signal Logic" id="config.framework.sf_el_ux_hcd_hs.VBUSENpin_logic">
+            <option display="Active Low"  id="config.framework.sf_el_ux_hcd_hs.VBUSENpin_logic.active_low"  value="(1)"/>
+            <option display="Active High" id="config.framework.sf_el_ux_hcd_hs.VBUSENpin_logic.active_high" value="(0)"/>
+        </property>
+        <property default="config.framework.sf_el_ux_hcd_hs.hs_bit.bitset_high" display="Enable High Speed" id="config.framework.sf_el_ux_hcd_hs.hs_bit">
+             <option display="Enable"  id="config.framework.sf_el_ux_hcd_hs.hs_bit.bitset_high" value="(1)"/>
+             <option display="Disable" id="config.framework.sf_el_ux_hcd_hs.hs_bit.bitset_low" value="(0)"/>
+        </property>
+        <content>
+            #include "sf_el_ux_cfg.h"
+
+            #if ${config.framework.sf_el_ux_hcd_hs.fifo_size}
+            #define UX_SYNERGY_MAX_BULK_PAYLOAD ${config.framework.sf_el_ux_hcd_hs.fifo_size}
+            #endif
+
+            #if ${config.framework.sf_el_ux_hcd_hs.VBUSENpin_logic}
+            #if !defined(UX_HOST_VBUS_ENABLE_LOW)
+            #define UX_HOST_VBUS_ENABLE_LOW
+            #endif
+            #endif
+            #if defined(BSP_BOARD_S7G2_SK)
+            #ifndef UX_HOST_VBUS_ENABLE_LOW
+            #define UX_HOST_VBUS_ENABLE_LOW
+            #endif
+            #endif
+
+            #if (${config.framework.sf_el_ux_hcd_hs.hs_bit} == 0)
+            #define UX_HOST_DISABLE_HS 
+            #endif
+
+            #if (SF_EL_UX_HCD_CFG_HS_IRQ_IPL == BSP_IRQ_DISABLED)
+            #undef SF_EL_UX_HCD_CFG_HS_IRQ_IPL
+            #define SF_EL_UX_HCD_CFG_HS_IRQ_IPL      ${config.framework.sf_el_ux_hcd_hs.irq_ipl}
+            #define UX_HCD_SYNERY_USE_USBHS
+            #endif
+        </content>
+    </config>
+
+    <config id="config.framework.sf_el_ux_hcd_fs" path="ssp_cfg/framework/sf_el_ux_hcd_fs_cfg.h" version="0">
+        <property default="board.icu.common.irq.disabled" display="Full Speed Interrupt Priority" id="config.framework.sf_el_ux_hcd_fs.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="config.framework.sf_el_ux_hcd_fs.VBUSENpin_logic.active_high" display="VBUSEN pin Signal Logic" id="config.framework.sf_el_ux_hcd_fs.VBUSENpin_logic">
+            <option display="Active Low"  id="config.framework.sf_el_ux_hcd_fs.VBUSENpin_logic.active_low"  value="(1)"/>
+            <option display="Active High" id="config.framework.sf_el_ux_hcd_fs.VBUSENpin_logic.active_high" value="(0)"/>
+        </property>
+        <content>
+            #include "sf_el_ux_cfg.h"
+
+            #if ${config.framework.sf_el_ux_hcd_fs.VBUSENpin_logic}
+            #if !defined(UX_HOST_VBUS_ENABLE_LOW)
+            #define UX_HOST_VBUS_ENABLE_LOW
+            #endif
+            #endif
+            #if defined(BSP_BOARD_S7G2_SK)
+            #ifndef UX_HOST_VBUS_ENABLE_LOW
+            #define UX_HOST_VBUS_ENABLE_LOW
+            #endif
+            #endif
+            
+            #if (SF_EL_UX_HCD_CFG_FS_IRQ_IPL == BSP_IRQ_DISABLED)
+            #undef SF_EL_UX_HCD_CFG_FS_IRQ_IPL
+            #define SF_EL_UX_HCD_CFG_FS_IRQ_IPL      ${config.framework.sf_el_ux_hcd_fs.irq_ipl}
+            #endif
+        </content>
+    </config>
+
+    <config id="config.framework.sf_el_ux_dcd_hs" path="ssp_cfg/framework/sf_el_ux_dcd_hs_cfg.h" version="0">
+        <property default="board.icu.common.irq.disabled" display="High Speed Interrupt Priority" id="config.framework.sf_el_ux_dcd_hs.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <content>
+            #include "sf_el_ux_cfg.h"
+
+            #if (SF_EL_UX_DCD_CFG_HS_IRQ_IPL == BSP_IRQ_DISABLED)
+            #undef SF_EL_UX_DCD_CFG_HS_IRQ_IPL
+            #define SF_EL_UX_DCD_CFG_HS_IRQ_IPL      ${config.framework.sf_el_ux_dcd_hs.irq_ipl}
+            #define UX_DCD_SYNERY_USE_USBHS
+            #endif
+        </content>
+    </config>
+
+    <config id="config.framework.sf_el_ux_dcd_fs" path="ssp_cfg/framework/sf_el_ux_dcd_fs_cfg.h" version="0">
+        <property default="board.icu.common.irq.disabled" display="Full Speed Interrupt Priority" id="config.framework.sf_el_ux_dcd_fs.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <content>
+            #include "sf_el_ux_cfg.h"
+
+            #if (SF_EL_UX_DCD_CFG_FS_IRQ_IPL == BSP_IRQ_DISABLED)
+            #undef SF_EL_UX_DCD_CFG_FS_IRQ_IPL
+            #define SF_EL_UX_DCD_CFG_FS_IRQ_IPL      ${config.framework.sf_el_ux_dcd_fs.irq_ipl}
+            #endif
+        </content>
+    </config>
+
+    <module config="config.framework.sf_el_ux_hcd_hs" display="X-Ware|USBX|Host|Synergy Port|${module.framework.sf_el_ux_hcd.name} USBX Port HCD on sf_el_ux for USBHS" common="1" id="module.framework.sf_el_ux_hcd_hs" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_ux_hcd.${module.framework.sf_el_ux_hcd.name}}" === "1"
+        </constraint>
+        <constraint display="Requires USBX Interrupt (USBHS USBIR) enabled">
+            ("${config.framework.sf_el_ux_hcd_hs.irq_ipl}" != "board.icu.common.irq.disabled")
+        </constraint>
+        <constraint display="The USB controller is used for USB device">
+            "${interface.framework.sf_el_ux_dcd.R_USBHS_BASE}" != "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_ux_hcd.requires.transfer_tx" interface="interface.driver.transfer" display="Add Transfer Module TX [Recommended but optional]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_block"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_elc_software_event_0"/>
+        </requires>
+        <requires id="module.framework.sf_el_ux_hcd.requires.transfer_rx" interface="interface.driver.transfer" display="Add Transfer Module RX [Recommended but optional]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_block"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_destination"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_elc_software_event_1"/>
+        </requires>
+        <provides interface="interface.framework.sf_el_ux_hcd" />
+        <provides interface="interface.framework.sf_el_ux_hcd.${module.framework.sf_el_ux_hcd.name}" />
+        <provides interface="interface.framework.sf_el_ux_hcd.R_USBHS_BASE" />
+        <property default="g_sf_el_ux_hcd_hs_${_instance}" display="Name" id="module.framework.sf_el_ux_hcd.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_ux_hcd.name}")</constraint>
+        </property>
+        <property default="R_USBHS_BASE" display="USB Controller Selection" id="module.framework.sf_el_ux_hcd.hw_address">
+            <option display="USBHS" id="module.framework.sf_el_ux_hcd.hw_address.hs" value="R_USBHS_BASE" />
+        </property>
+        <header>
+            #include "ux_api.h"
+            #include "ux_hcd_synergy.h"
+            #include "sf_el_ux_hcd_hs_cfg.h"
+        </header>
+        <declarations>
+
+            /***********************************************************************************************************************
+             * Registers Interrupt Vector for USBHS Controller.
+             **********************************************************************************************************************/
+            #if (SF_EL_UX_HCD_CFG_HS_IRQ_IPL != BSP_IRQ_DISABLED)
+            /* USBHS ISR vector registering. */
+            #if !defined(SSP_SUPPRESS_ISR_${module.framework.sf_el_ux_hcd.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_USB)
+            SSP_VECTOR_DEFINE_UNIT(usbhs_usb_int_resume_isr, USB, HS, USB_INT_RESUME, 0);
+            #endif
+            #endif
+
+            #undef SYNERGY_NOT_DEFINED
+            #define SYNERGY_NOT_DEFINED (1)
+            /***********************************************************************************************************************
+             * The definition of wrapper interface for USBX Synergy Port HCD Driver.
+             **********************************************************************************************************************/
+            static UINT ${module.framework.sf_el_ux_hcd.name}_initialize(UX_HCD *hcd)
+            {
+            #if ((SYNERGY_NOT_DEFINED != ${module.framework.sf_el_ux_hcd.requires.transfer_tx::module.driver.transfer.name}) &amp;&amp; (SYNERGY_NOT_DEFINED != ${module.framework.sf_el_ux_hcd.requires.transfer_rx::module.driver.transfer.name}))
+                /* DMA support */
+                UX_HCD_SYNERGY_TRANSFER hcd_transfer;
+                hcd_transfer.ux_synergy_transfer_tx = (transfer_instance_t *)&amp;${module.framework.sf_el_ux_hcd.requires.transfer_tx::module.driver.transfer.name};
+                hcd_transfer.ux_synergy_transfer_rx = (transfer_instance_t *)&amp;${module.framework.sf_el_ux_hcd.requires.transfer_rx::module.driver.transfer.name};
+                return (UINT)ux_hcd_synergy_initialize_transfer_support(hcd, (UX_HCD_SYNERGY_TRANSFER *)&amp;hcd_transfer);
+            #else
+                /* Non DMA support */
+                return (UINT)ux_hcd_synergy_initialize(hcd);
+            #endif
+            }  /* End of function ${module.framework.sf_el_ux_hcd.name}_initialize() */
+            #undef SYNERGY_NOT_DEFINED
+
+        </declarations>
+    </module>
+
+    <module config="config.framework.sf_el_ux_hcd_fs" display="X-Ware|USBX|Host|Synergy Port|${module.framework.sf_el_ux_hcd.name} USBX Port HCD on sf_el_ux for USBFS" common="1" id="module.framework.sf_el_ux_hcd_fs" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_ux_hcd.${module.framework.sf_el_ux_hcd.name}}" === "1"
+        </constraint>
+        <constraint display="Requires USBX Interrupt (USBFS USBI) enabled">
+            ("${config.framework.sf_el_ux_hcd_fs.irq_ipl}" != "board.icu.common.irq.disabled")
+        </constraint>
+        <constraint display="The USB controller is used for USB device">
+            "${interface.framework.sf_el_ux_dcd.R_USBFS_BASE}" != "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_ux_hcd_fs.requires.transfer_tx" interface="interface.driver.transfer" display="Add Transfer Module TX [Recommended but optional]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_block"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_elc_software_event_0"/>
+        </requires>
+        <requires id="module.framework.sf_el_ux_hcd_fs.requires.transfer_rx" interface="interface.driver.transfer" display="Add Transfer Module RX [Recommended but optional]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_block"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_destination"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_elc_software_event_1"/>
+        </requires>
+        <provides interface="interface.framework.sf_el_ux_hcd" />
+        <provides interface="interface.framework.sf_el_ux_hcd.${module.framework.sf_el_ux_hcd.name}" />
+        <provides interface="interface.framework.sf_el_ux_hcd.R_USBFS_BASE" />
+        <property default="g_sf_el_ux_hcd_fs_${_instance}" display="Name" id="module.framework.sf_el_ux_hcd.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_ux_hcd.name}")</constraint>
+        </property>
+        <property default="R_USBFS_BASE" display="USB Controller Selection" id="module.framework.sf_el_ux_hcd.hw_address">
+            <option display="USBFS" id="module.framework.sf_el_ux_hcd.hw_address.fs" value="R_USBFS_BASE" />
+        </property>
+        <header>
+            #include "ux_api.h"
+            #include "ux_hcd_synergy.h"
+            #include "sf_el_ux_hcd_fs_cfg.h"
+        </header>
+        <declarations>
+
+            /***********************************************************************************************************************
+             * Registers Interrupt Vector for USBFS Controller.
+             **********************************************************************************************************************/
+            #if (SF_EL_UX_HCD_CFG_FS_IRQ_IPL != BSP_IRQ_DISABLED)
+            /* USBFS ISR vector registering. */
+            #if !defined(SSP_SUPPRESS_ISR_${module.framework.sf_el_ux_hcd.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_USB)
+            SSP_VECTOR_DEFINE_UNIT(usbfs_int_isr, USB, FS, INT, 0);
+            #endif
+            #endif
+
+            #undef SYNERGY_NOT_DEFINED
+            #define SYNERGY_NOT_DEFINED (1)
+            /***********************************************************************************************************************
+             * The definition of wrapper interface for USBX Synergy Port HCD Driver.
+             **********************************************************************************************************************/
+            static UINT ${module.framework.sf_el_ux_hcd.name}_initialize(UX_HCD *hcd)
+            {
+            #if ((SYNERGY_NOT_DEFINED != ${module.framework.sf_el_ux_hcd_fs.requires.transfer_tx::module.driver.transfer.name}) &amp;&amp; (SYNERGY_NOT_DEFINED != ${module.framework.sf_el_ux_hcd_fs.requires.transfer_rx::module.driver.transfer.name}))
+                /* DMA support */
+                UX_HCD_SYNERGY_TRANSFER hcd_transfer;
+                hcd_transfer.ux_synergy_transfer_tx = (transfer_instance_t *)&amp;${module.framework.sf_el_ux_hcd_fs.requires.transfer_tx::module.driver.transfer.name};
+                hcd_transfer.ux_synergy_transfer_rx = (transfer_instance_t *)&amp;${module.framework.sf_el_ux_hcd_fs.requires.transfer_rx::module.driver.transfer.name};
+                return (UINT)ux_hcd_synergy_initialize_transfer_support(hcd, (UX_HCD_SYNERGY_TRANSFER *)&amp;hcd_transfer);
+            #else
+                /* Non DMA support */
+                return (UINT)ux_hcd_synergy_initialize(hcd);
+            #endif
+            }  /* End of function ${module.framework.sf_el_ux_hcd.name}_initialize() */
+            #undef SYNERGY_NOT_DEFINED
+
+        </declarations>
+    </module>
+
+    <module config="config.framework.sf_el_ux_dcd_hs" display="X-Ware|USBX|Device|Synergy Port|${module.framework.sf_el_ux_dcd_hs.name} USBX Port DCD on sf_el_ux for USBHS" id="module.framework.sf_el_ux_dcd_hs" common="1" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_ux_dcd.${module.framework.sf_el_ux_dcd_hs.name}}" === "1"
+        </constraint>
+        <constraint display="Requires USBX Interrupt (USBHS USBIR) enabled">
+            ("${config.framework.sf_el_ux_dcd_hs.irq_ipl}" != "board.icu.common.irq.disabled")
+        </constraint>
+        <constraint display="The USB controller is used for USB host">
+            "${interface.framework.sf_el_ux_hcd.R_USBHS_BASE}" != "1"
+        </constraint>
+        <constraint display="Requires the use of Transfer modules for both of TX and RX or neither">
+            ((testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name}") === true) &amp;&amp; (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name}") === true)) || ((testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name}") === false) &amp;&amp;(testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name}") === false))
+        </constraint>
+        <constraint display="Requires Transfer module (TX) Interrupt enabled">
+            (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name}") === false) || (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name}") &amp;&amp; ("${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.irq_ipl}" != "board.icu.common.irq.disabled"))
+        </constraint>
+        <constraint display="Requires Transfer module (RX) Interrupt enabled">
+            (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name}") === false) || (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name}") &amp;&amp; ("${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.irq_ipl}" != "board.icu.common.irq.disabled"))
+        </constraint>
+        <constraint display="Requires Interrupt Priority of Transfer module (TX) must be higher than USB's">
+            (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name}") === false) || (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name}") &amp;&amp; ("${config.framework.sf_el_ux_dcd_hs.irq_ipl}" &gt; "${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.irq_ipl}"))
+        </constraint>
+        <constraint display="Requires Interrupt Priority of Transfer module (RX) must be higher than USB's">
+            (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name}") === false) || (testExists("${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name}") &amp;&amp; ("${config.framework.sf_el_ux_dcd_hs.irq_ipl}" &gt; "${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.irq_ipl}"))
+        </constraint>
+        
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_ux_dcd_hs.requires.transfer_tx" interface="interface.driver.transfer" display="Add Transfer Module for TX [Recommended but optional]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_block"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_elc_software_event_0"/>
+        </requires>
+        <requires id="module.framework.sf_el_ux_dcd_hs.requires.transfer_rx" interface="interface.driver.transfer" display="Add Transfer Module for RX [Recommended but optional]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_block"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_destination"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_elc_software_event_1"/>
+        </requires>
+        <provides interface="interface.framework.sf_el_ux_dcd" />
+        <provides interface="interface.framework.sf_el_ux_dcd.${module.framework.sf_el_ux_dcd_hs.name}" />
+        <provides interface="interface.framework.sf_el_ux_dcd.R_USBHS_BASE" />
+        <property default="g_sf_el_ux_dcd_hs_${_instance}" display="Name" id="module.framework.sf_el_ux_dcd_hs.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_ux_dcd_hs.name}")</constraint>
+        </property>
+        <property default="R_USBHS_BASE" display="USB Controller Selection" id="module.framework.sf_el_ux_dcd_hs.hw_address">
+            <option display="USBHS" id="module.framework.sf_el_ux_dcd_hs.hw_address.fs" value="R_USBHS_BASE" />
+        </property>
+        <header>
+            #include "ux_api.h"
+            #include "ux_dcd_synergy.h"
+            #include "sf_el_ux_dcd_hs_cfg.h"
+            void ${module.framework.sf_el_ux_dcd_hs.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <declarations>
+
+            #if defined(__ICCARM__)
+            #define ${module.framework.sf_el_ux_dcd_hs.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.framework.sf_el_ux_dcd_hs.name}_err_callback  = ${module.framework.sf_el_ux_dcd_hs.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.framework.sf_el_ux_dcd_hs.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_el_ux_dcd_hs.name}_err_callback_internal")))
+            #endif
+            void ${module.framework.sf_el_ux_dcd_hs.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_el_ux_dcd_hs.name}_err_callback_WEAK_ATTRIBUTE;
+            #if (SF_EL_UX_CFG_HS_IRQ_IPL != BSP_IRQ_DISABLED)
+            /* USBHS ISR vector registering. */
+            #if !defined(SSP_SUPPRESS_ISR_${module.framework.sf_el_ux_dcd_hs.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_USB)
+            SSP_VECTOR_DEFINE_UNIT(usbhs_usb_int_resume_isr, USB, HS, USB_INT_RESUME, 0);
+            #endif
+            #endif
+
+            /* Prototype function for USBX DCD Initializer. */
+            static void ux_dcd_initialize(void);
+
+            #undef SYNERGY_NOT_DEFINED
+            #define SYNERGY_NOT_DEFINED (1)
+             /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.framework.sf_el_ux_dcd_hs.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.framework.sf_el_ux_dcd_hs.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.framework.sf_el_ux_dcd_hs.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+            #if ((SYNERGY_NOT_DEFINED != ${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name}) &amp;&amp; (SYNERGY_NOT_DEFINED != ${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name}))
+            /***********************************************************************************************************************
+             * The definition of wrapper interface for USBX Synergy Port DCD Driver to get a transfer module instance.
+             **********************************************************************************************************************/
+            static UINT ${module.framework.sf_el_ux_dcd_hs.name}_initialize_transfer_support(ULONG dcd_io)
+            {
+                UX_DCD_SYNERGY_TRANSFER dcd_transfer;
+                dcd_transfer.ux_synergy_transfer_tx = (transfer_instance_t *)&amp;${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name};
+                dcd_transfer.ux_synergy_transfer_rx = (transfer_instance_t *)&amp;${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name};
+                return (UINT)ux_dcd_synergy_initialize_transfer_support(dcd_io, (UX_DCD_SYNERGY_TRANSFER *)&amp;dcd_transfer);
+            }  /* End of function ${module.framework.sf_el_ux_dcd_hs.name}_initialize_transfer_support() */
+            #endif
+
+            /***********************************************************************************************************************
+             * Initializes USBX Device Controller Driver.
+             **********************************************************************************************************************/
+            void ux_dcd_initialize(void)
+            {
+                UINT status;
+                /* Initializes the USB device controller, enabling DMA transfer if transfer module instances are given. */
+                #if ((SYNERGY_NOT_DEFINED == ${module.framework.sf_el_ux_dcd_hs.requires.transfer_tx::module.driver.transfer.name}) || (SYNERGY_NOT_DEFINED == ${module.framework.sf_el_ux_dcd_hs.requires.transfer_rx::module.driver.transfer.name}))
+                status = (UINT)ux_dcd_synergy_initialize(R_USBHS_BASE);
+                #else
+                status = ${module.framework.sf_el_ux_dcd_hs.name}_initialize_transfer_support(R_USBHS_BASE);
+                #endif
+                #undef SYNERGY_NOT_DEFINED
+                if (UX_SUCCESS != status)
+                {
+                    ${module.framework.sf_el_ux_dcd_hs.name}_err_callback(NULL,&amp;status);
+                }
+             }  /* End of function ux_dcd_initialize() */
+        </declarations>
+    </module>
+
+    <module config="config.framework.sf_el_ux_dcd_fs" display="X-Ware|USBX|Device|Synergy Port|${module.framework.sf_el_ux_dcd_fs.name} USBX Port DCD on sf_el_ux for USBFS" id="module.framework.sf_el_ux_dcd_fs" common="1" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_ux_dcd.${module.framework.sf_el_ux_dcd_fs.name}}" === "1"
+        </constraint>
+        <constraint display="Requires USBX Interrupt (USBFS USBI) enabled">
+            ("${config.framework.sf_el_ux_dcd_fs.irq_ipl}" != "board.icu.common.irq.disabled")
+        </constraint>
+        <constraint display="The USB controller is used for USB host">
+            "${interface.framework.sf_el_ux_hcd.R_USBFS_BASE}" != "1"
+        </constraint>
+        <constraint display="Requires the use of Transfer modules for both of TX and RX or neither">
+            ((testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name}") === true) &amp;&amp; (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name}") === true)) || ((testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name}") === false) &amp;&amp;(testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name}") === false))
+        </constraint>
+        <constraint display="Requires Transfer module (TX) Interrupt enabled">
+            (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name}") === false) || (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name}") &amp;&amp; ("${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.irq_ipl}" != "board.icu.common.irq.disabled"))
+        </constraint>
+        <constraint display="Requires Transfer module (RX) Interrupt enabled">
+            (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name}") === false) || (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name}") &amp;&amp; ("${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.irq_ipl}" != "board.icu.common.irq.disabled"))
+        </constraint>
+        <constraint display="Requires Interrupt Priority of Transfer module (TX) must be higher than USB's">
+            (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name}") === false) || (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name}") &amp;&amp; ("${config.framework.sf_el_ux_dcd_fs.irq_ipl}" &gt; "${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.irq_ipl}"))
+        </constraint>
+        <constraint display="Requires Interrupt Priority of Transfer module (RX) must be higher than USB's">
+            (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name}") === false) || (testExists("${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name}") &amp;&amp; ("${config.framework.sf_el_ux_dcd_fs.irq_ipl}" &gt; "${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.irq_ipl}"))
+        </constraint>
+
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_ux_dcd_fs.requires.transfer_tx" interface="interface.driver.transfer" display="Add Transfer Module for TX [Recommended but optional]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_block"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_elc_software_event_0"/>
+        </requires>
+        <requires id="module.framework.sf_el_ux_dcd_fs.requires.transfer_rx" interface="interface.driver.transfer" display="Add Transfer Module for RX [Recommended but optional]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_block"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_destination"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_elc_software_event_1"/>
+        </requires>
+        <provides interface="interface.framework.sf_el_ux_dcd" />
+        <provides interface="interface.framework.sf_el_ux_dcd.${module.framework.sf_el_ux_dcd_fs.name}" />
+        <provides interface="interface.framework.sf_el_ux_dcd.R_USBFS_BASE" />
+        <property default="g_sf_el_ux_dcd_fs_${_instance}" display="Name" id="module.framework.sf_el_ux_dcd_fs.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_ux_dcd_fs.name}")</constraint>
+        </property>
+        <property default="R_USBFS_BASE" display="USB Controller Selection" id="module.framework.sf_el_ux_dcd_fs.hw_address">
+            <option display="USBFS" id="module.framework.sf_el_ux_dcd_fs.hw_address.fs" value="R_USBFS_BASE" />
+        </property>
+        <header>
+            #include "ux_api.h"
+            #include "ux_dcd_synergy.h"
+            #include "sf_el_ux_dcd_fs_cfg.h"
+            void ${module.framework.sf_el_ux_dcd_fs.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.framework.sf_el_ux_dcd_fs.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.framework.sf_el_ux_dcd_fs.name}_err_callback  = ${module.framework.sf_el_ux_dcd_fs.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.framework.sf_el_ux_dcd_fs.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_el_ux_dcd_fs.name}_err_callback_internal")))
+            #endif
+            void ${module.framework.sf_el_ux_dcd_fs.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_el_ux_dcd_fs.name}_err_callback_WEAK_ATTRIBUTE;
+            #if (SF_EL_UX_CFG_FS_IRQ_IPL != BSP_IRQ_DISABLED)
+            /* USBFS ISR vector registering. */
+            #if !defined(SSP_SUPPRESS_ISR_${module.framework.sf_el_ux_dcd_fs.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_USB)
+            SSP_VECTOR_DEFINE_UNIT(usbfs_int_isr, USB, FS, INT, 0);
+            #endif
+            #endif
+
+            /* Build-time constraint for non-supported configuration. */
+            #if (BSP_CFG_MCU_PART_SERIES == 0x1)
+             #warning "This MCU part does not have a USBHS port. Check sf_el_ux module configuration."
+            #endif
+
+            /* Prototype function for USBX DCD Initializer. */
+            static void ux_dcd_initialize(void);
+
+            #undef SYNERGY_NOT_DEFINED
+            #define SYNERGY_NOT_DEFINED (1)
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.framework.sf_el_ux_dcd_fs.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.framework.sf_el_ux_dcd_fs.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.framework.sf_el_ux_dcd_fs.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+            #if ((SYNERGY_NOT_DEFINED != ${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name}) &amp;&amp; (SYNERGY_NOT_DEFINED != ${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name}))
+            /***********************************************************************************************************************
+             * The definition of wrapper interface for USBX Synergy Port DCD Driver to get a transfer module instance.
+             **********************************************************************************************************************/
+            static UINT ${module.framework.sf_el_ux_dcd_fs.name}_initialize_transfer_support(ULONG dcd_io)
+            {
+                UX_DCD_SYNERGY_TRANSFER dcd_transfer;
+                dcd_transfer.ux_synergy_transfer_tx = (transfer_instance_t *)&amp;${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name};
+                dcd_transfer.ux_synergy_transfer_rx = (transfer_instance_t *)&amp;${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name};
+                return (UINT)ux_dcd_synergy_initialize_transfer_support(dcd_io, (UX_DCD_SYNERGY_TRANSFER *)&amp;dcd_transfer);
+            }  /* End of function ${module.framework.sf_el_ux_dcd_fs.name}_initialize_transfer_support() */
+            #endif
+
+            /***********************************************************************************************************************
+             * Initializes USBX Device Controller Driver.
+             **********************************************************************************************************************/
+            void ux_dcd_initialize(void)
+            {
+                UINT status;
+                /* Initializes the USB device controller, enabling DMA transfer if transfer module instances are given. */
+                #if ((SYNERGY_NOT_DEFINED == ${module.framework.sf_el_ux_dcd_fs.requires.transfer_tx::module.driver.transfer.name}) || (SYNERGY_NOT_DEFINED == ${module.framework.sf_el_ux_dcd_fs.requires.transfer_rx::module.driver.transfer.name}))
+                status = (UINT)ux_dcd_synergy_initialize(R_USBFS_BASE);
+                #else
+                status = ${module.framework.sf_el_ux_dcd_fs.name}_initialize_transfer_support(R_USBFS_BASE);
+                #endif
+                #undef SYNERGY_NOT_DEFINED
+                if (UX_SUCCESS != status)
+                {
+                   ${module.framework.sf_el_ux_dcd_fs.name}_err_callback(NULL,&amp;status);
+                }
+             }  /* End of function ux_dcd_initialize() */
+        </declarations>
+    </module>
+</synergyModuleDescription>

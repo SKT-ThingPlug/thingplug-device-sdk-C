@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nx_dhcp_server" path="ssp_cfg/framework/el/nx_dhcp_server_cfg.h" version="0">
+        <property default="1" display="Internal thread priority" id="config.el.nx_dhcp_server.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_server.priority}")  &amp;&amp; ("${config.el.nx_dhcp_server.priority}" &gt;= 0)
+            </constraint>
+        </property>        
+        <property default="2" display="Packet allocate timeout (seconds)" id="config.el.nx_dhcp_server.packet_alloc_timeout">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.packet_alloc_timeout}")  &amp;&amp; ("${config.el.nx_dhcp_server.packet_alloc_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="192,168,0,1" display="Server IPv4 address (use commas for separation)" id="config.el.nx_dhcp_server.ip_address">
+            <constraint display="Must be valid IP address separated by commas">"${config.el.nx_dhcp_server.ip_address}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="255,255,255,0" display="Subnet Mask for clients (use commas for separation)" id="config.el.nx_dhcp_server.sub_net">
+            <constraint display="Must be valid Subnet Mask separated by commas">"${config.el.nx_dhcp_server.sub_net}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="192,168,0,1" display="Subnet router IPv4 address (use commas for separation)" id="config.el.nx_dhcp_server.dns_router_ip_address">
+            <constraint display="Must be valid IP address separated by commas">"${config.el.nx_dhcp_server.dns_router_ip_address}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="192,168,0,1" display="Subnet DNS IPv4 address (use commas for separation)" id="config.el.nx_dhcp_server.dns_ip_address">
+            <constraint display="Must be valid IP address separated by commas">"${config.el.nx_dhcp_server.dns_ip_address}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="8" display="Maximum client identifier length (bytes)" id="config.el.nx_dhcp_server.dhcp_client_identifier">
+            <constraint display="Value must be between 6 to 8"> 
+                testInteger("${config.el.nx_dhcp_server.dhcp_client_identifier}")  &amp;&amp; ("${config.el.nx_dhcp_server.dhcp_client_identifier}" &gt;= 6)  &amp;&amp; ("${config.el.nx_dhcp_server.dhcp_client_identifier}" &lt;= 8)
+            </constraint>
+        </property>
+        <property default="10" display="Fast periodic timer interval to check valid sessions (ticks)" id="config.el.nx_dhcp_server.fast_periodic_time_interval">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.fast_periodic_time_interval}")  &amp;&amp; ("${config.el.nx_dhcp_server.fast_periodic_time_interval}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Next Client message wait (ticks)" id="config.el.nx_dhcp_server.client_session_timeout">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.client_session_timeout}")  &amp;&amp; ("${config.el.nx_dhcp_server.client_session_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="0xFFFFFFFF" display="Client IP address lease time (seconds)" id="config.el.nx_dhcp_server.assigned_lease_time">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.assigned_lease_time}")  &amp;&amp; ("${config.el.nx_dhcp_server.assigned_lease_time}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="50" display="Size of array for holding available IP addresses" id="config.el.nx_dhcp_server.ip_address_list_size">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.ip_address_list_size}")  &amp;&amp; ("${config.el.nx_dhcp_server.ip_address_list_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="12" display="Size of the array containing current requested options (units)" id="config.el.nx_dhcp_server.client_options_max" description="This is size of the array in the DHCP Client instance for holding the all the requested options in the parameter request list in the current session">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.client_options_max}")  &amp;&amp; ("${config.el.nx_dhcp_server.client_options_max}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1 3 6" display="Server option list (optional - use space for separation) " id="config.el.nx_dhcp_server.optional_server_option_list">
+        </property>
+        <property default="3" display="Server option list size (optional)" id="config.el.nx_dhcp_server.optional_server_option_size">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.optional_server_option_size}")  &amp;&amp; ("${config.el.nx_dhcp_server.optional_server_option_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="53 54" display="Server option list (required - use space for separation) " id="config.el.nx_dhcp_server.required_server_option_list">
+        </property>
+        <property default="30" display="Size of the current client hostname buffer (bytes)" id="config.el.nx_dhcp_server.client_hostname_max">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.client_hostname_max}")  &amp;&amp; ("${config.el.nx_dhcp_server.client_hostname_max}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Maximum size of an IP addresses list (units)" id="config.el.nx_dhcp_server.ip_address_max_list_size">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.ip_address_max_list_size}")  &amp;&amp; ("${config.el.nx_dhcp_server.ip_address_max_list_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="50" display="Size of client record table (units)" id="config.el.nx_dhcp_server.client_record_table_size">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.client_record_table_size}")  &amp;&amp; ("${config.el.nx_dhcp_server.client_record_table_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="548" display="Size of the BOOT buffer (bytes)" id="config.el.nx_dhcp_server.boot_buffer_size">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.boot_buffer_size}")  &amp;&amp; ("${config.el.nx_dhcp_server.boot_buffer_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="236" display="Size of the DHCP header (bytes)" id="config.el.nx_dhcp_server.header_size">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_server.header_size}")  &amp;&amp; ("${config.el.nx_dhcp_server.header_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_DHCP_SERVER_THREAD_PRIORITY             (${config.el.nx_dhcp_server.priority})
+            #define NX_DHCP_PACKET_ALLOCATE_TIMEOUT            (${config.el.nx_dhcp_server.packet_alloc_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_DHCP_SERVER_IP_ADDRESS                  IP_ADDRESS(${config.el.nx_dhcp_server.ip_address})
+            #define NX_DHCP_ROUTER_IP_ADDRESS                  IP_ADDRESS(${config.el.nx_dhcp_server.dns_router_ip_address})
+            #define NX_DHCP_DNS_IP_ADDRESS                     IP_ADDRESS(${config.el.nx_dhcp_server.dns_ip_address})
+            #define NX_DHCP_SUBNET_MASK                        IP_ADDRESS(${config.el.nx_dhcp_server.sub_net})
+            #define NX_DHCP_CLIENT_IDENTIFIER_MAX              (${config.el.nx_dhcp_server.dhcp_client_identifier})
+            #define NX_DHCP_FAST_PERIODIC_TIME_INTERVAL        (${config.el.nx_dhcp_server.fast_periodic_time_interval})
+            #define NX_DHCP_CLIENT_SESSION_TIMEOUT             (${config.el.nx_dhcp_server.client_session_timeout} * NX_DHCP_FAST_PERIODIC_TIME_INTERVAL)
+            #define NX_DHCP_ASSIGNED_LEASE_TIME                (${config.el.nx_dhcp_server.assigned_lease_time})
+            #define NX_DHCP_IP_ADDRESS_LIST_SIZE               (${config.el.nx_dhcp_server.ip_address_list_size})
+            #define NX_DHCP_CLIENT_OPTIONS_MAX                 (${config.el.nx_dhcp_server.client_options_max})
+            #define NX_DHCP_OPTIONAL_SERVER_OPTION_LIST        "${config.el.nx_dhcp_server.optional_server_option_list}"
+            #define NX_DHCP_DEFAULT_SERVER_OPTION_LIST          NX_DHCP_OPTIONAL_SERVER_OPTION_LIST
+            #define NX_DHCP_OPTIONAL_SERVER_OPTION_SIZE        (${config.el.nx_dhcp_server.optional_server_option_size})
+            #define NX_DHCP_DEFAULT_SERVER_OPTION_SIZE          NX_DHCP_OPTIONAL_SERVER_OPTION_SIZE
+            #define NX_DHCP_REQUIRED_SERVER_OPTION_LIST        "${config.el.nx_dhcp_server.required_server_option_list}"
+            #define NX_DHCP_CLIENT_HOSTNAME_MAX                (${config.el.nx_dhcp_server.client_hostname_max})
+            #define NX_DHCP_IP_ADDRESS_MAX_LIST_SIZE           ${config.el.nx_dhcp_server.ip_address_max_list_size}
+            #define NX_DHCP_CLIENT_RECORD_TABLE_SIZE           ${config.el.nx_dhcp_server.client_record_table_size}
+            #define NX_BOOT_BUFFER_SIZE                        ${config.el.nx_dhcp_server.boot_buffer_size}
+            #define NX_DHCP_HEADER_SIZE                        ${config.el.nx_dhcp_server.header_size}
+        </content>
+    </config>
+    <module  config="config.el.nx_dhcp_server" display="X-Ware|NetX|Protocols|${module.el.nx_dhcp_server.name} NetX DHCP Server" id="module.el.nx_dhcp_server" version="1">
+        <constraint display="Module instances must have unique names"> "${interface.el.nx_dhcp_server.${module.el.nx_dhcp_server.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_dhcp_server.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.rarp" value="module.el.nx.ip.rarp.disable" />
+            <override property="module.el.nx.ip.udp" value="module.el.nx.ip.udp.enable" />
+        </requires>
+        <requires id="module.el.nx_dhcp_server.requires.nx.packet_pool" interface="interface.el.nx_original.packet_pool" display="Add NetX Packet Pool" />
+        <requires id="module.el.nx_dhcp_server.requires.nx_dhcp_common" interface="interface.el.nx_dhcp_common" display="Add DHCP Common" />
+
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_dhcp_server" />
+        <provides interface="interface.el.nx_dhcp_server.${module.el.nx_dhcp_server.name}" />
+        <!-- NetX only -->
+        <provides interface="interface.el.nx_original_dhcp_server" />
+        <provides interface="interface.el.nx_original_dhcp_server.${module.el.nx_dhcp_server.name}" />
+        
+        <property default="g_dhcp_server${_instance}" display="Name" id="module.el.nx_dhcp_server.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_dhcp_server.name}")
+            </constraint>
+        </property>
+        <property default="2048" display="Internal thread stack size (bytes)" id="module.el.nx_dhcp_server.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_dhcp_server.stack_size}")  &amp;&amp; (("${module.el.nx_dhcp_server.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <header>
+            extern NX_DHCP_SERVER ${module.el.nx_dhcp_server.name};
+            void ${module.el.nx_dhcp_server.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_dhcp_server.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_dhcp_server.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_dhcp_server.name}_err_callback  = ${module.el.nx_dhcp_server.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_dhcp_server.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_dhcp_server.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_dhcp_server.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_dhcp_server.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_DHCP_SERVER   ${module.el.nx_dhcp_server.name};
+            uint8_t         ${module.el.nx_dhcp_server.name}_stack_memory[${module.el.nx_dhcp_server.stack_size}];
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.el.nx_dhcp_server.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+            **********************************************************************************************************************/
+            void ${module.el.nx_dhcp_server.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_dhcp_server.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_dhcp_server.name}_err;
+            /* Create DHCP Server. */
+            ${module.el.nx_dhcp_server.name}_err = nx_dhcp_server_create(&amp;${module.el.nx_dhcp_server.name},
+                                                                         &amp;${module.el.nx_dhcp_server.requires.nx.ip::module.el.nx.ip.name},
+                                                                         &amp;${module.el.nx_dhcp_server.name}_stack_memory[0],
+                                                                         ${module.el.nx_dhcp_server.stack_size},
+                                                                         "${module.el.nx_dhcp_server.name} dhcp Server",
+                                                                         &amp;${module.el.nx_dhcp_server.requires.nx.packet_pool::module.el.nx.packet_pool.name});
+            if (NX_SUCCESS != ${module.el.nx_dhcp_server.name}_err)
+            {
+               ${module.el.nx_dhcp_server.name}_err_callback((void *)&amp;${module.el.nx_dhcp_server.name},&amp;${module.el.nx_dhcp_server.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

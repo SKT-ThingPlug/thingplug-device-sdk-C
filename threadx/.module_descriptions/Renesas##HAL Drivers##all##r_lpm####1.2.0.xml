@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.lpm" path="ssp_cfg/driver/r_lpm_cfg.h" version="0">
+		<property default="config.driver.lpm.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.lpm.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.lpm.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.lpm.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.lpm.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>
+        #define LPM_CFG_PARAM_CHECKING_ENABLE ${config.driver.lpm.param_checking_enable}
+		</content>
+	</config>
+	<module config="config.driver.lpm" display="Driver|Power|${module.driver.lpm.name} Low Power Modes Driver on r_lpm" id="module.driver.lpm" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.lpm.${module.driver.lpm.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.lpm" />
+        <provides interface="interface.driver.lpm_on_lpm" />
+        <provides interface="interface.driver.lpm.${module.driver.lpm.name}" />
+        <property default="g_lpm${_instance}" display="Name" id="module.driver.lpm.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.lpm.name}")</constraint>
+        </property>
+        <property default="LPM_OPERATING_POWER_HIGH_SPEED_MODE" display="Operating power mode." id="module.driver.lpm.operating_power">
+			<option display="High speed operating mode." id="module.driver.lpm.operating_power.LPM_OPERATING_POWER_HIGH_SPEED_MODE" value="LPM_OPERATING_POWER_HIGH_SPEED_MODE"/>
+            <option display="Middle speed operating mode." id="module.driver.lpm.operating_power.LPM_OPERATING_POWER_MIDDLE_SPEED_MODE" value="LPM_OPERATING_POWER_MIDDLE_SPEED_MODE"/>
+            <option display="Low speed operating mode." id="module.driver.lpm.operating_power.LPM_OPERATING_POWER_LOW_SPEED_MODE" value="LPM_OPERATING_POWER_LOW_SPEED_MODE"/>
+            <option display="Low voltage operating mode." id="module.driver.lpm.operating_power.LPM_OPERATING_POWER_LOW_VOLTAGE_MODE" value="LPM_OPERATING_POWER_LOW_VOLTAGE_MODE"/>
+		</property>
+        <property default="LPM_SUBOSC_OTHER" display="Sub-oscillator mode." id="module.driver.lpm.sub_oscillator">
+			<option display="Sub oscillator mode not enabled." id="module.driver.lpm.sub_oscillator.LPM_SUBOSC_OTHER" value="LPM_SUBOSC_OTHER"/>
+            <option display="Sub oscillator mode enabled." id="module.driver.lpm.sub_oscillator.LPM_SUBOSC_SELECT" value="LPM_SUBOSC_SELECT"/>
+		</property>
+        <header>
+/** lpm Instance */
+extern const lpm_instance_t ${module.driver.lpm.name};
+        </header>
+        <includes>
+#include &quot;r_lpm.h&quot;
+#include &quot;r_lpm_api.h&quot;
+		</includes>
+		<declarations>
+const lpm_cfg_t ${module.driver.lpm.name}_cfg = 
+{
+    .operating_power        = ${module.driver.lpm.operating_power},
+    .sub_oscillator         = ${module.driver.lpm.sub_oscillator},
+    .code_flash             = LPM_CODE_FLASH_OPERATES
+};
+const lpm_instance_t ${module.driver.lpm.name} = 
+{
+    .p_api = &amp;g_lpm_on_lpm,
+    .p_cfg = &amp;${module.driver.lpm.name}_cfg
+};
+		</declarations>
+    </module>
+
+</synergyModuleDescription>

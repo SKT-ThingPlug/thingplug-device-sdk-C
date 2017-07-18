@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<synergyModuleDescription>
+    <config id="config.board.s124_dk" path="ssp_cfg/bsp/bsp_board_cfg.h" version="0">
+        <content>
+            #include "../../../synergy/board/s124_dk/bsp.h"
+        </content>
+    </config>
+    <board id="board.s124_dk" display="S124 DK" device="R7FS124773A01CFM" config="config.board.s124_dk" version="0" />
+</synergyModuleDescription>

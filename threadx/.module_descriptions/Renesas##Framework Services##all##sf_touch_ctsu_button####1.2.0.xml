@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_touch_ctsu_button" path="ssp_cfg/framework/sf_touch_ctsu_button_cfg.h" version="0">
+        <property default="config.framework.sf_touch_ctsu_button.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_touch_ctsu_button.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_touch_ctsu_button.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_touch_ctsu_button.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_touch_ctsu_button.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="1" display="Number of Buttons" id="config.framework.sf_touch_ctsu_button.button_count">
+            <constraint display="Value must be between 1 and 36 inclusive">testInteger("${config.framework.sf_touch_ctsu_button.button_count}")  &amp;&amp; ("${config.framework.sf_touch_ctsu_button.button_count}" &gt;= 0) &amp;&amp; ("${config.framework.sf_touch_ctsu_button.button_count}" &lt;= 36)</constraint>
+        </property>
+        <property default="1" display="Short hold debounce multiplier" id="config.framework.sf_touch_ctsu_button.short_hold_multiplier">
+            <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_touch_ctsu_button.short_hold_multiplier}")  &amp;&amp; ("${config.framework.sf_touch_ctsu_button.short_hold_multiplier}" &gt;= 0)</constraint>
+        </property>
+        <property default="5" display="Long hold debounce multiplier" id="config.framework.sf_touch_ctsu_button.long_hold_multiplier">
+            <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_touch_ctsu_button.long_hold_multiplier}")  &amp;&amp; ("${config.framework.sf_touch_ctsu_button.long_hold_multiplier}" &gt;= 0)</constraint>
+        </property>
+        <property default="10" display="Stuck in debounce multiplier" id="config.framework.sf_touch_ctsu_button.stuck_in_debounce_multiplier">
+            <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_touch_ctsu_button.stuck_in_debounce_multiplier}")  &amp;&amp; ("${config.framework.sf_touch_ctsu_button.stuck_in_debounce_multiplier}" &gt;= 0)</constraint>
+        </property>
+        <property default="config.framework.sf_touch_ctsu_button.multi_touch_enable.disabled" display="Multi touch enable" id="config.framework.sf_touch_ctsu_button.multi_touch_enable">
+            <option display="Enabled" id="config.framework.sf_touch_ctsu_button.multi_touch_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_touch_ctsu_button.multi_touch_enable.disabled" value="(0)"/>
+        </property>
+        <property default="config.framework.sf_touch_ctsu_button.detect_stuck_at.disabled" display="Enable stuck at condition detection" id="config.framework.sf_touch_ctsu_button.detect_stuck_at">
+            <option display="Enabled" id="config.framework.sf_touch_ctsu_button.detect_stuck_at.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_touch_ctsu_button.detect_stuck_at.disabled" value="(0)"/>
+        </property>
+        <content>
+		#define SF_TOUCH_CTSU_BUTTON_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_touch_ctsu_button.param_checking_enable}
+        /** Specify the maximum number of buttons to be used */
+        #define SF_TOUCH_CTSU_BUTTON_CFG_USER_SUPPORTED_BUTTONS          (${config.framework.sf_touch_ctsu_button.button_count})
+
+        /**
+         * The code will generate a notification after an interval of
+         * SHORT_HOLD_DEBOUNCE_MULTIPLIER*debounce_threshold from the first time the button
+         * was determined to be in the PRESSED state.*/
+        #define SF_TOUCH_CTSU_BUTTON_CFG_SHORT_HOLD_DEBOUNCE_MULTIPLIER  (${config.framework.sf_touch_ctsu_button.short_hold_multiplier})
+
+        /**
+         * The code will generate a notification after an interval of
+         * LONG_HOLD_DEBOUNCE_MULTIPLIER*debounce_threshold from the first time the button
+         * was determined to be in the PRESSED state.
+         * NOTE:
+         * 	Maintain SF_TOUCH_CTSU_BUTTON_CFG_LONG_HOLD_DEBOUNCE_MULTIPLIER > SF_TOUCH_CTSU_BUTTON_CFG_SHORT_HOLD_DEBOUNCE_MULTIPLIER */
+        #define SF_TOUCH_CTSU_BUTTON_CFG_LONG_HOLD_DEBOUNCE_MULTIPLIER   (${config.framework.sf_touch_ctsu_button.long_hold_multiplier})
+
+        /**
+         * Captouch buttons can be subject to jitter where the button may be fluctuating
+         * between touched or not-touched due to noise or other disturbances. The code
+         * monitors the amount of time for which a button is in this condition.
+         * If the button exceeds SF_TOUCH_CTSU_BUTTON_CFG_STUCK_IN_DEBOUNCE_MULTIPLIER*debounce_threshold
+         * then a notification event will be generated for that button. All buttons will have
+         * the same multiplier but the debouce period can be varied.
+         * NOTE: This monitoring is performed only between PRESSED and RELEASED state
+         * transitions. */
+        #define SF_TOUCH_CTSU_BUTTON_CFG_STUCK_IN_DEBOUNCE_MULTIPLIER    (${config.framework.sf_touch_ctsu_button.stuck_in_debounce_multiplier})
+
+        /** Multi touch enable or disable */
+        #define SF_TOUCH_CTSU_BUTTON_CFG_MULTI_TOUCH_ENABLE              (${config.framework.sf_touch_ctsu_button.multi_touch_enable})
+
+        /**
+         * Detect a stuck at condition.
+         */
+        #define SF_TOUCH_CTSU_BUTTON_DETECT_STUCK_AT                     (${config.framework.sf_touch_ctsu_button.detect_stuck_at})
+		</content>
+    </config>
+
+    <module config="config.framework.sf_touch_ctsu_button" display="Framework|Input|${module.framework.sf_touch_ctsu_button.name} Cap Touch Button Framework on sf_touch_ctsu_button" id="module.framework.sf_touch_ctsu_button" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.framework.sf_ctsu_button.${module.framework.sf_touch_ctsu_button.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_touch_ctsu_button.requires.sf_touch_ctsu" interface="interface.framework.sf_touch_ctsu" display="Add Capacitive Touch Framework"/>
+		<provides interface="interface.framework.sf_ctsu_button" />
+        <provides interface="interface.framework.sf_ctsu_button.${module.framework.sf_touch_ctsu_button.name}" />
+		<property default="g_sf_touch_button${_instance}" display="Name" id="module.framework.sf_touch_ctsu_button.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_ctsu_button.name}")</constraint>
+        </property>
+        <property default="touch_buttons" display="Button Configuration Structure Name (generated by Workbench)" id="module.framework.sf_touch_ctsu_button.button_cfg_name"  >
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_ctsu_button.button_cfg_name}")</constraint>
+        </property>
+        <property id="module.framework.sf_touch_ctsu_button.p_callback" display="Callback" default="g_button_framework_user_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_ctsu_button.p_callback}")</constraint>
+        </property>
+        <header>
+
+        /** SF Touch CTSU Button instance */
+        extern sf_touch_ctsu_button_instance_t ${module.framework.sf_touch_ctsu_button.name};
+        #ifndef ${module.framework.sf_touch_ctsu_button.p_callback}
+        /** Declaration of user callback function. This function MUST be defined in the user application.*/
+        void ${module.framework.sf_touch_ctsu_button.p_callback}(sf_touch_ctsu_button_callback_args_t * p_args);
+        #endif
+        void ${module.framework.sf_touch_ctsu_button.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+		#include &quot;sf_touch_ctsu_button.h&quot;
+		</includes>
+        <declarations>
+        #if defined(__ICCARM__)
+        #define ${module.framework.sf_touch_ctsu_button.name}_err_callback_WEAK_ATTRIBUTE
+        #pragma weak ${module.framework.sf_touch_ctsu_button.name}_err_callback  = ${module.framework.sf_touch_ctsu_button.name}_err_callback_internal
+        #elif defined(__GNUC__)
+        #define ${module.framework.sf_touch_ctsu_button.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_touch_ctsu_button.name}_err_callback_internal")))
+        #endif
+        void ${module.framework.sf_touch_ctsu_button.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_touch_ctsu_button.name}_err_callback_WEAK_ATTRIBUTE;
+        extern sf_touch_ctsu_button_individual_t* ${module.framework.sf_touch_ctsu_button.button_cfg_name}[SF_TOUCH_CTSU_BUTTON_CFG_USER_SUPPORTED_BUTTONS];
+		sf_touch_ctsu_button_instance_ctrl_t ${module.framework.sf_touch_ctsu_button.name}_ctrl;
+		sf_touch_ctsu_button_cfg_t ${module.framework.sf_touch_ctsu_button.name}_cfg =
+		{
+			.pp_button_cfgs                 = ${module.framework.sf_touch_ctsu_button.button_cfg_name},
+            .button_count                   = SF_TOUCH_CTSU_BUTTON_CFG_USER_SUPPORTED_BUTTONS,
+			.p_lower_lvl_touch_framework    = &amp;${module.framework.sf_touch_ctsu_button.requires.sf_touch_ctsu::module.framework.sf_touch_ctsu.name},
+            .p_callback                     = ${module.framework.sf_touch_ctsu_button.p_callback},
+            .p_context                      = NULL,
+            .p_extend                       = ${module.framework.sf_touch_ctsu_button.button_cfg_name},
+		};
+
+         sf_touch_ctsu_button_instance_t ${module.framework.sf_touch_ctsu_button.name} =
+        {
+            .p_ctrl = &amp;${module.framework.sf_touch_ctsu_button.name}_ctrl,
+            .p_cfg  = &amp;${module.framework.sf_touch_ctsu_button.name}_cfg,
+            .p_api  = &amp;g_sf_touch_ctsu_button_on_sf_touch_ctsu,
+        };
+        /*******************************************************************************************************************//**
+         * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+         *             with the prototype below.
+         *             - void ${module.framework.sf_touch_ctsu_button.name}_err_callback(void * p_instance, void * p_data)
+         *
+         * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+         **********************************************************************************************************************/
+        void ${module.framework.sf_touch_ctsu_button.name}_err_callback_internal(void * p_instance, void * p_data);
+        void ${module.framework.sf_touch_ctsu_button.name}_err_callback_internal(void * p_instance, void * p_data)
+        {
+           /** Suppress compiler warning for not using parameters. */
+            SSP_PARAMETER_NOT_USED(p_instance);
+            SSP_PARAMETER_NOT_USED(p_data);
+
+           /** An error has occurred. Please check function arguments for more information. */
+            BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+        }
+		</declarations>
+        <init>
+		ssp_err_t ssp_err_${module.framework.sf_touch_ctsu_button.name};
+		ssp_err_${module.framework.sf_touch_ctsu_button.name} = ${module.framework.sf_touch_ctsu_button.name}.p_api->open(${module.framework.sf_touch_ctsu_button.name}.p_ctrl, ${module.framework.sf_touch_ctsu_button.name}.p_cfg);
+        if (SSP_SUCCESS != ssp_err_${module.framework.sf_touch_ctsu_button.name})
+        {
+            ${module.framework.sf_touch_ctsu_button.name}_err_callback((void *)&amp;${module.framework.sf_touch_ctsu_button.name},&amp;ssp_err_${module.framework.sf_touch_ctsu_button.name});
+        }
+        </init>
+    </module>
+</synergyModuleDescription>

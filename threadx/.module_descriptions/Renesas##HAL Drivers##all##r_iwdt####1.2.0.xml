@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.iwdt" path="ssp_cfg/driver/r_iwdt_cfg.h" version="0">
+        <property id="config.driver.iwdt.param_checking_enable" display="Parameter Checking" default="config.driver.iwdt.param_checking_enable.bsp">
+            <option id="config.driver.iwdt.param_checking_enable.bsp" display="Default (BSP)" value="BSP_CFG_PARAM_CHECKING_ENABLE" />
+            <option id="config.driver.iwdt.param_checking_enable.enabled" display="Enabled" value="(1)" />
+            <option id="config.driver.iwdt.param_checking_enable.disabled" display="Disabled" value="(0)" />
+        </property>
+        <content>
+            #define IWDT_CFG_PARAM_CHECKING_ENABLE (${config.driver.iwdt.param_checking_enable})
+        </content>
+    </config>
+    <module id="module.driver.watchdog_on_iwdt" config="config.driver.iwdt" display="Driver|Monitoring|${module.driver.watchdog.name} Watchdog Driver on r_iwdt" version="0">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.wdt.${module.driver.watchdog.name}}" === "1"
+        </constraint>
+        <constraint display="Driver used multiple times. Can only be used once.">
+            "${interface.driver.wdt_on_iwdt}" === "1"
+        </constraint>
+        <provides interface="interface.driver.wdt" />
+        <provides interface="interface.driver.wdt_on_iwdt" />
+        <provides interface="interface.driver.wdt.${module.driver.watchdog.name}" />
+        <property default="g_wdt${_instance}" display="Name" id="module.driver.watchdog.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.watchdog.name}")</constraint>
+        </property>
+        <property display="NMI callback" id="module.driver.watchdog.nmi_callback" default="NULL">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.watchdog.nmi_callback}")</constraint>
+        </property>
+        <header>
+            /** WDT on IWDT Instance. */
+            extern const wdt_instance_t ${module.driver.watchdog.name};
+#ifndef ${module.driver.watchdog.nmi_callback}
+void ${module.driver.watchdog.nmi_callback}(wdt_callback_args_t * p_args);
+#endif
+
+        </header>
+        <includes>
+            #include "r_iwdt.h"
+            #include "r_wdt_api.h"
+        </includes>
+        <declarations>
+
+            static iwdt_instance_ctrl_t ${module.driver.watchdog.name}_ctrl;
+
+            static const wdt_cfg_t ${module.driver.watchdog.name}_cfg =
+            {
+                .p_callback = ${module.driver.watchdog.nmi_callback},
+            };
+
+/* Instance structure to use this module. */
+const wdt_instance_t ${module.driver.watchdog.name} =
+{
+    .p_ctrl        = &amp;${module.driver.watchdog.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.watchdog.name}_cfg,
+    .p_api         = &amp;g_wdt_on_iwdt
+};
+
+        </declarations>
+        <functions>
+        </functions>
+    </module>
+</synergyModuleDescription>

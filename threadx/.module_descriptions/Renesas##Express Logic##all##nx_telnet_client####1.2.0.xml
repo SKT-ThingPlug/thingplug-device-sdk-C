@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nx_telnet_client" path="ssp_cfg/framework/el/nx_telnet_client_cfg.h" version="0">
+        <content>
+        </content>
+    </config>
+    <module  config="config.el.nx_telnet_client" display="X-Ware|NetX|Protocols|${module.el.nx_telnet_client.name} NetX Telnet Client" id="module.el.nx_telnet_client" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_telnet_client.${module.el.nx_telnet_client.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_telnet_client.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.tcp" value="module.el.nx.ip.tcp.enable" />
+        </requires>
+        <requires id="module.el.nx_telnet_client.requires.nx_telnet_common" interface="interface.el.nx_telnet_common" display="Add Telnet Common" />        
+
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_telnet_client" />
+        <provides interface="interface.el.nx_telnet_client.${module.el.nx_telnet_client.name}" />
+        <!-- NetX only -->
+        <provides interface="interface.el.nx_original_telnet_client" />
+        <provides interface="interface.el.nx_original_telnet_client.${module.el.nx_telnet_client.name}" />
+        
+        <property default="g_telnet_client${_instance}" display="Name" id="module.el.nx_telnet_client.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_telnet_client.name}")</constraint>
+        </property>
+        <property default="1024" display="TCP Socket Window Size in Bytes" id="module.el.nx_telnet_client.window_size">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.nx_telnet_client.window_size}")  &amp;&amp; ("${module.el.nx_telnet_client.window_size}" &gt; 0)</constraint>
+        </property>
+        <header>
+            extern NX_TELNET_CLIENT  ${module.el.nx_telnet_client.name};
+            void ${module.el.nx_telnet_client.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_telnet_client.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_telnet_client.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_telnet_client.name}_err_callback  = ${module.el.nx_telnet_client.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_telnet_client.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_telnet_client.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_telnet_client.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_telnet_client.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_TELNET_CLIENT  ${module.el.nx_telnet_client.name};
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.el.nx_telnet_client.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+            **********************************************************************************************************************/
+            void ${module.el.nx_telnet_client.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_telnet_client.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_telnet_client.name}_err;
+            /* Create Telnet Client. */
+            ${module.el.nx_telnet_client.name}_err = nx_telnet_client_create(&amp;${module.el.nx_telnet_client.name},
+                                                                             "${module.el.nx_telnet_client.name} Telnet Client",
+                                                                             &amp;${module.el.nx_telnet_client.requires.nx.ip::module.el.nx.ip.name},
+                                                                             ${module.el.nx_telnet_client.window_size});
+            if (NX_SUCCESS != ${module.el.nx_telnet_client.name}_err)
+            {
+                ${module.el.nx_telnet_client.name}_err_callback((void *)&amp;${module.el.nx_telnet_client.name},&amp;${module.el.nx_telnet_client.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

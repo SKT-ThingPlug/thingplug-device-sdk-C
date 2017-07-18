@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.framework.sf_el_nx_comms" path="ssp_cfg/framework/sf_el_nx_comms_cfg.h" version="0">
+		<property default="config.framework.sf_comms.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_comms.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.framework.sf_comms.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.framework.sf_comms.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define SF_EL_NX_COMMS_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_comms.param_checking_enable}
+</content>
+	</config>
+	<module config="config.framework.sf_el_nx_comms" display="Framework|Connectivity|${module.framework.sf_comms.name} Communications Framework on sf_el_nx_comms" id="module.framework.sf_el_nx_comms" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_comms.${module.framework.sf_comms.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_nx_comms.requires.nx_telnet_server" interface="interface.el.nx_telnet_server" display="Add NetX Telnet Server Framework" />
+        <requires id="module.framework.sf_el_nx_comms.requires.sf_el_nx" interface="interface.framework.sf_el_nx" display="Add NetX Port" >
+			<override property="module.framework.sf_el_nx.channel" value="${module.framework.sf_comms.channel}"/>
+		</requires>        
+        <provides interface="interface.framework.sf_comms" />
+        <provides interface="interface.framework.sf_comms_on_sf_el_nx_comms" />
+        <provides interface="interface.framework.sf_comms.${module.framework.sf_comms.name}" />
+        <property default="g_sf_comms${_instance}" display="Name" id="module.framework.sf_comms.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_comms.name}")</constraint>
+        </property>
+	    <property default="0" display="Channel" id="module.framework.sf_comms.channel">
+			<constraint display="Value must be an integer between 0 and 1">testInteger("${module.framework.sf_comms.channel}")  &amp;&amp; ("${module.framework.sf_comms.channel}" &gt;= 0) &amp;&amp; ("${module.framework.sf_comms.channel}" &lt;= 1)</constraint>
+        </property>
+        <property default="192" display="IP Address Byte 1" id="module.framework.sf_comms.ip1">
+            <constraint display="Value must be between 0 and 255">testInteger("${module.framework.sf_comms.ip1}")  &amp;&amp; ("${module.framework.sf_comms.ip1}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_comms.ip1}" &lt;= 255)</constraint>
+        </property>
+        <property default="168" display="IP Address Byte 2" id="module.framework.sf_comms.ip2">
+            <constraint display="Value must be between 0 and 255">testInteger("${module.framework.sf_comms.ip2}")  &amp;&amp; ("${module.framework.sf_comms.ip2}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_comms.ip2}" &lt;= 255)</constraint>
+        </property>
+        <property default="0" display="IP Address Byte 3" id="module.framework.sf_comms.ip3">
+            <constraint display="Value must be between 0 and 255">testInteger("${module.framework.sf_comms.ip3}")  &amp;&amp; ("${module.framework.sf_comms.ip3}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_comms.ip3}" &lt;= 255)</constraint>
+        </property>
+        <property default="0" display="IP Address Byte 4" id="module.framework.sf_comms.ip4">
+            <constraint display="Value must be between 0 and 255">testInteger("${module.framework.sf_comms.ip4}")  &amp;&amp; ("${module.framework.sf_comms.ip4}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_comms.ip4}" &lt;= 255)</constraint>
+        </property>
+        <property default="255" display="Subnet Mask Byte 1" id="module.framework.sf_comms.sn1">
+            <constraint display="Value must be between 0 and 255">testInteger("${module.framework.sf_comms.sn1}")  &amp;&amp; ("${module.framework.sf_comms.sn1}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_comms.sn1}" &lt;= 255)</constraint>
+        </property>
+        <property default="255" display="Subnet Mask Byte 2" id="module.framework.sf_comms.sn2">
+            <constraint display="Value must be between 0 and 255">testInteger("${module.framework.sf_comms.sn2}")  &amp;&amp; ("${module.framework.sf_comms.sn2}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_comms.sn2}" &lt;= 255)</constraint>
+        </property>
+        <property default="255" display="Subnet Mask Byte 3" id="module.framework.sf_comms.sn3">
+            <constraint display="Value must be between 0 and 255">testInteger("${module.framework.sf_comms.sn3}")  &amp;&amp; ("${module.framework.sf_comms.sn3}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_comms.sn3}" &lt;= 255)</constraint>
+        </property>
+        <property default="0" display="Subnet Mask Byte 4" id="module.framework.sf_comms.sn4">
+            <constraint display="Value must be between 0 and 255">testInteger("${module.framework.sf_comms.sn4}")  &amp;&amp; ("${module.framework.sf_comms.sn4}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_comms.sn4}" &lt;= 255)</constraint>
+        </property>
+        <header>
+            extern const sf_comms_instance_t ${module.framework.sf_comms.name};
+            void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+		<includes>#include &quot;sf_el_nx_comms.h&quot;
+#include &quot;sf_comms_api.h&quot;</includes>
+		<declarations>
+              #if defined(__ICCARM__)
+              #define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE
+              #pragma weak ${module.framework.sf_comms.name}_err_callback  = ${module.framework.sf_comms.name}_err_callback_internal
+              #elif defined(__GNUC__)
+              #define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_comms.name}_err_callback_internal")))
+              #endif
+              void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE;
+sf_el_nx_comms_instance_ctrl_t ${module.framework.sf_comms.name}_ctrl;
+extern  VOID nx_ether_driver_eth${module.framework.sf_comms.channel}(NX_IP_DRIVER*);
+sf_el_nx_comms_on_comms_cfg_t ${module.framework.sf_comms.name}_cfg_extend =
+{
+	.ip_address = IP_ADDRESS(${module.framework.sf_comms.ip1},${module.framework.sf_comms.ip2},${module.framework.sf_comms.ip3},${module.framework.sf_comms.ip4}),
+	.subnet_mask = IP_ADDRESS(${module.framework.sf_comms.sn1},${module.framework.sf_comms.sn2},${module.framework.sf_comms.sn3},${module.framework.sf_comms.sn4}),
+	.driver   = nx_ether_driver_eth${module.framework.sf_comms.channel},
+};
+const sf_comms_cfg_t ${module.framework.sf_comms.name}_cfg =
+{
+    .p_extend = &amp;${module.framework.sf_comms.name}_cfg_extend,
+};
+/* Instance structure to use this module. */
+const sf_comms_instance_t ${module.framework.sf_comms.name} = 
+{
+    .p_ctrl        = &amp;${module.framework.sf_comms.name}_ctrl,
+    .p_cfg         = &amp;${module.framework.sf_comms.name}_cfg,
+    .p_api         = &amp;g_sf_el_nx_comms_on_sf_comms
+};
+              /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+               **********************************************************************************************************************/
+              void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data);
+              void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data)
+              {
+                /** Suppress compiler warning for not using parameters. */
+                 SSP_PARAMETER_NOT_USED(p_instance);
+                 SSP_PARAMETER_NOT_USED(p_data);
+
+                /** An error has occurred. Please check function arguments for more information. */
+                 BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+              }
+</declarations>
+        <init>
+            ssp_err_t ssp_err_${module.framework.sf_comms.name};
+            ssp_err_${module.framework.sf_comms.name} = ${module.framework.sf_comms.name}.p_api->open(${module.framework.sf_comms.name}.p_ctrl, ${module.framework.sf_comms.name}.p_cfg);
+            if (SSP_SUCCESS != ssp_err_${module.framework.sf_comms.name})
+            {
+                 ${module.framework.sf_comms.name}_err_callback((void *)&amp;${module.framework.sf_comms.name},&amp;ssp_err_${module.framework.sf_comms.name});
+            }
+        </init>
+	</module>
+</synergyModuleDescription>

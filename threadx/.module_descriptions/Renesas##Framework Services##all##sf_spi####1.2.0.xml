@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+   <!-- SPI Bus XML START here-->
+   <config id="config.framework.sf_spi_bus" path="ssp_cfg/framework/sf_spi_cfg.h" version="0">
+      <property default="config.framework.sf_spi_bus.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_spi_bus.param_checking_enable">
+         <option display="Default (BSP)" id="config.framework.sf_spi_bus.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)" />
+         <option display="Enabled" id="config.framework.sf_spi_bus.param_checking_enable.enabled" value="(1)" />
+         <option display="Disabled" id="config.framework.sf_spi_bus.param_checking_enable.disabled" value="(0)" />
+      </property>
+      <content>#define SF_SPI_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_spi_bus.param_checking_enable}</content>
+   </config>
+   <module config="config.framework.sf_spi_bus" display="Framework|Connectivity|${module.framework.sf_spi_bus.name} SPI Framework Shared Bus on sf_spi" id="module.framework.sf_spi_bus_on_sf_spi" common="100" version="1">
+       <constraint display="Module instances must have unique names">
+           "${interface.framework.sf_spi_bus.${module.framework.sf_spi_bus.name}}" === "1"
+       </constraint>
+       <requires interface="_rtos" />
+        <provides interface="interface.framework.sf_spi_bus" />
+        <provides interface="interface.framework.sf_spi_bus_on_sf_spi_bus" />
+        <provides interface="interface.framework.sf_spi_bus.${module.framework.sf_spi_bus.name}" />
+      <property default="g_sf_spi_bus${_instance}" display="Name" id="module.framework.sf_spi_bus.name">
+         <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_spi_bus.name}")</constraint>
+      </property>
+      <property id="module.framework.sf_spi_bus.spi_interface" display="SPI Implementation" default="module.framework.sf_spi_bus.spi_interface.sci">
+         <option display="SCI SPI" id="module.framework.sf_spi_bus.spi_interface.sci" value="sci" />
+         <option display="SPI" id="module.framework.sf_spi_bus.spi_interface.rspi" value="rspi"/>
+      </property>
+      <property default="0" display="Channel" id="module.framework.sf_spi_bus.channel">
+         <constraint display="Value must be an integer between 0 and 9">testInteger("${module.framework.sf_spi_bus.channel}")  &amp;&amp; ("${module.framework.sf_spi_bus.channel}" &gt;= 0) &amp;&amp; ("${module.framework.sf_spi_bus.channel}" &lt;= 9)</constraint>
+      </property>
+      <header>
+	        extern sf_spi_bus_t ${module.framework.sf_spi_bus.name};
+			extern const spi_api_t g_spi_on_${module.framework.sf_spi_bus.spi_interface};
+	  </header>
+      <includes>
+	  #include "r_cgc_api.h"
+	  #include "r_spi_api.h"
+	  #include "sf_spi.h"
+	  #include "sf_spi_api.h"
+	  </includes>
+      <declarations>
+        static TX_MUTEX             sf_bus_mutex_${module.framework.sf_spi_bus.name};
+		static TX_EVENT_FLAGS_GROUP sf_bus_eventflag_${module.framework.sf_spi_bus.name};
+		static sf_spi_ctrl_t      * p_sf_curr_ctrl_${module.framework.sf_spi_bus.name}; 
+		
+		sf_spi_bus_t ${module.framework.sf_spi_bus.name} =
+		{
+			.p_bus_name       = (uint8_t *)"${module.framework.sf_spi_bus.name}",
+			.channel          = ${module.framework.sf_spi_bus.channel},
+			.freq_hz_min      = 0,
+			.p_lock_mutex     = &amp;sf_bus_mutex_${module.framework.sf_spi_bus.name},
+			.p_sync_eventflag = &amp;sf_bus_eventflag_${module.framework.sf_spi_bus.name},
+			.pp_curr_ctrl     = (sf_spi_ctrl_t **)&amp;p_sf_curr_ctrl_${module.framework.sf_spi_bus.name},
+			.p_lower_lvl_api  = (spi_api_t *)&amp;g_spi_on_${module.framework.sf_spi_bus.spi_interface},
+			.device_count     = 0,
+		};
+      </declarations>
+   </module>
+   <!-- SPI Bus XML END here-->
+   <!-- SPI Framework XML START here-->
+   <config id="config.framework.sf_spi" path="ssp_cfg/framework/sf_spi_cfg.h" version="0">
+      <property default="config.framework.sf_spi.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_spi.param_checking_enable">
+         <option display="Default (BSP)" id="config.framework.sf_spi.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)" />
+         <option display="Enabled" id="config.framework.sf_spi.param_checking_enable.enabled" value="(1)" />
+         <option display="Disabled" id="config.framework.sf_spi.param_checking_enable.disabled" value="(0)" />
+      </property>
+      <content>#define SF_SPI_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_spi.param_checking_enable}</content>
+   </config>
+   <module config="config.framework.sf_spi" display="Framework|Connectivity|${module.framework.sf_spi.name} SPI Framework Device on sf_spi" id="module.framework.sf_spi_on_sf_spi" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_spi.${module.framework.sf_spi.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_spi_on_sf_spi.requires.spi" interface="interface.driver.spi" display="Add SPI Driver" />
+        <requires id="module.framework.sf_spi_on_sf_spi.requires.sf_spi_bus" interface="interface.framework.sf_spi_bus" display="Add SPI Framework Shared Bus" />        
+       <provides interface="interface.framework.sf_spi" />
+       <provides interface="interface.framework.sf_spi_on_sf_spi" />
+       <provides interface="interface.framework.sf_spi.${module.framework.sf_spi.name}" />
+      <property default="g_sf_spi_device${_instance}" display="Name" id="module.framework.sf_spi.name">
+         <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_spi.name}")</constraint>
+      </property>    
+      <property display="Chip Select Port" id="module.framework.sf_spi.chipselect_port" default="module.framework.sf_spi.chipselect_port.PORT_00">
+         <option id="module.framework.sf_spi.chipselect_port.PORT_00" display="00" value="00" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_01" display="01" value="01" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_02" display="02" value="02" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_03" display="03" value="03" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_04" display="04" value="04" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_05" display="05" value="05" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_06" display="06" value="06" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_07" display="07" value="07" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_08" display="08" value="08" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_09" display="09" value="09" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_10" display="10" value="10" />
+         <option id="module.framework.sf_spi.chipselect_port.PORT_11" display="11" value="11" />
+      </property>
+      <property display="Chip Select Pin" id="module.framework.sf_spi.chipselect_pin" default="module.framework.sf_spi.chipselect_pin.PIN_00">
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_00" display="00" value="00" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_01" display="01" value="01" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_02" display="02" value="02" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_03" display="03" value="03" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_04" display="04" value="04" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_05" display="05" value="05" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_06" display="06" value="06" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_07" display="07" value="07" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_08" display="08" value="08" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_09" display="09" value="09" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_10" display="10" value="10" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_11" display="11" value="11" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_12" display="12" value="12" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_13" display="13" value="13" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_14" display="14" value="14" />
+         <option id="module.framework.sf_spi.chipselect_pin.PIN_15" display="15" value="15" />
+      </property>
+      <property display="Chip Select Active Level" id="module.framework.sf_spi.chipselectactive" default="module.framework.sf_spi.chipselectactive.low">
+         <option id="module.framework.sf_spi.chipselectactive.low" display="Low" value="IOPORT_LEVEL_LOW" />
+         <option id="module.framework.sf_spi.chipselectactive.high" display="High" value="IOPORT_LEVEL_HIGH" />
+      </property>
+      <header>
+            /* SF SPI on SF SPI Instance. */
+	         extern const sf_spi_instance_t ${module.framework.sf_spi.name};
+      </header>
+      <includes>#include "sf_spi.h"
+			#include "sf_spi_api.h"</includes>
+      <declarations>sf_spi_instance_ctrl_t ${module.framework.sf_spi.name}_ctrl =
+			{
+				.p_lower_lvl_ctrl = &amp;${module.framework.sf_spi_on_sf_spi.requires.spi::module.driver.spi.name}_ctrl,
+			};
+			const sf_spi_cfg_t ${module.framework.sf_spi.name}_cfg =
+			{
+				.p_bus                    = (sf_spi_bus_t *)&amp;${module.framework.sf_spi_on_sf_spi.requires.sf_spi_bus::module.framework.sf_spi_bus.name},
+				.chip_select              = IOPORT_PORT_${module.framework.sf_spi.chipselect_port}_PIN_${module.framework.sf_spi.chipselect_pin},
+				.chip_select_level_active = ${module.framework.sf_spi.chipselectactive},
+				.p_lower_lvl_cfg          = &amp;${module.framework.sf_spi_on_sf_spi.requires.spi::module.driver.spi.name}_cfg,
+			};
+         /* Instance structure to use this module. */
+         const sf_spi_instance_t ${module.framework.sf_spi.name} = 
+         {
+             .p_ctrl        = &amp;${module.framework.sf_spi.name}_ctrl,
+             .p_cfg         = &amp;${module.framework.sf_spi.name}_cfg,
+             .p_api         = &amp;g_sf_spi_on_sf_spi
+         };
+      </declarations>
+   </module>
+   <!-- SPI Framework XML END here-->
+</synergyModuleDescription>

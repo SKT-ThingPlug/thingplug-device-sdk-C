@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <module config="config.framework.tes.dave2d" display="Framework|Graphics|D/AVE 2D Driver on dave2d" id="module.framework.tes.dave2d" common="1" version="1">
+        <requires interface="_rtos" />
+        <requires id="module.framework.tes.dave2d.requires.sf_tes_2d_drw" interface="interface.framework.sf_tes_2d_drw" display="Add TES D/AVE 2D Port Driver" />
+        <provides interface="interface.framework.tes.dave2d" />
+    </module>
+</synergyModuleDescription>

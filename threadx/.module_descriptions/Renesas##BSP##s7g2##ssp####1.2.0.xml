@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.bsp.s7g2.ssp" path="ssp_cfg/bsp/bsp_mcu_family_cfg.h" version="0">
+       <property default="config.bsp.s7g2.ssp.OFS0_Register.default" display="OFS0 register settings" id="config.bsp.s7g2.ssp.OFS0">
+			<option display="Select fields below" id="config.bsp.s7g2.ssp.OFS0_Register.default" value="(0)"/>
+        </property>
+		<property default="config.bsp.s7g2.ssp.OFS0.iwdt_start_mode.disabled" display="     IWDT Start Mode" id="config.bsp.s7g2.ssp.OFS0.iwdt_start_mode">
+			 <option display="IWDT is Disabled" id="config.bsp.s7g2.ssp.OFS0.iwdt_start_mode.disabled" value="1 &lt;&lt; 1"/>
+			 <option display="IWDT is automatically activated after a reset (Autostart mode)" id="config.bsp.s7g2.ssp.OFS0.iwdt_start_mode.enabled" value="0 &lt;&lt; 1"/>
+		</property>
+		<property default="config.bsp.s7g2.ssp.OFS0.iwdt_timeout.2048" display="     IWDT Timeout Period" id="config.bsp.s7g2.ssp.OFS0.iwdt_timeout">
+			 <option display="128 cycles" id="config.bsp.s7g2.ssp.OFS0.iwdt_timeout.128" value="0 &lt;&lt; 2"/>
+			 <option display="512 cycles" id="config.bsp.s7g2.ssp.OFS0.iwdt_timeout.512" value="1 &lt;&lt; 2"/>
+			 <option display="1024 cycles" id="config.bsp.s7g2.ssp.OFS0.iwdt_timeout.1024" value="2 &lt;&lt; 2"/>
+			 <option display="2048 cycles" id="config.bsp.s7g2.ssp.OFS0.iwdt_timeout.2048" value="3 &lt;&lt; 2"/>
+		</property>	
+		<property default="config.bsp.s7g2.ssp.OFS0.iwdt_divisor.128" display="     IWDT Dedicated Clock Frequency Divisor" id="config.bsp.s7g2.ssp.OFS0.iwdt_divisor">
+			 <option display="1" id="config.bsp.s7g2.ssp.OFS0.iwdt_divisor.1" value="0 &lt;&lt; 4"/>
+			 <option display="16" id="config.bsp.s7g2.ssp.OFS0.iwdt_divisor.16" value="2 &lt;&lt; 4"/>
+			 <option display="32" id="config.bsp.s7g2.ssp.OFS0.iwdt_divisor.32" value="3 &lt;&lt; 4"/>
+			 <option display="64" id="config.bsp.s7g2.ssp.OFS0.iwdt_divisor.64" value="4 &lt;&lt; 4"/>
+			 <option display="128" id="config.bsp.s7g2.ssp.OFS0.iwdt_divisor.128" value="15 &lt;&lt; 4"/>
+			 <option display="256" id="config.bsp.s7g2.ssp.OFS0.iwdt_divisor.256" value="5 &lt;&lt; 4"/>
+		</property>			
+		<property default="config.bsp.s7g2.ssp.OFS0.iwdt_window_end.0" display="     IWDT Window End Position" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_end">
+			 <option display="75%" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_end.75" value="0 &lt;&lt; 8"/>
+			 <option display="50%" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_end.50" value="1 &lt;&lt; 8"/>
+			 <option display="25%" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_end.25" value="2 &lt;&lt; 8"/>
+			 <option display=" 0% (no window end position)" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_end.0" value="3 &lt;&lt; 8"/>
+		</property>			
+		<property default="config.bsp.s7g2.ssp.OFS0.iwdt_window_start.100" display="     IWDT Window Start Position" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_start">
+			 <option display="25%" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_start.25" value="0 &lt;&lt; 10"/>
+			 <option display="50%" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_start.50" value="1 &lt;&lt; 10"/>
+			 <option display="75%" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_start.75" value="2 &lt;&lt; 10"/>
+			 <option display="100% (no window start position)" id="config.bsp.s7g2.ssp.OFS0.iwdt_window_start.100" value="3 &lt;&lt; 10"/>
+		</property>	
+		<property default="config.bsp.s7g2.ssp.OFS0.iwdt_reset_interrupt.Reset" display="     IWDT Reset Interrupt Request Select" id="config.bsp.s7g2.ssp.OFS0.iwdt_reset_interrupt">
+			 <option display="NMI request or interrupt request is enabled" id="config.bsp.s7g2.ssp.OFS0.iwdt_reset_interrupt.NMI" value="0 &lt;&lt; 12"/>
+			 <option display="Reset is enabled" id="config.bsp.s7g2.ssp.OFS0.iwdt_reset_interrupt.Reset" value="1 &lt;&lt; 12"/>
+		</property>
+		<property default="config.bsp.s7g2.ssp.OFS0.iwdt_stop_control.stops" display="     IWDT Stop Control" id="config.bsp.s7g2.ssp.OFS0.iwdt_stop_control">
+			 <option display="Counting continues" id="config.bsp.s7g2.ssp.OFS0.iwdt_stop_control.continues" value="0 &lt;&lt; 14"/>
+			 <option display="Stop counting when in Sleep, Snooze mode, Software Standby, or Deep Software Standby mode" id="config.bsp.s7g2.ssp.OFS0.iwdt_stop_control.stops" value="1 &lt;&lt; 14"/>
+		</property>
+		<property default="config.bsp.s7g2.ssp.OFS0.wdt_start_mode.register" display="     WDT Start Mode Select" id="config.bsp.s7g2.ssp.OFS0.wdt_start_mode">
+			 <option display="Automatically activate WDT after a reset (auto-start mode)" id="config.bsp.s7g2.ssp.OFS0.wdt_start_mode.auto" value="0 &lt;&lt; 17"/>
+			 <option display="Stop WDT after a reset (register-start mode)" id="config.bsp.s7g2.ssp.OFS0.wdt_start_mode.register" value="1 &lt;&lt; 17"/>
+		</property>
+		<property default="config.bsp.s7g2.ssp.OFS0.wdt_timeout.16384" display="     WDT Timeout Period" id="config.bsp.s7g2.ssp.OFS0.wdt_timeout">
+			 <option display="1024 cycles" id="config.bsp.s7g2.ssp.OFS0.wdt_timeout.1024" value="0 &lt;&lt; 18"/>
+			 <option display="4096 cycles" id="config.bsp.s7g2.ssp.OFS0.wdt_timeout.4096" value="1 &lt;&lt; 18"/>
+			 <option display="8192 cycles" id="config.bsp.s7g2.ssp.OFS0.wdt_timeout.8192" value="2 &lt;&lt; 18"/>
+			 <option display="16384 cycles" id="config.bsp.s7g2.ssp.OFS0.wdt_timeout.16384" value="3 &lt;&lt; 18"/>
+		</property>	
+		<property default="config.bsp.s7g2.ssp.OFS0.wdt_divisor.128" display="     WDT Clock Frequency Division Ratio" id="config.bsp.s7g2.ssp.OFS0.wdt_divisor">
+			 <option display="4" id="config.bsp.s7g2.ssp.OFS0.wdt_divisor.4" value="1 &lt;&lt; 20"/>
+			 <option display="64" id="config.bsp.s7g2.ssp.OFS0.wdt_divisor.64" value="4 &lt;&lt; 20"/>
+			 <option display="128" id="config.bsp.s7g2.ssp.OFS0.wdt_divisor.128" value="15 &lt;&lt; 20"/>
+			 <option display="512" id="config.bsp.s7g2.ssp.OFS0.wdt_divisor.512" value="6 &lt;&lt; 20"/>
+			 <option display="2048" id="config.bsp.s7g2.ssp.OFS0.wdt_divisor.2048" value="7 &lt;&lt; 20"/>
+			 <option display="8192" id="config.bsp.s7g2.ssp.OFS0.wdt_divisor.8192" value="8 &lt;&lt; 20"/>
+		</property>			
+		<property default="config.bsp.s7g2.ssp.OFS0.wdt_window_end.0" display="     WDT Window End Position" id="config.bsp.s7g2.ssp.OFS0.wdt_window_end">
+			 <option display="75%" id="config.bsp.s7g2.ssp.OFS0.wdt_window_end.75" value="0 &lt;&lt; 24"/>
+			 <option display="50%" id="config.bsp.s7g2.ssp.OFS0.wdt_window_end.50" value="1 &lt;&lt; 24"/>
+			 <option display="25%" id="config.bsp.s7g2.ssp.OFS0.wdt_window_end.25" value="2 &lt;&lt; 24"/>
+			 <option display=" 0% (no window end position)" id="config.bsp.s7g2.ssp.OFS0.wdt_window_end.0" value="3 &lt;&lt; 24"/>
+		</property>			
+		<property default="config.bsp.s7g2.ssp.OFS0.wdt_window_start.100" display="     WDT Window Start Position" id="config.bsp.s7g2.ssp.OFS0.wdt_window_start">
+			 <option display="25%" id="config.bsp.s7g2.ssp.OFS0.wdt_window_start.25" value="0 &lt;&lt; 26"/>
+			 <option display="50%" id="config.bsp.s7g2.ssp.OFS0.wdt_window_start.50" value="1 &lt;&lt; 26"/>
+			 <option display="75%" id="config.bsp.s7g2.ssp.OFS0.wdt_window_start.75" value="2 &lt;&lt; 26"/>
+			 <option display="100% (no window start position)" id="config.bsp.s7g2.ssp.OFS0.wdt_window_start.100" value="3 &lt;&lt; 26"/>
+		</property>	
+		<property default="config.bsp.s7g2.ssp.OFS0.wdt_reset_interrupt.Reset" display="     WDT Reset Interrupt Request" id="config.bsp.s7g2.ssp.OFS0.wdt_reset_interrupt">
+			 <option display="NMI" id="config.bsp.s7g2.ssp.OFS0.wdt_reset_interrupt.NMI" value="0 &lt;&lt; 28"/>
+			 <option display="Reset" id="config.bsp.s7g2.ssp.OFS0.wdt_reset_interrupt.Reset" value="1 &lt;&lt; 28"/>
+		</property>
+		<property default="config.bsp.s7g2.ssp.OFS0.wdt_stop_control.stops" display="     WDT Stop Control" id="config.bsp.s7g2.ssp.OFS0.wdt_stop_control">
+			 <option display="Counting continues" id="config.bsp.s7g2.ssp.OFS0.wdt_stop_control.continues" value="0 &lt;&lt; 30"/>
+			 <option display="Stop counting when entering Sleep mode" id="config.bsp.s7g2.ssp.OFS0.wdt_stop_control.stops" value="1 &lt;&lt; 30"/>
+		</property>		
+				
+       <property default="config.bsp.s7g2.ssp.OFS1_Register.default" display="OFS1 register settings" id="config.bsp.s7g2.ssp.OFS1">
+			<option display="Select fields below" id="config.bsp.s7g2.ssp.OFS1_Register.default" value="(0)"/>
+        </property>		
+		<property default="config.bsp.s7g2.ssp.OFS1.voltage_detection0.start.disabled" display="     Voltage Detection 0 Circuit Start" id="config.bsp.s7g2.ssp.OFS1.voltage_detection0.start">
+			 <option display="Voltage monitor 0 reset is enabled after reset" id="config.bsp.s7g2.ssp.OFS1.voltage_detection0.start.enabled" value="0 &lt;&lt; 2"/>
+			 <option display="Voltage monitor 0 reset is disabled after reset" id="config.bsp.s7g2.ssp.OFS1.voltage_detection0.start.disabled" value="1 &lt;&lt; 2"/>
+		</property>
+		
+		<property default="config.bsp.s7g2.ssp.OFS1.voltage_detection0_level.280" display="     Voltage Detection 0 Level" id="config.bsp.s7g2.ssp.OFS1.voltage_detection0_level">
+			 <option display="2.94 V" id="config.bsp.s7g2.ssp.OFS1.voltage_detection0_level.294" value="1"/>
+			 <option display="2.87 V" id="config.bsp.s7g2.ssp.OFS1.voltage_detection0_level.287" value="2"/>
+			 <option display="2.80 V" id="config.bsp.s7g2.ssp.OFS1.voltage_detection0_level.280" value="3"/>
+		</property>	
+						
+		<property default="config.bsp.s7g2.ssp.OFS1.hoco_osc.disabled" display="     HOCO OScillation Enable" id="config.bsp.s7g2.ssp.OFS1.hoco_osc">
+			 <option display="HOCO oscillation is enabled after reset" id="config.bsp.s7g2.ssp.OFS1.hoco_osc.enabled" value="0 &lt;&lt; 8"/>
+			 <option display="HOCO oscillation is disabled after reset" id="config.bsp.s7g2.ssp.OFS1.hoco_osc.disabled" value="1 &lt;&lt; 8"/>
+		</property>
+        <content>
+            #include "bsp_mcu_device_pn_cfg.h"
+            #include "bsp_mcu_device_cfg.h"
+            #include "../../../synergy/ssp/src/bsp/mcu/s7g2/bsp_mcu_info.h"
+            #include "bsp_clock_cfg.h"
+            #define BSP_MCU_GROUP_S7G2 (1)
+            #define BSP_LOCO_HZ                 (32768)
+            #define BSP_MOCO_HZ                 (8000000)
+            #define BSP_SUB_CLOCK_HZ            (32768)
+            #if   BSP_CFG_HOCO_FREQUENCY == 0
+                #define BSP_HOCO_HZ                 (16000000)
+            #elif BSP_CFG_HOCO_FREQUENCY == 1
+                #define BSP_HOCO_HZ                 (18000000)
+            #elif BSP_CFG_HOCO_FREQUENCY == 2
+                #define BSP_HOCO_HZ                 (20000000)
+            #else
+                #error "Invalid HOCO frequency chosen (BSP_CFG_HOCO_FREQUENCY) in bsp_clock_cfg.h"
+            #endif
+
+            #define BSP_CORTEX_VECTOR_TABLE_ENTRIES    (16U)
+            #define BSP_VECTOR_TABLE_MAX_ENTRIES       (112U)
+            #define BSP_MCU_VBATT_SUPPORT       (1)
+
+            #define OFS_SEQ1 0xA001A001 | (${config.bsp.s7g2.ssp.OFS0.iwdt_start_mode}) | (${config.bsp.s7g2.ssp.OFS0.iwdt_timeout})
+            #define OFS_SEQ2 (${config.bsp.s7g2.ssp.OFS0.iwdt_divisor}) | (${config.bsp.s7g2.ssp.OFS0.iwdt_window_end}) | (${config.bsp.s7g2.ssp.OFS0.iwdt_window_start})
+            #define OFS_SEQ3 (${config.bsp.s7g2.ssp.OFS0.iwdt_reset_interrupt}) | (${config.bsp.s7g2.ssp.OFS0.iwdt_stop_control}) | (${config.bsp.s7g2.ssp.OFS0.wdt_start_mode})
+            #define OFS_SEQ4 (${config.bsp.s7g2.ssp.OFS0.wdt_timeout}) |(${config.bsp.s7g2.ssp.OFS0.wdt_divisor}) | (${config.bsp.s7g2.ssp.OFS0.wdt_window_end}) | (${config.bsp.s7g2.ssp.OFS0.wdt_window_start})
+            #define OFS_SEQ5 (${config.bsp.s7g2.ssp.OFS0.wdt_reset_interrupt}) | (${config.bsp.s7g2.ssp.OFS0.wdt_stop_control})           
+            #define BSP_CFG_ROM_REG_OFS0 (OFS_SEQ1 | OFS_SEQ2 | OFS_SEQ3 | OFS_SEQ4 | OFS_SEQ5)           
+            #define BSP_CFG_ROM_REG_OFS1 (0xFFFFFEF8 | (${config.bsp.s7g2.ssp.OFS1.voltage_detection0.start}) | (${config.bsp.s7g2.ssp.OFS1.voltage_detection0_level}) |  (${config.bsp.s7g2.ssp.OFS1.hoco_osc}))
+        </content>
+    </config>   
+    <bsp id="bsp.s7g2.ssp" config="config.bsp.s7g2.ssp" display="S7G2 Family" version="0">
+        <clock>
+            <node id="board.clock.xtal.freq" xhint="0" yhint="0" default="24000000" tooltip="Click to edit the XTAL frequency.">
+                <option id="_edit" display="XTAL ${value}Hz" macroName="BSP_CFG_XTAL_HZ" macroValue="(${value})" />
+            </node>
+            <node id="board.clock.pll.source" xhint="1" yhint="1" default="board.clock.pll.source.xtal">
+                <option id="board.clock.pll.source.xtal" display="PLL Src: XTAL" input="board.clock.xtal.freq" macroName="BSP_CFG_PLL_SOURCE" macroValue="(CGC_CLOCK_MAIN_OSC)" />
+                <option id="board.clock.pll.source.hoco" display="PLL Src: HOCO" input="board.clock.hoco.freq" macroName="BSP_CFG_PLL_SOURCE" macroValue="(CGC_CLOCK_HOCO)" />
+            </node>
+            <node id="board.clock.hoco.freq" xhint="0" yhint="5" default="board.clock.hoco.freq.20m">
+                <option id="board.clock.hoco.freq.16m" display="HOCO 16MHz" mul="16000000" macroName="BSP_CFG_HOCO_FREQUENCY" macroValue="(0)" />
+                <option id="board.clock.hoco.freq.18m" display="HOCO 18MHz" mul="18000000" macroName="BSP_CFG_HOCO_FREQUENCY" macroValue="(1)" />
+                <option id="board.clock.hoco.freq.20m" display="HOCO 20MHz" mul="20000000" macroName="BSP_CFG_HOCO_FREQUENCY" macroValue="(2)" />
+            </node>
+            <node id="board.clock.loco.freq" xhint="0" yhint="6" default="board.clock.loco.freq.32768">
+                <option id="board.clock.loco.freq.32768" display="LOCO 32768Hz" mul="32768" />
+            </node>
+            <node id="board.clock.moco.freq" xhint="0" yhint="7" default="board.clock.moco.freq.8m">
+                <option id="board.clock.moco.freq.8m" display="MOCO 8MHz" mul="8000000" />
+            </node>
+            <node id="board.clock.subclk.freq" xhint="0" yhint="8" default="board.clock.subclk.freq.32768">
+                <option id="board.clock.subclk.freq.32768" display="SUBCLK 32768Hz" mul="32768" />
+            </node>
+            <node id="board.clock.pll.div" xhint="1" yhint="2" default="board.clock.pll.div.2">
+                <option id="board.clock.pll.div.1" display="PLL Div /1" div="1" input="board.clock.pll.source" macroName="BSP_CFG_PLL_DIV" macroValue="(CGC_PLL_DIV_1)" />
+                <option id="board.clock.pll.div.2" display="PLL Div /2" div="2" input="board.clock.pll.source" macroName="BSP_CFG_PLL_DIV" macroValue="(CGC_PLL_DIV_2)" />
+                <option id="board.clock.pll.div.3" display="PLL Div /3" div="3" input="board.clock.pll.source" macroName="BSP_CFG_PLL_DIV" macroValue="(CGC_PLL_DIV_3)" />
+            </node>
+            <node id="board.clock.pll.mul" xhint="1" yhint="3" default="board.clock.pll.mul.200">
+                <option id="board.clock.pll.mul.100" display="PLL Mul x10.0" mul="100" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(10.0)" />
+                <option id="board.clock.pll.mul.105" display="PLL Mul x10.5" mul="105" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(10.5)" />
+                <option id="board.clock.pll.mul.110" display="PLL Mul x11.0" mul="110" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(11.0)" />
+                <option id="board.clock.pll.mul.115" display="PLL Mul x11.5" mul="115" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(11.5)" />
+                <option id="board.clock.pll.mul.120" display="PLL Mul x12.0" mul="120" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(12.0)" />
+                <option id="board.clock.pll.mul.125" display="PLL Mul x12.5" mul="125" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(12.5)" />
+                <option id="board.clock.pll.mul.130" display="PLL Mul x13.0" mul="130" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(13.0)" />
+                <option id="board.clock.pll.mul.135" display="PLL Mul x13.5" mul="135" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(13.5)" />
+                <option id="board.clock.pll.mul.140" display="PLL Mul x14.0" mul="140" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(14.0)" />
+                <option id="board.clock.pll.mul.145" display="PLL Mul x14.5" mul="145" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(14.5)" />
+                <option id="board.clock.pll.mul.150" display="PLL Mul x15.0" mul="150" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(15.0)" />
+                <option id="board.clock.pll.mul.155" display="PLL Mul x15.5" mul="155" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(15.5)" />
+                <option id="board.clock.pll.mul.160" display="PLL Mul x16.0" mul="160" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(16.0)" />
+                <option id="board.clock.pll.mul.165" display="PLL Mul x16.5" mul="165" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(16.5)" />
+                <option id="board.clock.pll.mul.170" display="PLL Mul x17.0" mul="170" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(17.0)" />
+                <option id="board.clock.pll.mul.175" display="PLL Mul x17.5" mul="175" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(17.5)" />
+                <option id="board.clock.pll.mul.180" display="PLL Mul x18.0" mul="180" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(18.0)" />
+                <option id="board.clock.pll.mul.185" display="PLL Mul x18.5" mul="185" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(18.5)" />
+                <option id="board.clock.pll.mul.190" display="PLL Mul x19.0" mul="190" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(19.0)" />
+                <option id="board.clock.pll.mul.195" display="PLL Mul x19.5" mul="195" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(19.5)" />
+                <option id="board.clock.pll.mul.200" display="PLL Mul x20.0" mul="200" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(20.0)" />
+                <option id="board.clock.pll.mul.205" display="PLL Mul x20.5" mul="205" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(20.5)" />
+                <option id="board.clock.pll.mul.210" display="PLL Mul x21.0" mul="210" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(21.0)" />
+                <option id="board.clock.pll.mul.215" display="PLL Mul x21.5" mul="215" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(21.5)" />
+                <option id="board.clock.pll.mul.220" display="PLL Mul x22.0" mul="220" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(22.0)" />
+                <option id="board.clock.pll.mul.225" display="PLL Mul x22.5" mul="225" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(22.5)" />
+                <option id="board.clock.pll.mul.230" display="PLL Mul x23.0" mul="230" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(23.0)" />
+                <option id="board.clock.pll.mul.235" display="PLL Mul x23.5" mul="235" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(23.5)" />
+                <option id="board.clock.pll.mul.240" display="PLL Mul x24.0" mul="240" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(24.0)" />
+                <option id="board.clock.pll.mul.245" display="PLL Mul x24.5" mul="245" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(24.5)" />
+                <option id="board.clock.pll.mul.250" display="PLL Mul x25.0" mul="250" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(25.0)" />
+                <option id="board.clock.pll.mul.255" display="PLL Mul x25.5" mul="255" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(25.5)" />
+                <option id="board.clock.pll.mul.260" display="PLL Mul x26.0" mul="260" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(26.0)" />
+                <option id="board.clock.pll.mul.265" display="PLL Mul x26.5" mul="265" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(26.5)" />
+                <option id="board.clock.pll.mul.270" display="PLL Mul x27.0" mul="270" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(27.0)" />
+                <option id="board.clock.pll.mul.275" display="PLL Mul x27.5" mul="275" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(27.5)" />
+                <option id="board.clock.pll.mul.280" display="PLL Mul x28.0" mul="280" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(28.0)" />
+                <option id="board.clock.pll.mul.285" display="PLL Mul x28.5" mul="285" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(28.5)" />
+                <option id="board.clock.pll.mul.290" display="PLL Mul x29.0" mul="290" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(29.0)" />
+                <option id="board.clock.pll.mul.295" display="PLL Mul x29.5" mul="295" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(29.5)" />
+                <option id="board.clock.pll.mul.300" display="PLL Mul x30.0" mul="300" div="10" input="board.clock.pll.div" macroName="BSP_CFG_PLL_MUL" macroValue="(30.0)" />
+            </node>
+            <node id="board.clock.pll.display" xhint="1" yhint="4">
+                <option id="board.clock.pll.display.value" input="board.clock.pll.mul" display="PLL ${value}Hz" minValue="120000000" maxValue="240000000" />
+            </node>
+            <node id="board.clock.clock.source" xhint="2" yhint="4" default="board.clock.clock.source.pll">
+                <option id="board.clock.clock.source.hoco" display="Clock Src: HOCO" input="board.clock.hoco.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_HOCO)" />
+                <option id="board.clock.clock.source.moco" display="Clock Src: MOCO" input="board.clock.moco.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_MOCO)" />
+                <option id="board.clock.clock.source.loco" display="Clock Src: LOCO" input="board.clock.loco.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_LOCO)" />
+                <option id="board.clock.clock.source.xtal" display="Clock Src: XTAL" input="board.clock.xtal.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_MAIN_OSC)" />
+                <option id="board.clock.clock.source.subclk" display="Clock Src: SUBCLK" input="board.clock.subclk.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_SUBCLOCK)" />
+                <option id="board.clock.clock.source.pll" display="Clock Src: PLL" input="board.clock.pll.display" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_PLL)" />
+            </node>
+            <node id="board.clock.iclk.div" xhint="3" yhint="0" default="board.clock.iclk.div.1">
+                <option id="board.clock.iclk.div.1" display="ICLK Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.iclk.div.2" display="ICLK Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.iclk.div.4" display="ICLK Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.iclk.div.8" display="ICLK Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.iclk.div.16" display="ICLK Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.iclk.div.32" display="ICLK Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.iclk.div.64" display="ICLK Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.iclk.display" xhint="4" yhint="0" tooltip="The system clock (ICLK) is used as the operating clock of the CPU, DMAC, DTC, ROM and RAM.">
+                <option id="board.clock.iclk.display.value" input="board.clock.iclk.div" display="ICLK ${value}Hz" maxValue="240000000" />
+            </node>
+            <node id="board.clock.pclka.div" xhint="3" yhint="1" default="board.clock.pclka.div.2">
+                <option id="board.clock.pclka.div.1" display="PCLKA Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_PCKA_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.pclka.div.2" display="PCLKA Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_PCKA_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.pclka.div.4" display="PCLKA Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_PCKA_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.pclka.div.8" display="PCLKA Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_PCKA_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.pclka.div.16" display="PCLKA Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_PCKA_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.pclka.div.32" display="PCLKA Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_PCKA_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.pclka.div.64" display="PCLKA Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_PCKA_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.pclka.display" xhint="4" yhint="1" tooltip="The Peripheral clock A (PCLKA) is used as the operating clock for the ETHER, USBHS, QSPI, RSPI, SCI, TSIP, GLCD, SDHI, CRC, JPEG, G2D, GPT and Standby-RAM modules.">
+                <option id="board.clock.pclka.display.value" input="board.clock.pclka.div" display="PCLKA ${value}Hz" maxValue="120000000" />
+            </node>
+            <node id="board.clock.pclkb.div" xhint="3" yhint="2" default="board.clock.pclkb.div.4">
+                <option id="board.clock.pclkb.div.1" display="PCLKB Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.pclkb.div.2" display="PCLKB Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.pclkb.div.4" display="PCLKB Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.pclkb.div.8" display="PCLKB Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.pclkb.div.16" display="PCLKB Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.pclkb.div.32" display="PCLKB Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.pclkb.div.64" display="PCLKB Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.pclkb.display" xhint="4" yhint="2" tooltip="The Peripheral clock B (PCLKB) is used as the operating clock for all other modules not supported by PCLKA, PCLKC and PCLKD.">
+                <option id="board.clock.pclkb.display.value" input="board.clock.pclkb.div" display="PCLKB ${value}Hz" maxValue="60000000" />
+            </node>
+            <node id="board.clock.pclkc.div" xhint="3" yhint="3" default="board.clock.pclkc.div.4">
+                <option id="board.clock.pclkc.div.1" display="PCLKC Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_PCKC_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.pclkc.div.2" display="PCLKC Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_PCKC_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.pclkc.div.4" display="PCLKC Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_PCKC_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.pclkc.div.8" display="PCLKC Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_PCKC_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.pclkc.div.16" display="PCLKC Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_PCKC_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.pclkc.div.32" display="PCLKC Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_PCKC_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.pclkc.div.64" display="PCLKC Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_PCKC_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.pclkc.display" xhint="4" yhint="3" tooltip="The Peripheral clock C (PCLKC) is used as the operating clock for the ADC modules.">
+                <option id="board.clock.pclkc.display.value" input="board.clock.pclkc.div" display="PCLKC ${value}Hz" maxValue="60000000" />
+            </node>
+            <node id="board.clock.pclkd.div" xhint="3" yhint="4" default="board.clock.pclkd.div.2">
+                <option id="board.clock.pclkd.div.1" display="PCLKD Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.pclkd.div.2" display="PCLKD Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.pclkd.div.4" display="PCLKD Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.pclkd.div.8" display="PCLKD Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.pclkd.div.16" display="PCLKD Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.pclkd.div.32" display="PCLKD Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.pclkd.div.64" display="PCLKD Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.pclkd.display" xhint="4" yhint="4" tooltip="The Peripheral clock D (PCLKD) is used as the operating clock for the GPT module.">
+                <option id="board.clock.pclkd.display.value" input="board.clock.pclkd.div" display="PCLKD ${value}Hz" maxValue="120000000" />
+            </node>
+            <node id="board.clock.sdclkout.div" xhint="3" yhint="5" default="board.clock.sdclkout.div.1">
+                <option id="board.clock.sdclkout.div.0" display="SDCLKout Off" mul="0" input="board.clock.bclk.div" macroName="BSP_CFG_SDCLK_OUTPUT" macroValue="(0)" />
+                <option id="board.clock.sdclkout.div.1" display="SDCLKout On" div="1" input="board.clock.bclk.div" macroName="BSP_CFG_SDCLK_OUTPUT" macroValue="(1)" />
+            </node>
+            <node id="board.clock.sdclkout.display" xhint="4" yhint="5" tooltip="The SDRAM clock (SDCLK) is an operating clock for the external bus controller.\nIt is output externally from the SDCLK pin for the SDRAM that is connected to the external bus.">
+                <option id="board.clock.sdclkout.display.value" input="board.clock.sdclkout.div" display="SDCLKout ${value}Hz" maxValue="120000000" />
+            </node>
+            <node id="board.clock.bclk.div" xhint="3" yhint="6" default="board.clock.bclk.div.2">
+                <option id="board.clock.bclk.div.1" display="BCLK Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_BCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.bclk.div.2" display="BCLK Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_BCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.bclk.div.4" display="BCLK Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_BCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.bclk.div.8" display="BCLK Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_BCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.bclk.div.16" display="BCLK Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_BCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.bclk.div.32" display="BCLK Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_BCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.bclk.div.64" display="BCLK Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_BCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.bclk.display" xhint="4" yhint="6" tooltip="The external bus clock (BCLK) is an operating clock for the external bus controller.\nIt is also output externally from the BCLK pin for the external connection bus.">
+                <option id="board.clock.bclk.display.value" input="board.clock.bclk.div" display="BCLK ${value}Hz" maxValue="120000000" />
+            </node>
+            <node id="board.clock.bclkout.div" xhint="3" yhint="7" default="board.clock.bclkout.div.2">
+                <option id="board.clock.bclkout.div.0" display="No output" mul="0" input="board.clock.bclk.div" macroName="BSP_CFG_BCLK_OUTPUT" macroValue="(0)" />
+                <option id="board.clock.bclkout.div.1" display="BCK" div="1" input="board.clock.bclk.div" macroName="BSP_CFG_BCLK_OUTPUT" macroValue="(1)" />
+                <option id="board.clock.bclkout.div.2" display="BCK/2" div="2" input="board.clock.bclk.div" macroName="BSP_CFG_BCLK_OUTPUT" macroValue="(2)" />
+            </node>
+            <node id="board.clock.bclkout.display" xhint="4" yhint="7" tooltip="Whether to output the BCLK frequency on the BCLKOUT pin.">
+                <option id="board.clock.bclkout.display.value" input="board.clock.bclkout.div" display="BCLKout ${value}Hz" maxValue="60000000" />
+            </node>
+            <node id="board.clock.uclk.div" xhint="3" yhint="8" default="board.clock.uclk.div.5">
+                <option id="board.clock.uclk.div.3" display="UCLK Div /3" div="3" input="board.clock.clock.source" macroName="BSP_CFG_UCK_DIV" macroValue="(CGC_USB_CLOCK_DIV_3)" />
+                <option id="board.clock.uclk.div.4" display="UCLK Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_UCK_DIV" macroValue="(CGC_USB_CLOCK_DIV_4)" />
+                <option id="board.clock.uclk.div.5" display="UCLK Div /5" div="5" input="board.clock.clock.source" macroName="BSP_CFG_UCK_DIV" macroValue="(CGC_USB_CLOCK_DIV_5)" />
+             </node>
+            <node id="board.clock.uclk.display" xhint="4" yhint="8" tooltip="The USB clock (UCLK) is an operating clock for the USBFS module.\nA 48-MHz clock must be supplied to the USB module.\nWhen the USB module is used, setting must be made so that UCLK is 48 MHz.">
+                <option id="board.clock.uclk.display.value" input="board.clock.uclk.div" display="UCLK ${value}Hz" minValue="48000000" maxValue="48000000" />
+            </node>
+            <node id="board.clock.fclk.div" xhint="3" yhint="9" default="board.clock.fclk.div.4">
+                <option id="board.clock.fclk.div.1" display="FCLK Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_FCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.fclk.div.2" display="FCLK Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_FCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.fclk.div.4" display="FCLK Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_FCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.fclk.div.8" display="FCLK Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_FCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.fclk.div.16" display="FCLK Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_FCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.fclk.div.32" display="FCLK Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_FCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.fclk.div.64" display="FCLK Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_FCK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.fclk.display" xhint="4" yhint="9" tooltip="The flash-interface clock (FCLK) is used as the operating clock for the flash-memory interfaces.\nThat is, FCLK is used for programming and erasure of the ROM and E2 DataFlash, and reading from the E2 DataFlash.">
+                <option id="board.clock.fclk.display.value" input="board.clock.fclk.div" display="FCLK ${value}Hz" minValue="4000000" maxValue="60000000" />
+            </node>
+        </clock>
+    </bsp>
+</synergyModuleDescription>

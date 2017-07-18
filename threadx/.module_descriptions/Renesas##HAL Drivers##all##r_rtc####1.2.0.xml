@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.rtc" path="ssp_cfg/driver/r_rtc_cfg.h" version="0">
+		<property default="config.driver.rtc.param_checking_enable.bsp" display="Parameter Checking Enable" id="config.driver.rtc.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.rtc.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.rtc.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.rtc.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define RTC_CFG_PARAM_CHECKING_ENABLE ${config.driver.rtc.param_checking_enable}
+</content>
+	</config>
+	<module config="config.driver.rtc" display="Driver|Timers|${module.driver.rtc.name} RTC Driver on r_rtc" id="module.driver.rtc_on_rtc" version="1">
+        <constraint display="Requires Interrupt enabled">
+          ("${module.driver.rtc.p_callback}" === "NULL") || ("${module.driver.rtc.alarm_ipl}" != "board.icu.common.irq.disabled") || ("${module.driver.rtc.periodic_ipl}" != "board.icu.common.irq.disabled") || ("${module.driver.rtc.carry_ipl}" != "board.icu.common.irq.disabled")
+        </constraint>
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.rtc.${module.driver.rtc.name}}" === "1"
+        </constraint>        
+        <provides interface="interface.driver.rtc" />
+        <provides interface="interface.driver.rtc_on_rtc" />
+        <provides interface="interface.driver.rtc.${module.driver.rtc.name}" />        
+        <property default="g_rtc${_instance}" display="Name" id="module.driver.rtc.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.rtc.name}")</constraint>
+        </property>
+		<property default="module.driver.rtc.clock_source.clock_source_loco" display="Clock Source" id="module.driver.rtc.clock_source">
+			<option display="Sub-Clock" id="module.driver.rtc.clock_source.clock_source_subclk" value="RTC_CLOCK_SOURCE_SUBCLK"/>
+			<option display="LOCO" id="module.driver.rtc.clock_source.clock_source_loco" value="RTC_CLOCK_SOURCE_LOCO"/>
+		</property>
+        <property default="0" display="Error Adjustment Value [DEPRECATED]" id="module.driver.rtc.error_adjustment_value">
+            <constraint display="Value locked as it is deprecated" > ("${module.driver.rtc.error_adjustment_value}" === 0)</constraint>
+        </property>
+        <property default="module.driver.rtc.error_adjustment_type.error_adjustment_none" display="Error Adjustment Type [DEPRECATED]" id="module.driver.rtc.error_adjustment_type">
+            <option display="None" id="module.driver.rtc.error_adjustment_type.error_adjustment_none" value="RTC_ERROR_ADJUSTMENT_NONE"/>
+        </property>
+        <property default="NULL" display="Callback" id="module.driver.rtc.p_callback">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.rtc.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Alarm Interrupt Priority" id="module.driver.rtc.alarm_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Period Interrupt Priority" id="module.driver.rtc.periodic_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Carry Interrupt Priority" id="module.driver.rtc.carry_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <header>
+            /** RTC on RTC Instance. */
+            extern const rtc_instance_t ${module.driver.rtc.name};
+			#ifndef ${module.driver.rtc.p_callback}
+            void ${module.driver.rtc.p_callback}(rtc_callback_args_t * p_args);
+            #endif
+        </header>
+		<includes>#include &quot;r_rtc.h&quot;
+#include &quot;r_rtc_api.h&quot;</includes>
+		<declarations>
+#if ${module.driver.rtc.alarm_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.rtc.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_RTC)
+SSP_VECTOR_DEFINE(rtc_alarm_isr, RTC, ALARM);
+#endif
+#endif
+#if ${module.driver.rtc.periodic_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.rtc.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_RTC)
+SSP_VECTOR_DEFINE(rtc_period_isr, RTC, PERIOD);
+#endif
+#endif
+#if ${module.driver.rtc.carry_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.rtc.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_RTC)
+SSP_VECTOR_DEFINE(rtc_carry_isr, RTC, CARRY);
+#endif
+#endif
+rtc_instance_ctrl_t ${module.driver.rtc.name}_ctrl;
+const rtc_cfg_t ${module.driver.rtc.name}_cfg =
+{
+    .clock_source           = ${module.driver.rtc.clock_source},
+    .error_adjustment_value = ${module.driver.rtc.error_adjustment_value},
+    .error_adjustment_type  = ${module.driver.rtc.error_adjustment_type},
+    .p_callback             = ${module.driver.rtc.p_callback},
+    .p_context              = &amp;${module.driver.rtc.name},
+    .alarm_ipl              = ${module.driver.rtc.alarm_ipl},
+    .periodic_ipl           = ${module.driver.rtc.periodic_ipl},
+    .carry_ipl              = ${module.driver.rtc.carry_ipl},
+};
+/* Instance structure to use this module. */
+const rtc_instance_t ${module.driver.rtc.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.rtc.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.rtc.name}_cfg,
+    .p_api         = &amp;g_rtc_on_rtc
+};
+
+</declarations>
+	</module>
+</synergyModuleDescription>

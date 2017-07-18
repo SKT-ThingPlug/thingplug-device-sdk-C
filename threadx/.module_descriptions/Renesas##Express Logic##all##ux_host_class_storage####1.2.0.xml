@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_host_class_storage" path="ssp_cfg/framework/el/ux_host_class_storage_user.h" version="0">
+        <content>
+        #if (${interface.el.ux_host_class_storage_src})
+        #include "ux_host_class_storage_src_user.h"
+        #endif
+        </content>
+    </config>
+    <module config="config.el.ux_host_class_storage" display="X-Ware|USBX|Host|Classes|Mass Storage|${module.el.host_class.name} USBX Host Class Mass Storage" id="module.el.ux_host_class_storage" common = "100" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.ux_host_class_storage.${module.el.host_class.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_host_class_storage_src" display="Add USBX Host Class Mass Storage Source [Optional]" id="module.el.ux_host_class_storage.requires.ux_host_class_storage_src" find="false" />
+        <requires id="module.el.ux_host_class_storage.requires.ux_host" interface="interface.el.ux_host" display="Add USB Host Configuration" />
+        <provides interface="interface.el.ux_host_class_storage" />
+        <provides interface="interface.el.ux_host_class_storage.${module.el.host_class.name}" />
+        <property default="g_ux_host_class_storage${_instance}" display="Name" id="module.el.host_class.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.host_class.name}")</constraint>
+        </property>
+        <header>
+            #include "ux_api.h"
+            #include "ux_host_class_storage.h"
+
+            /* Pointer to a USBX Host Mass Storage Class Instance */
+            extern UX_HOST_CLASS_STORAGE * ${module.el.host_class.name};
+        </header>
+        <macros>
+            #define USB_HOST_STORAGE_CLASS_REGISTER
+        </macros>
+        <declarations>
+            /* Pointer to a USBX Host Mass Storage Class Instance */
+            UX_HOST_CLASS_STORAGE * ${module.el.host_class.name};
+        </declarations>
+        <init>
+        </init>
+    </module>
+</synergyModuleDescription>

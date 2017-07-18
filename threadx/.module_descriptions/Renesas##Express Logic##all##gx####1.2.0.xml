@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.gx" path="ssp_cfg/framework/el/gx_user.h" version="0">
+        <property id="config.el.gx.enable_synergy_drw" display="Enable Synergy 2D Drawing Engine Support" default="config.el.gx.enable_synergy_drw.no" description="GUIX enables Synergy 2D Drawing Engine rendersing if you say yes.">
+            <option id="config.el.gx.enable_synergy_drw.yes" display="Yes" value="(1)"/>
+            <option id="config.el.gx.enable_synergy_drw.no"  display="No(default)" value="(0)"/>
+        </property>
+        <property id="config.el.gx.enable_synergy_jpeg" display="Enable Synergy JPEG Support" default="config.el.gx.enable_synergy_jpeg.no" description="GUIX enables Synergy JPEG Codec Support if you say yes.">
+            <option id="config.el.gx.enable_synergy_jpeg.yes" display="Yes" value="(1)"/>
+            <option id="config.el.gx.enable_synergy_jpeg.no"  display="No(default)" value="(0)"/>
+        </property>
+        <content>
+#if (${interface.el.gx_src})
+#include "gx_src_user.h"
+#endif
+#define GX_USE_SYNERGY_DRW  ${config.el.gx.enable_synergy_drw}
+#define GX_USE_SYNERGY_JPEG ${config.el.gx.enable_synergy_jpeg}
+        </content>
+    </config>
+    <module config="config.el.gx" display="X-Ware|GUIX|GUIX on gx" id="module.el.gx" common="100" version="1">
+        <requires interface="_rtos" />
+        <requires id="module.el.gx.requires.sf_el_gx" interface="interface.framework.sf_el_gx" display="Add GUIX Port" />
+        <requires id="module.el.gx.requires.gx_src" interface="interface.el.gx_src" display="Add GUIX Source" find="false" />
+        <provides interface="interface.el.gx" />
+    </module>
+</synergyModuleDescription>

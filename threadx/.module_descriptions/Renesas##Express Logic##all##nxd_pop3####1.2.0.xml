@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nxd_pop3_client" path="ssp_cfg/framework/el/nxd_pop3_client_cfg.h" version="0">
+        <property default="2000" display="Maximum buffer size to store messages (bytes)" id="config.el.nxd_pop3_client.mail_buffer_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.mail_buffer_size}")  &amp;&amp; ("${config.el.nxd_pop3_client.mail_buffer_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1" display="Packet time out (seconds)" id="config.el.nxd_pop3_client.packet_time_out">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.packet_time_out}")  &amp;&amp; ("${config.el.nxd_pop3_client.packet_time_out}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="30" display="Connection time out (seconds)" id="config.el.nxd_pop3_client.connection_time_out">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.connection_time_out}")  &amp;&amp; ("${config.el.nxd_pop3_client.connection_time_out}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2" display="Disconnect time out (seconds)" id="config.el.nxd_pop3_client.disconnect_time_out">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.disconnect_time_out}")  &amp;&amp; ("${config.el.nxd_pop3_client.disconnect_time_out}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2" display="TCP socket send wait (seconds)" id="config.el.nxd_pop3_client.tcp_socket_wait">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.tcp_socket_wait}")  &amp;&amp; ("${config.el.nxd_pop3_client.tcp_socket_wait}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Server reply timeout (seconds)" id="config.el.nxd_pop3_client.server_reply_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.server_reply_timeout}")  &amp;&amp; ("${config.el.nxd_pop3_client.server_reply_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1460" display="TCP window size (bytes)" id="config.el.nxd_pop3_client.client_tcp_window_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.client_tcp_window_size}")  &amp;&amp; ("${config.el.nxd_pop3_client.client_tcp_window_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="40" display="Maximum user name length (bytes)" id="config.el.nxd_pop3_client.max_username">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.max_username}")  &amp;&amp; ("${config.el.nxd_pop3_client.max_username}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Maximum password length (bytes)" id="config.el.nxd_pop3_client.max_password">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_pop3_client.max_password}")  &amp;&amp; ("${config.el.nxd_pop3_client.max_password}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_POP3_CLIENT_MAIL_BUFFER_SIZE            (${config.el.nxd_pop3_client.mail_buffer_size})
+            #define NX_POP3_CLIENT_PACKET_TIMEOUT              (${config.el.nxd_pop3_client.packet_time_out} * NX_IP_PERIODIC_RATE)
+            #define NX_POP3_CLIENT_CONNECTION_TIMEOUT          (${config.el.nxd_pop3_client.connection_time_out} * NX_IP_PERIODIC_RATE)
+            #define NX_POP3_CLIENT_DISCONNECT_TIMEOUT          (${config.el.nxd_pop3_client.disconnect_time_out} * NX_IP_PERIODIC_RATE)
+            #define NX_POP3_TCP_SOCKET_SEND_WAIT               (${config.el.nxd_pop3_client.tcp_socket_wait} * NX_IP_PERIODIC_RATE)
+            #define NX_POP3_SERVER_REPLY_TIMEOUT               (${config.el.nxd_pop3_client.server_reply_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_POP3_CLIENT_TCP_WINDOW_SIZE             (${config.el.nxd_pop3_client.client_tcp_window_size})
+            #define NX_POP3_MAX_USERNAME                       (${config.el.nxd_pop3_client.max_username})
+            #define NX_POP3_MAX_PASSWORD                       (${config.el.nxd_pop3_client.max_password})
+        </content>
+    </config>
+    <module config="config.el.nxd_pop3_client" display="X-Ware|NetX Duo|Protocols|${module.el.nx_pop3_client.name} NetX Duo POP3 Client" id="module.el.nxd_pop3_client" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_pop3_client.${module.el.nx_pop3_client.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_pop3_client.requires.nxd.ip" interface="interface.el.nxd.ip" display="Add NetX Duo IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.tcp" value="module.el.nx.ip.tcp.enable" />
+        </requires>
+        <requires id="module.el.nx_pop3_client.requires.nxd.packet_pool" interface="interface.el.nxd.packet_pool" display="Add NetX Duo Packet Pool" />
+        <requires id="module.el.nx_pop3_client.requires.nxd_md5" interface="interface.el.nxd_md5" display="Add NetX Duo MD5" />
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_pop3_client" />
+        <provides interface="interface.el.nx_pop3_client.${module.el.nx_pop3_client.name}" />
+        <!-- NetX Duo only -->
+        <provides interface="interface.el.nxd_pop3_client"/>
+        <provides interface="interface.el.nxd_pop3_client.${module.el.nx_pop3_client.name}" />
+        
+        <property default="g_pop3_client${_instance}" display="Name" id="module.el.nx_pop3_client.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_pop3_client.name}")
+            </constraint>
+        </property>
+        <property default="module.el.nx_pop3_client.apop_authentication.disable" display="APOP Authentication" id="module.el.nx_pop3_client.apop_authentication">
+            <option id="module.el.nx_pop3_client.apop_authentication.enable" display="Enable" value="NX_TRUE" />
+            <option id="module.el.nx_pop3_client.apop_authentication.disable" display="Disable" value="NX_FALSE" />
+        </property>
+        <property default="module.el.nx_pop3_client.address_type.ipv6" display="Use server address type" id="module.el.nx_pop3_client.address_type">
+            <option display="IPv4" id="module.el.nx_pop3_client.address_type.ipv4" value="0"/>
+            <option display="IPv6" id="module.el.nx_pop3_client.address_type.ipv6" value="1"/>
+        </property>        
+        <property default="192,168,0,2" display="Server IPv4 Address (use commas for separation)" id="module.el.nx_pop3_client.server_address_ipv4">
+            <constraint display="Must be valid IP address separated by commas">"${module.el.nx_pop3_client.server_address_ipv4}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="0x2001,0x0,0x0,0x0,0x0,0x0,0x0,0x1" display="Server IPv6 Address (use commas for separation)" id="module.el.nx_pop3_client.server_address_ipv6">
+            <constraint display="Must be valid IPv6 address separated by commas">"${module.el.nx_pop3_client.server_address_ipv6}".split(",").length == 8</constraint>
+        </property>
+        <property default="110" display="Server Port number" id="module.el.nx_pop3_client.server_port">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${module.el.nx_pop3_client.server_port}")  &amp;&amp; ("${module.el.nx_pop3_client.server_port}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="username@domain.com" display="Client Name" id="module.el.nx_pop3_client.client_name" />
+        <property default="password" display="Client Password" id="module.el.nx_pop3_client.client_password" />
+        <property default="module.el.nx_pop3_client.init.disable" display="Auto initialization" id="module.el.nx_pop3_client.init">
+            <option display="Enable"  id="module.el.nx_pop3_client.init.enable"  value="1"/>
+            <option display="Disable" id="module.el.nx_pop3_client.init.disable" value="0"/>
+        </property>
+        <property default="pop3_client_init${_instance}" display="Name of generated initialization function" id="module.el.nx_pop3_client.init_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_pop3_client.init_function}")</constraint>
+        </property>
+        <header>
+            extern NX_POP3_CLIENT  ${module.el.nx_pop3_client.name};
+            void ${module.el.nx_pop3_client.name}_err_callback(void * p_instance, void * p_data);
+            void ${module.el.nx_pop3_client.init_function}(void);
+        </header>
+        <includes>
+            #include "nxd_pop3_client.h"
+            #include "nx_md5.h"
+        </includes>
+        <macros>
+            #ifndef NX_DISABLE_IPV6
+            #ifndef FILL_NXD_IPV6_ADDRESS
+            #define FILL_NXD_IPV6_ADDRESS(ipv6,f0,f1,f2,f3,f4,f5,f6,f7) do { \
+                                                                       ipv6.nxd_ip_address.v6[0] = (((uint32_t)f0 &lt;&lt; 16) &amp; 0xFFFF0000) | ((uint32_t)f1 &amp; 0x0000FFFF);\
+                                                                       ipv6.nxd_ip_address.v6[1] = (((uint32_t)f2 &lt;&lt; 16) &amp; 0xFFFF0000) | ((uint32_t)f3 &amp; 0x0000FFFF);\
+                                                                       ipv6.nxd_ip_address.v6[2] = (((uint32_t)f4 &lt;&lt; 16) &amp; 0xFFFF0000) | ((uint32_t)f5 &amp; 0x0000FFFF);\
+                                                                       ipv6.nxd_ip_address.v6[3] = (((uint32_t)f6 &lt;&lt; 16) &amp; 0xFFFF0000) | ((uint32_t)f7 &amp; 0x0000FFFF);\
+                                                                       ipv6.nxd_ip_version       = NX_IP_VERSION_V6;\
+                                                                   } while(0);
+            #endif /* FILL_NXD_IPV6_ADDRESS */
+            #endif
+        </macros>
+        <declarations>
+            NX_POP3_CLIENT  ${module.el.nx_pop3_client.name};
+            #ifndef NX_DISABLE_IPV6
+            NXD_ADDRESS ${module.el.nx_pop3_client.name}_ip_address;
+            #else
+            ULONG ${module.el.nx_pop3_client.name}_ip_address;
+            #endif
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_pop3_client.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_pop3_client.name}_err_callback  = ${module.el.nx_pop3_client.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_pop3_client.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_pop3_client.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_pop3_client.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_pop3_client.name}_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.nx_pop3_client.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_pop3_client.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_pop3_client.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }      
+
+            /*******************************************************************************************************************//**
+             * @brief     This is nx POP3 initialization function. User Can call this function in the application if required with the below mentioned prototype.
+             *            - void ${module.el.nx_pop3_client.init_function}(void)
+             **********************************************************************************************************************/
+            void ${module.el.nx_pop3_client.init_function} (void)                  
+            {
+                UINT ${module.el.nx_pop3_client.name}_err;
+                /* Create POP3 Client. */
+                #ifndef NX_DISABLE_IPV6
+                #if !(${module.el.nx_pop3_client.address_type})
+                ${module.el.nx_pop3_client.name}_ip_address.nxd_ip_version = NX_IP_VERSION_V4;
+                ${module.el.nx_pop3_client.name}_ip_address.nxd_ip_address.v4 = IP_ADDRESS(${module.el.nx_pop3_client.server_address_ipv4});
+                #else
+                FILL_NXD_IPV6_ADDRESS(${module.el.nx_pop3_client.name}_ip_address,${module.el.nx_pop3_client.server_address_ipv6});
+                #endif
+                ${module.el.nx_pop3_client.name}_err = nxd_pop3_client_create(&amp;${module.el.nx_pop3_client.name},
+                                                                             ${module.el.nx_pop3_client.apop_authentication},
+                                                                             &amp;${module.el.nx_pop3_client.requires.nxd.ip::module.el.nx.ip.name},
+                                                                             &amp;${module.el.nx_pop3_client.requires.nxd.packet_pool::module.el.nx.packet_pool.name},
+                                                                             &amp;${module.el.nx_pop3_client.name}_ip_address,
+                                                                             ${module.el.nx_pop3_client.server_port},
+                                                                             "${module.el.nx_pop3_client.client_name}",
+                                                                             "${module.el.nx_pop3_client.client_password}");
+                #else
+                ${module.el.nx_pop3_client.name}_ip_address = IP_ADDRESS(${module.el.nx_pop3_client.server_address_ipv4});
+                ${module.el.nx_pop3_client.name}_err = nx_pop3_client_create(&amp;${module.el.nx_pop3_client.name},
+                                                                             ${module.el.nx_pop3_client.apop_authentication},
+                                                                             &amp;${module.el.nx_pop3_client.requires.nxd.ip::module.el.nx.ip.name},
+                                                                             &amp;${module.el.nx_pop3_client.requires.nxd.packet_pool::module.el.nx.packet_pool.name},
+                                                                             &amp;${module.el.nx_pop3_client.name}_ip_address,
+                                                                             ${module.el.nx_pop3_client.server_port},
+                                                                             "${module.el.nx_pop3_client.client_name}",
+                                                                             "${module.el.nx_pop3_client.client_password}");            
+                #endif            
+                if (NX_SUCCESS != ${module.el.nx_pop3_client.name}_err)
+                {
+                    ${module.el.nx_pop3_client.name}_err_callback((void *)&amp;${module.el.nx_pop3_client.name},&amp;${module.el.nx_pop3_client.name}_err);
+                }            
+            }
+        </declarations>
+        <init>
+               /** Call POP3 client initialization function. User Can call at later time as well if required. */
+               #if (${module.el.nx_pop3_client.init})
+                    ${module.el.nx_pop3_client.init_function}(); 
+               #endif
+        </init>
+    </module>
+</synergyModuleDescription>

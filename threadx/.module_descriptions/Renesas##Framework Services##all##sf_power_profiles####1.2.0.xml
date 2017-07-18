@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+<!-- SF Power Profiles XML START here-->  
+    <config id="config.framework.sf_power_profiles" path="ssp_cfg/framework/sf_power_profiles_cfg.h" version="0">
+        <property default="config.framework.sf_power_profiles.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_power_profiles.param_checking_enable">
+            <option display="Default (BSP)" id="config.framework.sf_power_profiles.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_power_profiles.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_power_profiles.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="config.framework.sf_power_profiles.rtc_support_enable.disabled" display="RTC Support" id="config.framework.sf_power_profiles.rtc_support_enable">
+            <option display="Enabled" id="config.framework.sf_power_profiles.rtc_support_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_power_profiles.rtc_support_enable.disabled" value="(0)"/>
+        </property>
+        <content>
+           #define SF_POWER_PROFILES_RTC_SUPPORT_ENABLE ${config.framework.sf_power_profiles.rtc_support_enable}		
+           #define SF_POWER_PROFILES_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_power_profiles.param_checking_enable}
+        </content>		
+    </config>   
+    <module config="config.framework.sf_power_profiles" display="Framework|Services|${module.framework.sf_power_profiles.name} Power Profiles Framework on sf_power_profiles" id="module.framework.sf_power_profiles_on_sf_power_profiles" version="1">
+         <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_power_profiles.${module.framework.sf_power_profiles.name}}" === "1"
+        </constraint>       				
+       <constraint display="Requires RTC Module when in RTC Support is enabled">
+           (("${config.framework.sf_power_profiles.rtc_support_enable}" === "config.framework.sf_power_profiles.rtc_support_enable.disabled") ||
+            (testExists("${module.framework.sf_power_profiles_on_sf_power_profiles.requires.rtc::module.driver.rtc.name}")))
+       </constraint>
+        <constraint display="Requires RTC Support enabled when in RTC operating mode">
+            (("${config.framework.sf_power_profiles.rtc_support_enable}" === "config.framework.sf_power_profiles.rtc_support_enable.enabled") ||
+             ("${module.framework.sf_power_profiles.operating_mode}" != "module.framework.sf_power_profiles.operating_mode.rtc"))
+        </constraint>
+
+        <requires id="module.framework.sf_power_profiles_on_sf_power_profiles.requires.rtc" interface="interface.driver.rtc" display="Add RTC Driver" />
+        <requires id="module.framework.sf_power_profiles_on_sf_power_profiles.requires.lpm" interface="interface.driver.lpm" display="Add LPM Driver" />
+        <provides interface="interface.framework.sf_power_profiles" />
+        <provides interface="interface.framework.sf_power_profiles_on_sf_power_profiles" />
+	    <provides interface="interface.framework.sf_power_profiles.${module.framework.sf_power_profiles.name}" />
+		
+        <property id="module.framework.sf_power_profiles.name" display="Name" default="g_sf_power_profiles${_instance}">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_power_profiles.name}")</constraint>
+        </property>     		
+        <property id="module.framework.sf_power_profiles.p_callback" display="Callback" default="NULL">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_power_profiles.p_callback}")</constraint>
+        </property>  
+
+        <property id="module.framework.sf_power_profiles.wake_cfg_table" display="Wakeup pin config table" default="NULL">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_power_profiles.wake_cfg_table}")</constraint>
+        </property>
+ 
+        <property id="module.framework.sf_power_profiles.sleep_cfg_table" display="Sleep pin config table" default="NULL">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_power_profiles.sleep_cfg_table}")</constraint>
+        </property>
+  
+       <property id="module.framework.sf_power_profiles.operating_mode" display="Operating mode" default="module.framework.sf_power_profiles.operating_mode.run">
+			<option display="Run" id="module.framework.sf_power_profiles.operating_mode.run" value="SF_POWER_PROFILES_MODE_RUN"/>
+			<option display="RTC" id="module.framework.sf_power_profiles.operating_mode.rtc" value="SF_POWER_PROFILES_MODE_RTC"/>
+			<option display="External" id="module.framework.sf_power_profiles.operating_mode.ext" value="SF_POWER_PROFILES_MODE_EXTERNAL"/>
+        </property>			     		
+         <header>
+            /** Power Profiles on Power Profiles instance */
+            extern sf_power_profiles_instance_t ${module.framework.sf_power_profiles.name};
+			
+			
+            #ifdef ${module.framework.sf_power_profiles.sleep_cfg_table}
+			#define POWER_PROFILES_ON_POWER_PROFILES_SLEEP_TBL_USED_${module.framework.sf_power_profiles.name} (0)
+			#else
+			#define POWER_PROFILES_ON_POWER_PROFILES_SLEEP_TBL_USED_${module.framework.sf_power_profiles.name} (1)			
+			#endif
+			
+	        #if POWER_PROFILES_ON_POWER_PROFILES_SLEEP_TBL_USED_${module.framework.sf_power_profiles.name}
+			extern const ioport_cfg_t ${module.framework.sf_power_profiles.sleep_cfg_table};
+            #endif
+
+			#ifdef ${module.framework.sf_power_profiles.wake_cfg_table}
+			#define POWER_PROFILES_ON_POWER_PROFILES_WAKE_TBL_USED_${module.framework.sf_power_profiles.name} (0)
+			#else
+			#define POWER_PROFILES_ON_POWER_PROFILES_WAKE_TBL_USED_${module.framework.sf_power_profiles.name} (1)			
+			#endif	
+
+	        #if POWER_PROFILES_ON_POWER_PROFILES_WAKE_TBL_USED_${module.framework.sf_power_profiles.name}
+			extern const ioport_cfg_t ${module.framework.sf_power_profiles.wake_cfg_table};
+            #endif
+				
+			
+            #ifdef ${module.framework.sf_power_profiles.p_callback}
+            #define POWER_PROFILES_ON_POWER_PROFILES_CALLBACK_USED_${module.framework.sf_power_profiles.name} (0)
+            #else
+            #define POWER_PROFILES_ON_POWER_PROFILES_CALLBACK_USED_${module.framework.sf_power_profiles.name} (1)
+            #endif
+			
+			
+            #if POWER_PROFILES_ON_POWER_PROFILES_CALLBACK_USED_${module.framework.sf_power_profiles.name}
+            void ${module.framework.sf_power_profiles.p_callback}(sf_power_profiles_callback_args_t * p_args);
+            #endif
+			
+            #if POWER_PROFILES_ON_POWER_PROFILES_CALLBACK_USED_${module.framework.sf_power_profiles.name}
+            void ${module.framework.sf_power_profiles.p_callback}(sf_power_profiles_callback_args_t * p_args);
+            #endif
+			
+            
+        </header>
+        <includes>
+            #include &quot;sf_power_profiles.h&quot;
+      </includes>
+    <declarations>
+             #if POWER_PROFILES_ON_POWER_PROFILES_CALLBACK_USED_${module.framework.sf_power_profiles.name}
+            void ${module.framework.sf_power_profiles.p_callback}(sf_power_profiles_callback_args_t * p_args);
+            #endif
+            sf_power_profiles_ctrl_t ${module.framework.sf_power_profiles.name}_ctrl; 
+            sf_power_profiles_cfg_t ${module.framework.sf_power_profiles.name}_cfg =
+            {
+             #if SF_POWER_PROFILES_RTC_SUPPORT_ENABLE
+    			.p_lower_lvl_rtc    = &amp;${module.framework.sf_power_profiles_on_sf_power_profiles.requires.rtc::module.driver.rtc.name},
+             #endif				
+                .p_lower_lvl_lpm  = &amp;${module.framework.sf_power_profiles_on_sf_power_profiles.requires.lpm::module.driver.lpm.name},
+                .operating_mode      = ${module.framework.sf_power_profiles.operating_mode},
+                .p_callback         = ${module.framework.sf_power_profiles.p_callback},
+				
+            #if POWER_PROFILES_ON_POWER_PROFILES_WAKE_TBL_USED_${module.framework.sf_power_profiles.name}
+                .p_wake_ioport_pin_tbl      = &amp;${module.framework.sf_power_profiles.wake_cfg_table},
+			#else	
+                .p_wake_ioport_pin_tbl      = NULL,
+			#endif	
+
+            #if POWER_PROFILES_ON_POWER_PROFILES_SLEEP_TBL_USED_${module.framework.sf_power_profiles.name}
+                .p_sleep_ioport_pin_tbl     = &amp;${module.framework.sf_power_profiles.sleep_cfg_table},
+			#else	
+                .p_sleep_ioport_pin_tbl      = NULL,
+			#endif			
+            };
+    
+            sf_power_profiles_instance_t ${module.framework.sf_power_profiles.name} =
+            {
+                .p_ctrl = &amp;${module.framework.sf_power_profiles.name}_ctrl,
+                .p_cfg =  &amp;${module.framework.sf_power_profiles.name}_cfg,
+                .p_api =  &amp;g_sf_power_profiles_on_sf_power_profiles,
+            };
+
+    </declarations>
+    </module>
+</synergyModuleDescription>

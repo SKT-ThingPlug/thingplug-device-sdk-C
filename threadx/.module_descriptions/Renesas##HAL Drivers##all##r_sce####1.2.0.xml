@@ -1,0 +1,294 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <!-- SCE periphheral configuration and module description -->
+    <config id="config.driver.sce" path="ssp_cfg/driver/r_sce_cfg.h" version="0">
+        <content></content>
+    </config>        
+    <module config="config.driver.sce" display="Driver|Crypto|${module.driver.sce.name} SCE COMMON Driver on r_sce" id="module.driver.sce" common="1" version="1">
+    <provides interface="interface.driver.crypto"/>
+        <property default="g_sce" display="Name" id="module.driver.sce.name">
+            <constraint display="Name must be a valid C symbol">
+                testSymbol("${module.driver.sce.name}")
+            </constraint>
+        </property>
+        <header>
+            extern const crypto_instance_t ${module.driver.sce.name};
+        </header>       
+        <includes>
+            #include &quot;r_crypto_api.h&quot;
+        </includes>
+        <declarations>
+            crypto_ctrl_t ${module.driver.sce.name}_ctrl;
+            crypto_cfg_t  ${module.driver.sce.name}_cfg =  
+            { .p_sce_long_plg_start_callback = NULL, 
+              .p_sce_long_plg_end_callback   = NULL
+            };            
+            const crypto_instance_t ${module.driver.sce.name} =
+            {
+                  .p_ctrl = &amp;${module.driver.sce.name}_ctrl ,
+                  .p_cfg  = &amp;${module.driver.sce.name}_cfg  ,
+                  .p_api  = &amp;g_sce_crypto_api
+            };
+        </declarations>
+        <init>
+        </init>
+    </module>
+
+    <!-- random number generation configuration and module description -->
+    <config id="config.driver.sce_trng" path="ssp_cfg/driver/r_sce_trng_cfg.h" version="0">
+        <content></content>
+    </config>        
+    <module config="config.driver.sce_trng" display="Driver|Crypto|${module.driver.sce_trng.name} TRNG Driver on r_sce_trng" id="module.driver.sce_trng" common="1" version="1">
+        <requires interface="interface.driver.crypto" display="Add SCE COMMON Driver" id="module.driver.sce" />
+        <provides interface="interface.driver.crypto.trng"/>
+        <property default="g_sce_trng" display="Name" id="module.driver.sce_trng.name">
+            <constraint display="Name must be a valid C symbol">
+                testSymbol("${module.driver.sce_trng.name}")</constraint>
+        </property>
+        <property default="2" display="Max. Attempts" id="module.driver.sce_trng.nattempts">
+            <constraint display="Maximum number of attempts must be a positive integer">
+                testInteger("${module.driver.sce_trng.nattempts}")
+            </constraint>
+        </property>
+        <header>
+            extern const trng_instance_t ${module.driver.sce_trng.name};
+        </header>       
+        <includes>
+            #include &quot;r_trng_api.h&quot;
+        </includes>
+        <declarations>
+            trng_ctrl_t ${module.driver.sce_trng.name}_ctrl;
+            trng_cfg_t  ${module.driver.sce_trng.name}_cfg =
+            {
+              .p_crypto_api = &amp;g_sce_crypto_api,
+              .nattempts = ${module.driver.sce_trng.nattempts}
+            };
+            const trng_instance_t ${module.driver.sce_trng.name} =
+            {
+                  .p_ctrl = &amp;${module.driver.sce_trng.name}_ctrl ,
+                  .p_cfg  = &amp;${module.driver.sce_trng.name}_cfg  ,
+                  .p_api  = &amp;g_trng_on_sce
+            };
+        </declarations>
+        <init>
+       </init>
+    </module>
+
+    <!-- AES configuration and module description -->
+    <config id="config.driver.sce_aes" path="ssp_cfg/driver/r_sce_aes_cfg.h" version="0">
+        <content></content>
+    </config>        
+    <module config="config.driver.sce_aes" display="Driver|Crypto|${module.driver.sce_aes.name} AES Driver on r_sce_aes" id="module.driver.sce_aes" version="1">
+        <requires interface="interface.driver.crypto" display="Add SCE COMMON Driver" id="module.driver.sce" />    <provides interface="interface.driver.crypto.aes"/>
+        <property default="g_sce_aes_${_instance}" display="Name" id="module.driver.sce_aes.name">
+            <constraint display="Name must be a valid C symbol">
+                testSymbol("${module.driver.sce_aes.name}")
+            </constraint>
+        </property>
+        <property display="Key Length"
+             id="module.driver.sce_aes.key_length" 
+             default="module.driver.sce_aes.key_length.key128bit" >          
+            <option display="128" 
+                    id="module.driver.sce_aes.key_length.key128bit"
+                    value="128"/>
+            <option display="192" 
+                    id="module.driver.sce_aes.key_length.key192bit"
+                    value="192"/>
+            <option display="256"
+                    id="module.driver.sce_aes.key_length.key256bit"
+                    value="256"/>
+        </property>
+        <property display="Chaining Mode" 
+            id="module.driver.sce_aes.chaining_mode"
+            default="module.driver.sce_aes.chaining_mode.cbc">
+            <option display="ECB" 
+                    id="module.driver.sce_aes.chaining_mode.ecb"
+                    value="ecb"/>
+            <option display="CBC" 
+                    id="module.driver.sce_aes.chaining_mode.cbc"
+                    value="cbc"/>
+            <option display="CTR"
+                    id="module.driver.sce_aes.chaining_mode.ctr"
+                    value="ctr"/>
+            <option display="GCM" 
+                    id="module.driver.sce_aes.chaining_mode.gcm"
+                    value="gcm"/>
+            <option display="XTS" 
+                    id="module.driver.sce_aes.chaining_mode.xts"
+                    value="xts"/>
+        </property>        
+        <header>
+            extern const aes_instance_t ${module.driver.sce_aes.name};
+        </header>       
+        <includes>
+            #include &quot;r_aes_api.h&quot;
+        </includes>
+        <declarations>
+            #if ( (${module.driver.sce_aes.key_length} == 192) &amp;&amp; !( defined(BSP_MCU_GROUP_S7G2) || defined(BSP_MCU_GROUP_S5D9) ) )
+            #error  "AES 192-bit Driver on SCE Feature not available for selected MCU"
+            #endif
+            aes_ctrl_t ${module.driver.sce_aes.name}_ctrl;
+            aes_cfg_t  ${module.driver.sce_aes.name}_cfg =
+            {
+              .p_crypto_api = &amp;g_sce_crypto_api
+            };
+            const aes_instance_t ${module.driver.sce_aes.name} =
+            {
+                  .p_ctrl = &amp;${module.driver.sce_aes.name}_ctrl ,
+                  .p_cfg  = &amp;${module.driver.sce_aes.name}_cfg  ,
+                  .p_api  = &amp;g_aes${module.driver.sce_aes.key_length}${module.driver.sce_aes.chaining_mode}_on_sce
+            };
+        </declarations>
+        <init>
+        </init>
+    </module>
+
+    <!-- Hash (message digest) driver configuration and module description -->
+    <config id="config.driver.sce_hash" path="ssp_cfg/driver/r_sce_hash_cfg.h" version="0">
+        <content></content>
+    </config>        
+    <module config="config.driver.sce_hash" display="Driver|Crypto|${module.driver.sce_hash.name} HASH Driver on r_sce_hash" id="module.driver.sce_hash" version="1">
+        <requires interface="interface.driver.crypto" display="Add SCE COMMON Driver" id="module.driver.sce" />
+        <provides interface="interface.driver.crypto.hash"/>
+        <property default="g_sce_hash_${_instance}" display="Name (for S7G2, S5D9 devices only)" id="module.driver.sce_hash.name">
+            <constraint display="Name must be a valid C symbol">
+                testSymbol("${module.driver.sce_hash.name}")
+            </constraint>
+        </property>
+        <property display="Algorithm"
+             id="module.driver.sce_hash.algorithm" 
+             default="module.driver.sce_hash.algorithm.sha256" >          
+            <option display="SHA1" 
+                    id="module.driver.sce_hash.algorithm.sha1"
+                    value="sha1"/>
+            <option display="SHA256"
+                    id="module.driver.sce_hash.algorithm.sha256"
+                    value="sha256"/>
+        </property>
+        <header>
+            extern const hash_instance_t ${module.driver.sce_hash.name};
+        </header>       
+        <includes>
+            #include &quot;r_hash_api.h&quot;
+        </includes>
+        <declarations>
+        #if defined(BSP_MCU_GROUP_S7G2) || defined(BSP_MCU_GROUP_S5D9)
+            hash_ctrl_t ${module.driver.sce_hash.name}_ctrl;
+            hash_cfg_t  ${module.driver.sce_hash.name}_cfg =
+            {
+              .p_crypto_api  = &amp;g_sce_crypto_api
+            };
+            const hash_instance_t ${module.driver.sce_hash.name} =
+            {
+                  .p_ctrl = &amp;${module.driver.sce_hash.name}_ctrl ,
+                  .p_cfg  = &amp;${module.driver.sce_hash.name}_cfg  ,
+                  .p_api  = &amp;g_${module.driver.sce_hash.algorithm}_hash_on_sce
+            };
+        #else
+            #error  "HASH Driver on SCE Feature not available for selected MCU"
+        #endif
+        </declarations>
+        <init>
+        </init>
+    </module>
+
+    <!-- RSA configuration and module description -->
+    <config id="config.driver.sce_rsa" path="ssp_cfg/driver/r_sce_rsa_cfg.h" version="0">
+        <content></content>
+    </config>        
+    <module config="config.driver.sce_rsa" display="Driver|Crypto|${module.driver.sce_rsa.name} RSA Driver on r_sce_rsa" id="module.driver.sce_rsa" version="1">
+        <requires interface="interface.driver.crypto" display="Add SCE COMMON Driver" id="module.driver.sce" />    <provides interface="interface.driver.crypto.rsa"/>
+        <property default="g_sce_rsa_${_instance}" display="Name (for S7G2, S5D9 devices only)" id="module.driver.sce_rsa.name">
+            <constraint display="Name must be a valid C symbol">
+                testSymbol("${module.driver.sce_rsa.name}")
+            </constraint>
+        </property>
+        <property display="Key Length"
+             id="module.driver.sce_rsa.key_length" 
+             default="module.driver.sce_rsa.key_length.key2048bit" >
+            <option display="1024" 
+                    id="module.driver.sce_rsa.key_length.key1024bit"
+                    value="1024"/>
+            <option display="2048"
+                    id="module.driver.sce_rsa.key_length.key2048bit"
+                    value="2048"/>
+        </property>
+        <header>
+            extern const rsa_instance_t ${module.driver.sce_rsa.name};
+        </header>       
+        <includes>
+            #include &quot;r_rsa_api.h&quot;
+        </includes>
+        <declarations>
+        #if defined(BSP_MCU_GROUP_S7G2) || defined(BSP_MCU_GROUP_S5D9)
+            rsa_ctrl_t ${module.driver.sce_rsa.name}_ctrl;
+            rsa_cfg_t  ${module.driver.sce_rsa.name}_cfg =
+            {
+              .p_crypto_api = &amp;g_sce_crypto_api
+            };
+            const rsa_instance_t ${module.driver.sce_rsa.name} =
+            {
+                  .p_ctrl = &amp;${module.driver.sce_rsa.name}_ctrl ,
+                  .p_cfg  = &amp;${module.driver.sce_rsa.name}_cfg  ,
+                  .p_api  = &amp;g_rsa${module.driver.sce_rsa.key_length}_on_sce
+            };
+        #else
+            #error  "RSA Driver on SCE Feature not available for selected MCU"
+        #endif
+        </declarations>
+        <init>
+        </init>
+    </module>
+    
+    <!-- DSA configuration and module description -->
+    <config id="config.driver.sce_dsa" path="ssp_cfg/driver/r_sce_dsa_cfg.h" version="0">
+        <content></content>
+    </config>        
+    <module config="config.driver.sce_dsa" display="Driver|Crypto|${module.driver.sce_dsa.name} DSA Driver on r_sce_dsa" id="module.driver.sce_dsa" version="1">
+        <requires interface="interface.driver.crypto" display="Add SCE COMMON Driver" id="module.driver.sce" />    <provides interface="interface.driver.crypto.dsa"/>
+        <property default="g_sce_dsa_${_instance}" display="Name (for S7G2, S5D9 devices only)" id="module.driver.sce_dsa.name">
+            <constraint display="Name must be a valid C symbol">
+                testSymbol("${module.driver.sce_dsa.name}")
+            </constraint>
+        </property>
+        <property display="Key Length"
+             id="module.driver.sce_dsa.key_length" 
+             default="module.driver.sce_dsa.key_length.key2048_256bit" >
+            <option display="(1024, 160)" 
+                    id="module.driver.sce_dsa.key_length.key1024_160bit"
+                    value="1024_160"/>
+            <option display="(2048, 224)"
+                    id="module.driver.sce_dsa.key_length.key2048_224bit"
+                    value="2048_224"/>
+            <option display="(2048, 256)"
+                    id="module.driver.sce_dsa.key_length.key2048_256bit"
+                    value="2048_256"/>
+        </property>
+        <header>
+            extern const dsa_instance_t ${module.driver.sce_dsa.name};
+        </header>       
+        <includes>
+            #include &quot;r_dsa_api.h&quot;
+        </includes>
+        <declarations>
+        #if defined(BSP_MCU_GROUP_S7G2) || defined(BSP_MCU_GROUP_S5D9)
+            dsa_ctrl_t ${module.driver.sce_dsa.name}_ctrl;
+            dsa_cfg_t  ${module.driver.sce_dsa.name}_cfg =
+            {
+              .p_crypto_api = &amp;g_sce_crypto_api
+            };
+            const dsa_instance_t ${module.driver.sce_dsa.name} =
+            {
+                  .p_ctrl = &amp;${module.driver.sce_dsa.name}_ctrl ,
+                  .p_cfg  = &amp;${module.driver.sce_dsa.name}_cfg  ,
+                  .p_api  = &amp;g_dsa${module.driver.sce_dsa.key_length}_on_sce
+            };
+        #else
+            #error  "DSA Driver on SCE Feature not available for selected MCU"
+        #endif
+        </declarations>
+        <init>
+        </init>
+    </module>
+
+</synergyModuleDescription>

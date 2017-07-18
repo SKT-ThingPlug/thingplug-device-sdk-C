@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_el_ux_comms_v2" path="ssp_cfg/framework/sf_el_ux_comms_cfg_v2.h" version="0">
+        <property default="config.framework.sf_comms.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_comms.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_comms.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_comms.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="128" display="Read Input Buffer Size (Bytes)" id="config.framework.sf_comms.read_size">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.read_size}") &amp;&amp; "${config.framework.sf_comms.read_size}" &gt; 0</constraint>
+        </property>
+        <property default="1000" display="Timeout in ticks" id="config.framework.sf_comms.timeout">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.timeout}") &amp;&amp; "${config.framework.sf_comms.timeout}" &gt; 0</constraint>
+        </property>
+        <content>
+                  #define SF_EL_UX_COMMS_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_comms.param_checking_enable}
+                  #define SF_EL_UX_COMMS_CFG_BUFFER_MAX_LENGTH (${config.framework.sf_comms.read_size})
+                  #define SF_EL_UX_COMMS_CFG_BUFFER_TIMEOUT_COUNT (${config.framework.sf_comms.timeout})
+        </content>
+    </config>
+    <module config="config.framework.sf_el_ux_comms_v2" display="Framework|Connectivity|${module.framework.sf_comms.name} Communications Framework on sf_el_ux_comms" id="module.framework.sf_el_ux_comms_v2" version="1">
+        <constraint display="Module instances must have unique names">
+                  "${interface.framework.sf_comms.${module.framework.sf_comms.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2" interface="interface.el.ux_device_class_cdc_acm_v2" display="Add USBX Device Class CDC ACM Framework" />
+        <provides interface="interface.framework.sf_comms" />
+        <provides interface="interface.framework.sf_comms_on_sf_el_ux_comms" />
+        <provides interface="interface.framework.sf_comms.${module.framework.sf_comms.name}" />
+        <property default="g_sf_comms${_instance}" display="Name" id="module.framework.sf_comms.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_comms.name}")</constraint>
+        </property>
+        <property default="sf_comms_init${_instance}" display="Name of the sf comms initialization function" id="module.framework.sf_comms.init_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_comms.init_function}")</constraint>
+        </property>
+        <property default="module.framework.sf_comms.init.enable" display="Auto sf comms Initialization" id="module.framework.sf_comms.init">
+            <option display="Enable"  id="module.framework.sf_comms.init.enable"  value="1"/>
+            <option display="Disable" id="module.framework.sf_comms.init.disable" value="0"/>
+        </property>
+        <header>
+                  /* USB Communication Framework Instance */
+                  extern const sf_comms_instance_t ${module.framework.sf_comms.name};
+                  /* USBX CDC-ACM Instance Activate User Callback Function */
+                  VOID ${module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2::module.el.ux_device_class_cdc_acm_v2.pfunc_activate} (VOID *cdc_instance);
+                  /* USBX CDC-ACM Instance Deactivate User Callback Function */
+                  VOID ${module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2::module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate} (VOID *cdc_instance);
+                  void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data);
+                  void ${module.framework.sf_comms.init_function}(void);
+        </header>
+        <includes>
+                  #include &quot;sf_el_ux_comms_v2.h&quot;
+                  #include &quot;sf_comms_api.h&quot;
+        </includes>
+        <declarations>
+                  #if defined(__ICCARM__)
+                  #define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE
+                  #pragma weak ${module.framework.sf_comms.name}_err_callback  = ${module.framework.sf_comms.name}_err_callback_internal
+                  #elif defined(__GNUC__)
+                  #define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_comms.name}_err_callback_internal")))
+                  #endif
+                  void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE;
+                  /***********************************************************************************************************************
+                   * USB Communications Framework (SF_EL_UX_COMMS) Instance for ${module.framework.sf_comms.name}
+                   **********************************************************************************************************************/
+                  sf_el_ux_comms_instance_ctrl_t ${module.framework.sf_comms.name}_instance_ctrl =
+                  {
+                      .p_cdc = NULL,
+                  };
+                  
+                  /* Instance structure to use this module. */
+                  const sf_comms_instance_t ${module.framework.sf_comms.name} = 
+                  {
+                      .p_ctrl        = &amp;${module.framework.sf_comms.name}_instance_ctrl,
+                      .p_cfg         = NULL,
+                      .p_api         = &amp;g_sf_el_ux_comms_on_sf_comms
+                  };
+                  
+                  /***********************************************************************************************************************
+                   * USBX Device CDC-ACM Instance Activate Callback function required for ${module.framework.sf_comms.name}
+                   **********************************************************************************************************************/
+                  VOID ${module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2::module.el.ux_device_class_cdc_acm_v2.pfunc_activate} (VOID *cdc_instance)
+                  {
+                      /* Save the CDC instance for ${module.framework.sf_comms.name}. */
+                      ${module.framework.sf_comms.name}_instance_ctrl.p_cdc = (UX_SLAVE_CLASS_CDC_ACM *) cdc_instance;
+                  
+                      /* Inform the CDC instance activation event for ${module.framework.sf_comms.name}. */
+                      if (NULL != ${module.framework.sf_comms.name}.p_ctrl)
+                      {
+                              sf_el_ux_comms_instance_ctrl_t * p_ux_comms_ctrl = (sf_el_ux_comms_instance_ctrl_t *)${module.framework.sf_comms.name}.p_ctrl;
+                  
+                              /* Check if the semaphore for ${module.framework.sf_comms.name} is ready. */
+                              if(0x53454D41 != p_ux_comms_ctrl->semaphore.tx_semaphore_id)
+                              {
+                                  tx_semaphore_create(&amp;p_ux_comms_ctrl->semaphore, (CHAR *) "UX_COMMS_SEMAPHORE", 0);
+                              }
+                  
+                              /* Put a semaphore if the instance for ${module.framework.sf_comms.name} to inform CDC instance is ready. */
+                              tx_semaphore_ceiling_put(&amp;p_ux_comms_ctrl->semaphore, 1);
+                      }
+                      return;
+                  }
+                  /***********************************************************************************************************************
+                   * USBX Device CDC-ACM Instance Deactivate Callback function required for ${module.framework.sf_comms.name}
+                   **********************************************************************************************************************/
+                  VOID ${module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2::module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate} (VOID *cdc_instance)
+                  {
+                      SSP_PARAMETER_NOT_USED(cdc_instance);
+                  
+                      /* Reset the CDC instance for ${module.framework.sf_comms.name}. */
+                      ${module.framework.sf_comms.name}_instance_ctrl.p_cdc = UX_NULL;
+                  
+                      return;
+                  }
+                   /*******************************************************************************************************************//**
+                    * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+                    *             with the prototype below.
+                    *             - void${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data)
+                    *
+                    * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+                    **********************************************************************************************************************/
+                   void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data);
+                   void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data)
+                   {
+                     /** Suppress compiler warning for not using parameters. */
+                     SSP_PARAMETER_NOT_USED(p_instance);
+                     SSP_PARAMETER_NOT_USED(p_data);
+                  
+                     /** An error has occurred. Please check function arguments for more information. */
+                     BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+                   }
+                   /*******************************************************************************************************************//**
+                    * @brief     This is sf comms initialization function. User Can call this function in the application if required with the below mentioned prototype.
+                    *            - void ${module.framework.sf_comms.init_function}(void)
+                    **********************************************************************************************************************/
+                  void ${module.framework.sf_comms.init_function}(void)
+                   {
+                     ssp_err_t ssp_err_${module.framework.sf_comms.name};
+                     /** Open USB Communications Framework */
+                     ssp_err_${module.framework.sf_comms.name} = ${module.framework.sf_comms.name}.p_api->open(${module.framework.sf_comms.name}.p_ctrl, ${module.framework.sf_comms.name}.p_cfg);
+                     if (UX_SUCCESS != ssp_err_${module.framework.sf_comms.name})
+                      {
+                        ${module.framework.sf_comms.name}_err_callback((void *)&amp;${module.framework.sf_comms.name},&amp;ssp_err_${module.framework.sf_comms.name});
+                      }
+                    }
+        </declarations>
+        <init>
+               /** Call sf comms initialization function. User Can call at later time as well if required. */
+               #if (${module.framework.sf_comms.init})
+                   ${module.framework.sf_comms.init_function}(); 
+               #endif
+        </init>
+    </module>
+</synergyModuleDescription>

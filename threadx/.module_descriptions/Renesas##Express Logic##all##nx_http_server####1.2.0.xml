@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nx_http_server" path="ssp_cfg/framework/el/nx_http_server_cfg.h" version="0">
+        <property default="config.el.nx_http_server.filex.enable" display="FileX Support" id="config.el.nx_http_server.filex">
+            <option display="Disable" id="config.el.nx_http_server.filex.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_http_server.filex.enable" value="1"/>
+        </property>
+        <property default="config.el.nx_http_server.multipart.disable" display="Multipart HTTP requests support" id="config.el.nx_http_server.multipart">
+            <option display="Disable" id="config.el.nx_http_server.multipart.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_http_server.multipart.enable" value="1"/>
+        </property>
+        <property default="16" display="Internal thread priority" id="module.el.nx_http_server.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${module.el.nx_http_server.priority}")  &amp;&amp; ("${module.el.nx_http_server.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2048" display="Server socket window size (bytes)" id="config.el.nx_http_server.server_window_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.server_window_size}")  &amp;&amp; ("${config.el.nx_http_server.server_window_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Server time out (seconds)" id="config.el.nx_http_server.server_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.server_timeout}")  &amp;&amp; ("${config.el.nx_http_server.server_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Server time out for accept (seconds)" id="config.el.nx_http_server.server_timeout_accept">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.server_timeout_accept}")  &amp;&amp; ("${config.el.nx_http_server.server_timeout_accept}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Server time out for disconnect (seconds)" id="config.el.nx_http_server.server_timeout_disconnect">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.server_timeout_disconnect}")  &amp;&amp; ("${config.el.nx_http_server.server_timeout_disconnect}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Server time out for receive (seconds)" id="config.el.nx_http_server.server_timeout_receive">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.server_timeout_receive}")  &amp;&amp; ("${config.el.nx_http_server.server_timeout_receive}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Server time out for send (seconds)" id="config.el.nx_http_server.server_timeout_send">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.server_timeout_send}")  &amp;&amp; ("${config.el.nx_http_server.server_timeout_send}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="256" display="Maximum size of header field (bytes)" id="config.el.nx_http_server.max_header_field">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.max_header_field}")  &amp;&amp; ("${config.el.nx_http_server.max_header_field}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="5" display="Maximum connections in queue" id="config.el.nx_http_server.server_max_pending">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.server_max_pending}")  &amp;&amp; ("${config.el.nx_http_server.server_max_pending}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Maximum client user name length (bytes)" id="config.el.nx_http_server.max_name">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.max_name}")  &amp;&amp; ("${config.el.nx_http_server.max_name}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Maximum client user password length (bytes)" id="config.el.nx_http_server.max_password">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.max_password}")  &amp;&amp; ("${config.el.nx_http_server.max_password}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="600" display="Minimum size of packets in pool (bytes)" id="config.el.nx_http_server.server_min_packet_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_http_server.server_min_packet_size}")  &amp;&amp; ("${config.el.nx_http_server.server_min_packet_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #if (!${config.el.nx_http_server.filex})
+            #define NX_HTTP_NO_FILEX
+            #endif
+            #if (${config.el.nx_http_server.multipart})
+            #define NX_HTTP_MULTIPART_ENABLE
+            #endif
+            
+            #define NX_HTTP_SERVER_PRIORITY                     ${module.el.nx_http_server.priority}
+            #define NX_HTTP_SERVER_WINDOW_SIZE                  ${config.el.nx_http_server.server_window_size}
+            #define NX_HTTP_SERVER_TIMEOUT                      (${config.el.nx_http_server.server_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_HTTP_SERVER_TIMEOUT_ACCEPT               (${config.el.nx_http_server.server_timeout_accept} * NX_IP_PERIODIC_RATE)
+            #define NX_HTTP_SERVER_TIMEOUT_DISCONNECT           (${config.el.nx_http_server.server_timeout_disconnect} * NX_IP_PERIODIC_RATE)
+            #define NX_HTTP_SERVER_TIMEOUT_RECEIVE              (${config.el.nx_http_server.server_timeout_receive} * NX_IP_PERIODIC_RATE)
+            #define NX_HTTP_SERVER_TIMEOUT_SEND                 (${config.el.nx_http_server.server_timeout_send} * NX_IP_PERIODIC_RATE)
+            #define NX_HTTP_MAX_HEADER_FIELD                    ${config.el.nx_http_server.max_header_field}
+            #define NX_HTTP_SERVER_MAX_PENDING                  ${config.el.nx_http_server.server_max_pending}
+            #define NX_HTTP_MAX_NAME                            ${config.el.nx_http_server.max_name}
+            #define NX_HTTP_MAX_PASSWORD                        ${config.el.nx_http_server.max_password}
+            #define NX_HTTP_SERVER_MIN_PACKET_SIZE              ${config.el.nx_http_server.server_min_packet_size}
+        </content>
+    </config>
+    <module config="config.el.nx_http_server" display="X-Ware|NetX|Protocols|${module.el.nx_http_server.name} NetX HTTP Server" id="module.el.nx_http_server" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_http_server.${module.el.nx_http_server.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_http_server.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.tcp" value="module.el.nx.ip.tcp.enable" />
+        </requires>
+        <requires id="module.el.nx_http_server.requires.fx" interface="interface.el.fx" display="Add FileX" />
+        <requires id="module.el.nx_http_server.requires.nx_http_common" interface="interface.el.nx_http_common" display="Add HTTP Common" />
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_http_server" />
+        <provides interface="interface.el.nx_http_server.${module.el.nx_http_server.name}" />
+        <!-- NetX only -->
+        <provides interface="interface.el.nx_original_http_server" />
+        <provides interface="interface.el.nx_original_http_server.${module.el.nx_http_server.name}" />
+        
+        <property default="g_http_server${_instance}" display="Name" id="module.el.nx_http_server.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_http_server.name}")</constraint>
+        </property>
+        <property default="4096" display="Internal thread stack size (bytes)" id="module.el.nx_http_server.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_http_server.stack_size}")  &amp;&amp; (("${module.el.nx_http_server.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <property default="authentication_check" display="Name of Authentication Checking Function" id="module.el.nx_http_server.authentication_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_http_server.authentication_function}")</constraint>
+        </property>
+        <property default="request_notify" display="Name of Request Notify Callback Function" id="module.el.nx_http_server.request_notify_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_http_server.request_notify_function}")</constraint>
+        </property>
+        <header>
+            extern NX_HTTP_SERVER ${module.el.nx_http_server.name};
+            #if !defined(${module.el.nx_http_server.authentication_function})
+            UINT ${module.el.nx_http_server.authentication_function}(NX_HTTP_SERVER *server_ptr, UINT request_type, CHAR *resource, CHAR **name, CHAR **password, CHAR **realm);
+            #endif
+            #if !defined(${module.el.nx_http_server.request_notify_function})
+            UINT ${module.el.nx_http_server.request_notify_function}(NX_HTTP_SERVER *server_ptr, UINT request_type, CHAR *resource, NX_PACKET *packet_ptr);
+            #endif
+            void ${module.el.nx_http_server.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_http_server.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_http_server.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_http_server.name}_err_callback  = ${module.el.nx_http_server.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_http_server.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_http_server.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_http_server.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_http_server.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_HTTP_SERVER  ${module.el.nx_http_server.name};
+            uint8_t         ${module.el.nx_http_server.name}_stack_memory[${module.el.nx_http_server.stack_size}];
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.el.nx_http_server.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_http_server.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_http_server.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_http_server.name}_err;
+            /* Create HTTP Server. */
+            ${module.el.nx_http_server.name}_err = nx_http_server_create(&amp;${module.el.nx_http_server.name},
+                                                                         "${module.el.nx_http_server.name} HTTP Server",
+                                                                         &amp;${module.el.nx_http_server.requires.nx.ip::module.el.nx.ip.name},
+                                                                         &amp;${module.el.nx_http_server.requires.fx::module.framework.fx.name},
+                                                                         &amp;${module.el.nx_http_server.name}_stack_memory[0],
+                                                                         ${module.el.nx_http_server.stack_size},
+                                                                         &amp;${module.el.nx.packet_pool.name},
+                                                                         ${module.el.nx_http_server.authentication_function},
+                                                                         ${module.el.nx_http_server.request_notify_function});
+            if (NX_SUCCESS != ${module.el.nx_http_server.name}_err)
+            {
+                ${module.el.nx_http_server.name}_err_callback((void *)&amp;${module.el.nx_http_server.name},&amp;${module.el.nx_http_server.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

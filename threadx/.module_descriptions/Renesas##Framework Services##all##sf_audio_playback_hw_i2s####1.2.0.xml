@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_audio_playback_hw_i2s" path="ssp_cfg/framework/sf_audio_playback_hw_i2s_cfg.h" version="0">
+        <property default="config.framework.sf_audio_playback_hw_i2s.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_audio_playback_hw_i2s.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback_hw_i2s.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_audio_playback_hw_i2s.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_audio_playback_hw_i2s.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define SF_AUDIO_PLAYBACK_HW_I2S_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_audio_playback_hw_i2s.param_checking_enable}
+</content>
+    </config>
+    <module config="config.framework.sf_audio_playback_hw_i2s" display="Framework|Audio|${module.framework.sf_audio_playback_hw.name} Audio Playback Hardware Framework Shared on sf_audio_playback_hw_i2s" id="module.framework.sf_audio_playback_hw_i2s" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_audio_playback_hw.${module.framework.sf_audio_playback_hw.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_audio_playback_hw_i2s.requires.i2s" interface="interface.driver.i2s" display="Add I2S Driver" />
+        <provides interface="interface.framework.sf_audio_playback_hw" />
+        <provides interface="interface.framework.sf_audio_playback_hw_on_sf_audio_playback_hw_i2s" />
+        <provides interface="interface.framework.sf_audio_playback_hw.${module.framework.sf_audio_playback_hw.name}" />
+       <property default="g_sf_audio_playback_hw${_instance}" display="Name" id="module.framework.sf_audio_playback_hw.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback_hw.name}")</constraint>
+        </property>
+        <header>
+            extern const sf_audio_playback_hw_instance_t ${module.framework.sf_audio_playback_hw.name};
+		</header>
+        <includes>#include &quot;sf_audio_playback_hw_i2s.h&quot;</includes>
+        <declarations>
+static sf_audio_playback_hw_i2s_instance_ctrl_t ${module.framework.sf_audio_playback_hw.name}_ctrl;
+static const sf_audio_playback_hw_i2s_cfg_t ${module.framework.sf_audio_playback_hw.name}_cfg_extend =
+{
+    .p_lower_lvl_i2s = &amp;${module.framework.sf_audio_playback_hw_i2s.requires.i2s::module.driver.i2s.name},
+};
+static const sf_audio_playback_hw_cfg_t ${module.framework.sf_audio_playback_hw.name}_cfg =
+{
+    .p_extend = &amp;${module.framework.sf_audio_playback_hw.name}_cfg_extend
+};
+const sf_audio_playback_hw_instance_t ${module.framework.sf_audio_playback_hw.name} = 
+{
+    .p_api = &amp;g_sf_audio_playback_hw_on_sf_audio_playback_hw_i2s,
+	.p_ctrl = &amp;${module.framework.sf_audio_playback_hw.name}_ctrl,
+	.p_cfg = &amp;${module.framework.sf_audio_playback_hw.name}_cfg,
+};
+</declarations>
+    </module>
+</synergyModuleDescription>

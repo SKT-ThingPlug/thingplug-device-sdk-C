@@ -1,0 +1,404 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <module config="config.el.ux_device_class_hid" display="X-Ware|USBX|Device|Classes|HID|${module.el.ux_device_class_hid.name} USBX Device Class HID" common="100" id="module.el.ux_device_class_hid" version="1">
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_device_class_hid_src" display="Add USBX Device Class HID Source [Optional]" id="module.el.ux_device_class_hid.requires.ux_device_class_hid_src" find="false" />
+        <requires id="module.el.ux_device_class_cdcacm.requires.ux_device" interface="interface.el.ux_device" display="Add USB Device Configuration" />
+        <requires id="module.el.ux_device_class_hid.requires.interface_descriptor_hid" interface="interface.el.ux.interface_descriptor_hid" display="Add USB Configuration Descriptor" />
+        <provides interface="interface.el.ux_device_class_hid" />
+        <property default="g_ux_device_class_hid" display="Name" id="module.el.ux_device_class_hid.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_hid.name}")</constraint>
+        </property>
+        <property default="ux_hid_device_callback" display="USBX HID User Callback Function" id="module.el.ux_device_class_hid.pfunc_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_hid.pfunc_callback}")</constraint>
+        </property>
+        <header>
+            #include "ux_api.h"
+            #include "ux_device_class_hid.h"
+            /* Function for USBX HID Class Instance Activate/Deactivate Function Alias. */
+            extern UINT ${module.el.ux_device_class_hid.pfunc_callback} (UX_SLAVE_CLASS_HID * hid, UX_SLAVE_CLASS_HID_EVENT * hid_event);
+        </header>
+        <macros>
+        </macros>
+        <declarations>
+            static void ${module.el.ux_device_class_hid.name}_setup(void);
+            /***********************************************************************************************************************
+             * USBX HID Class Parameter Configuration Function.
+             **********************************************************************************************************************/
+            static UX_SLAVE_CLASS_HID_PARAMETER ${module.el.ux_device_class_hid.name}_parameter;
+            static void ${module.el.ux_device_class_hid.name}_setup(void)
+            {
+                /* Initialize the HID class parameters for a keyboard.  */
+                ${module.el.ux_device_class_hid.name}_parameter.ux_device_class_hid_parameter_report_address = (UCHAR *)g_hid_report_descriptor;
+                ${module.el.ux_device_class_hid.name}_parameter.ux_device_class_hid_parameter_report_length  = sizeof(g_hid_report_descriptor);
+                ${module.el.ux_device_class_hid.name}_parameter.ux_device_class_hid_parameter_callback       = ${module.el.ux_device_class_hid.pfunc_callback};
+
+                /* Initialize the device HID class. This class owns both interfaces starting with 1. */
+                _ux_device_stack_class_register(_ux_system_slave_class_hid_name, ux_device_class_hid_entry, 1, ${module.el.ux_device_class_hid.requires.interface_descriptor_hid::module.el.ux.interface_descriptor_hid.bInterfaceNumber}, (VOID *)&amp;${module.el.ux_device_class_hid.name}_parameter);
+
+                /* Counts up the number of Interfaces. */
+#if (${module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable})
+                g_usbx_number_of_interface_count = (uint8_t)(g_usbx_number_of_interface_count + 2);
+#else
+                g_usbx_number_of_interface_count = (uint8_t)(g_usbx_number_of_interface_count + 1);
+#endif
+            }
+        </declarations>
+        <init>
+            /* Setups USB HID Class to create the instance (if required) */
+            ${module.el.ux_device_class_hid.name}_setup();
+
+            /* USB DCD initialization (Only executed once after all the class registration completed). */
+            if (g_usbx_number_of_interface_count == USB_NUMBER_OF_INTERFACE)
+            {
+                /* Initializes USBX Device Control Driver */
+                ux_dcd_initialize();
+            }
+        </init>
+    </module>
+
+    <module config="" display="X-Ware|USBX|Device|Classes|HID|Descriptors|${module.el.ux.interface_descriptor_hid.name} USBX Interface Configuration HID" id="module.el.ux.interface_descriptor_hid.hid" common="100" version="1">
+        <constraint display="Device Descriptor must have unique names">
+            "${interface.el.ux.interface_descriptor_hid.${module.el.ux.interface_descriptor_hid.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux.interface_descriptor_hid" />
+        <provides interface="interface.el.ux.interface_descriptor_hid.${module.el.ux.interface_descriptor_hid.name}" />
+        <property default="g_usb_interface_descriptor_hid${_instance}" display="Name" id="module.el.ux.interface_descriptor_hid.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux.interface_descriptor_hid.name}")</constraint>
+        </property>
+        <property default="0x00" display="Interface Number of HID Class interface" id="module.el.ux.interface_descriptor_hid.bInterfaceNumber">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_hid.bInterfaceNumber}") &amp;&amp; (("${module.el.ux.interface_descriptor_hid.bInterfaceNumber}") &gt;= 0) &amp;&amp; (("${module.el.ux.interface_descriptor_hid.bInterfaceNumber}") &lt;= 255)</constraint>
+        </property>
+        <property default="1" display="Protocol code(None(0)/Keyboard(1)/Mouse(2))" id="module.el.ux.interface_descriptor_hid.bInterfaceProtocol">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_hid.bInterfaceProtocol}")  &amp;&amp; (("${module.el.ux.interface_descriptor_hid.bInterfaceProtocol}") &lt;= 255)</constraint>
+        </property>
+        <property default="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep1" display="Endpoint Number to be used for Interrupt-In" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in">
+            <option display="Endpoint 1" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep1" value="1"/>
+            <option display="Endpoint 2" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep2" value="2"/>
+            <option display="Endpoint 3" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep3" value="3"/>
+            <option display="Endpoint 4" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep4" value="4"/>
+            <option display="Endpoint 5" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep5" value="5"/>
+            <option display="Endpoint 6" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep6" value="6"/>
+            <option display="Endpoint 7" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep7" value="7"/>
+            <option display="Endpoint 8" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep8" value="8"/>
+            <option display="Endpoint 9" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.ep9" value="9"/>
+        </property>
+        <property default="0x8" display="Maximum packet size in bytes for Interrupt-In EP" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.wMaxPacketSize">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_hid.ep_interrupt_in.wMaxPacketSize}")  &amp;&amp; (("${module.el.ux.interface_descriptor_hid.ep_interrupt_in.wMaxPacketSize}") &lt;= 65535)</constraint>
+        </property>
+        <property default="0x8" display="Interval for polling Interrupt-In EP for data transfers(milliseconds)" id="module.el.ux.interface_descriptor_hid.ep_interrupt_in.bInterval">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_hid.ep_interrupt_in.bInterval}")  &amp;&amp; (("${module.el.ux.interface_descriptor_hid.ep_interrupt_in.bInterval}") &lt;= 255)</constraint>
+        </property>
+        <property default="module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable.false" display="Interrupt-Out Endpoint(Optional)" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable">
+            <option display="Enable"  id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable.true"  value="1"/>
+            <option display="Disable" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable.false" value="0"/>
+        </property>
+        <property default="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep2" display="Endpoint Number for Interrupt-Out(Optional)" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum">
+            <option display="Endpoint 1" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep1" value="1"/>
+            <option display="Endpoint 2" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep2" value="2"/>
+            <option display="Endpoint 3" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep3" value="3"/>
+            <option display="Endpoint 4" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep4" value="4"/>
+            <option display="Endpoint 5" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep5" value="5"/>
+            <option display="Endpoint 6" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep6" value="6"/>
+            <option display="Endpoint 7" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep7" value="7"/>
+            <option display="Endpoint 8" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep8" value="8"/>
+            <option display="Endpoint 9" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum.ep9" value="9"/>
+        </property>
+        <property default="0x8" display="Maximum packet size in bytes for Interrupt-Out EP(Optional)" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.wMaxPacketSize">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_hid.ep_interrupt_out.wMaxPacketSize}")  &amp;&amp; (("${module.el.ux.interface_descriptor_hid.ep_interrupt_out.wMaxPacketSize}") &lt;= 65535)</constraint>
+        </property>
+        <property default="0x8" display="Interval for polling Interrupt-Out EP for data transfers(milliseconds)(Optional)" id="module.el.ux.interface_descriptor_hid.ep_interrupt_out.bInterval">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_hid.ep_interrupt_out.bInterval}")  &amp;&amp; (("${module.el.ux.interface_descriptor_hid.ep_interrupt_out.bInterval}") &lt;= 255)</constraint>
+        </property>
+        <header>
+        </header>
+        <macros>
+        </macros>
+        <declarations>
+            /***********************************************************************************************************************
+             * USB HID Descriotor definitions
+             **********************************************************************************************************************/
+            /* Define the size of HID Descriptor to be used */
+            #ifndef USB_HID_DESCRIPTOR_TYPE
+             #define USB_HID_DESCRIPTOR_TYPE      (${module.el.ux.interface_descriptor_hid.bInterfaceProtocol}) 
+            #endif
+            #if (USB_HID_DESCRIPTOR_TYPE == 0)
+             #define USB_HID_DESCRIPTOR_LENGTH    (0x0)
+            #elif (USB_HID_DESCRIPTOR_TYPE == 1)
+             #define USB_HID_DESCRIPTOR_LENGTH    (0x3F)   /* HID Descriptor for Keyboard Device */
+            #elif (USB_HID_DESCRIPTOR_TYPE == 2)
+             #define USB_HID_DESCRIPTOR_LENGTH    (0x32)   /* HID Descriptor for Mouse Device */
+            #else
+             #define USB_HID_DESCRIPTOR_LENGTH    (0xFF)
+            #endif
+            #if (${module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable})
+             #define USB_HID_DESCRIPTOR_NUM_OF_EP (2)   /* If enabled Interrupt Out endpoint */
+            #else
+             #define USB_HID_DESCRIPTOR_NUM_OF_EP (1)
+            #endif
+
+            /***********************************************************************************************************************
+             * USB HID Interface Descriptor for FS mode ${module.el.ux.interface_descriptor_hid.name}
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char ${module.el.ux.interface_descriptor_hid.name}_full_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_fs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_interface_desc_fs" 1
+            __root static const unsigned char ${module.el.ux.interface_descriptor_hid.name}_full_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_fs")
+            #endif
+            = {
+                /****************************************************************
+                 * HID Class Interface Descriptor Requirement 9 bytes           *
+                 ****************************************************************/
+                0x9, /* 0 bLength */
+                UX_INTERFACE_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_hid.bInterfaceNumber}, /* 2 bInterfaceNumber */
+                0x00, /* 4 bAlternateSetting  */
+#if (${module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable})
+                0x02, /* 5 bNumEndpoints      */
+#else
+                0x01, /* 5 bNumEndpoints      */
+#endif
+                UX_DEVICE_CLASS_HID_CLASS, /* 6 bInterfaceClass    : HID Class(0x3)  */
+                UX_DEVICE_CLASS_HID_SUBCLASS, /* 7 bInterfaceSubClass : Not support boot interface FIXME */
+                ${module.el.ux.interface_descriptor_hid.bInterfaceProtocol}, /* 8 bInterfaceProtocol : Protocol code(None(0)/Keyboard(1)/Mouse(2)) */
+                0x00, /* 9 iInterface Index   */
+                /****************************************************************
+                 * HID Descriptor                                               *
+                 ****************************************************************/
+                0x9, /* 0 bLength */
+                UX_DEVICE_CLASS_HID_DESCRIPTOR_HID, /* 1 bDescriptorType : HID descriptor (0x21) */
+                0x10, /* 2 bcdHID 0x0110 == 1.10 */
+                0x01, /* 3 bcdHID  */
+                0x21, /* 4 bCountryCode : Hardware target country */
+                USB_HID_DESCRIPTOR_NUM_OF_EP, /* 5 bNumDescriptors */
+                UX_DEVICE_CLASS_HID_DESCRIPTOR_REPORT, /* 6 bDescriptorType (Report descriptor type) */
+                (UCHAR)(USB_HID_DESCRIPTOR_LENGTH), /* 7 wItemLength */
+                (UCHAR)(USB_HID_DESCRIPTOR_LENGTH &gt;&gt; 8), /* 8 wItemLength */
+                /****************************************************************
+                 * Endpoint descriptor (Interrupt-In)                           *
+                 ****************************************************************/
+                0x7, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                (UX_ENDPOINT_IN | ${module.el.ux.interface_descriptor_hid.ep_interrupt_in}), /* 2 bEndpointAddress */
+                UX_INTERRUPT_ENDPOINT, /* 3 bmAttributes  */
+                (UCHAR)(${module.el.ux.interface_descriptor_hid.ep_interrupt_in.wMaxPacketSize}),          /* 4 wMaxPacketSize */
+                (UCHAR)(${module.el.ux.interface_descriptor_hid.ep_interrupt_in.wMaxPacketSize} &gt;&gt; 8), /* 5 wMaxPacketSize */
+                ${module.el.ux.interface_descriptor_hid.ep_interrupt_in.bInterval},                        /* 6 bInterval */
+#if (${module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable})
+                /****************************************************************
+                 * Endpoint descriptor (Interrupt-Out)                          *
+                 ****************************************************************/
+                UX_ENDPOINT_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                (UX_ENDPOINT_OUT | ${module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT,
+                UX_INTERRUPT_ENDPOINT, /* 3 bmAttributes */
+                (UCHAR)(${module.el.ux.interface_descriptor_hid.ep_interrupt_out.wMaxPacketSize}), /* 4 wMaxPacketSize */
+                (UCHAR)(${module.el.ux.interface_descriptor_hid.ep_interrupt_out.wMaxPacketSize} &gt;&gt; 8), /* 5 wMaxPacketSize */
+                ${module.el.ux.interface_descriptor_hid.ep_interrupt_out.bInterval}, /* 6 bInterval */
+#else
+#endif
+            };
+
+            #if defined (UX_DCD_SYNERY_USE_USBHS)
+            /***********************************************************************************************************************
+             * USB HID Interface Descriptor for HS mode ${module.el.ux.interface_descriptor_hid.name}
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char ${module.el.ux.interface_descriptor_hid.name}_high_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_hs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_interface_desc_hs" 1
+            __root static const unsigned char ${module.el.ux.interface_descriptor_hid.name}_high_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_hs")
+            #endif
+            = {
+                /****************************************************************
+                 * HID Class Interface Descriptor Requirement 9 bytes           *
+                 ****************************************************************/
+                0x9, /* 0 bLength */
+                UX_INTERFACE_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_hid.bInterfaceNumber}, /* 2 bInterfaceNumber */
+                0x00, /* 4 bAlternateSetting  */
+#if (${module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable})
+                0x02, /* 5 bNumEndpoints      */
+#else
+                0x01, /* 5 bNumEndpoints      */
+#endif
+                UX_DEVICE_CLASS_HID_CLASS, /* 6 bInterfaceClass    : HID Class(0x3)  */
+                UX_DEVICE_CLASS_HID_SUBCLASS, /* 7 bInterfaceSubClass : Not support boot interface FIXME */
+                ${module.el.ux.interface_descriptor_hid.bInterfaceProtocol}, /* 8 bInterfaceProtocol : Protocol code(None(0)/Keyboard(1)/Mouse(2)) */
+                0x00, /* 9 iInterface Index   */
+                /****************************************************************
+                 * HID Descriptor                                               *
+                 ****************************************************************/
+                0x9, /* 0 bLength */
+                UX_DEVICE_CLASS_HID_DESCRIPTOR_HID, /* 1 bDescriptorType : HID descriptor (0x21) */
+                0x10, /* 2 bcdHID 0x0110 == 1.10 */
+                0x01, /* 3 bcdHID  */
+                0x21, /* 4 bCountryCode : Hardware target country */
+                USB_HID_DESCRIPTOR_NUM_OF_EP, /* 5 bNumDescriptors */
+                UX_DEVICE_CLASS_HID_DESCRIPTOR_REPORT, /* 6 bDescriptorType (Report descriptor type) */
+                (UCHAR)(USB_HID_DESCRIPTOR_LENGTH), /* 7 wItemLength */
+                (UCHAR)(USB_HID_DESCRIPTOR_LENGTH &gt;&gt; 8), /* 8 wItemLength */
+                /****************************************************************
+                 * Endpoint descriptor (Interrupt-In)                           *
+                 ****************************************************************/
+                0x7, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                (UX_ENDPOINT_IN | ${module.el.ux.interface_descriptor_hid.ep_interrupt_in}), /* 2 bEndpointAddress */
+                UX_INTERRUPT_ENDPOINT, /* 3 bmAttributes  */
+                (UCHAR)(${module.el.ux.interface_descriptor_hid.ep_interrupt_in.wMaxPacketSize}),          /* 4 wMaxPacketSize */
+                (UCHAR)(${module.el.ux.interface_descriptor_hid.ep_interrupt_in.wMaxPacketSize} &gt;&gt; 8), /* 5 wMaxPacketSize */
+                ${module.el.ux.interface_descriptor_hid.ep_interrupt_in.bInterval},                        /* 6 bInterval */
+#if (${module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable})
+                /****************************************************************
+                 * Endpoint descriptor (Interrupt-Out)                          *
+                 ****************************************************************/
+                UX_ENDPOINT_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                (UX_ENDPOINT_OUT | ${module.el.ux.interface_descriptor_hid.ep_interrupt_out.epnum}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT,
+                UX_INTERRUPT_ENDPOINT, /* 3 bmAttributes */
+                (UCHAR)(${module.el.ux.interface_descriptor_hid.ep_interrupt_out.wMaxPacketSize}), /* 4 wMaxPacketSize */
+                (UCHAR)(${module.el.ux.interface_descriptor_hid.ep_interrupt_out.wMaxPacketSize} &gt;&gt; 8), /* 5 wMaxPacketSize */
+                ${module.el.ux.interface_descriptor_hid.ep_interrupt_out.bInterval}, /* 6 bInterval */
+#else
+#endif
+            };
+            #endif
+            
+            /* Size of this USB Interface Descriptor */
+            #define USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}       (sizeof(${module.el.ux.interface_descriptor_hid.name}_full_speed))
+            /* Number of Interface this USB Interface Descriptor has */
+#if (${module.el.ux.interface_descriptor_hid.ep_interrupt_out.enable})
+            #define USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}        (2)
+#else
+            #define USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}        (1)
+#endif
+#ifndef USB_IFD_NUM_0
+ #define USB_IFD_NUM_0  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+ #define USB_IFD_SIZE_0 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+#else
+ #ifndef USB_IFD_NUM_1
+  #define USB_IFD_NUM_1  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+  #define USB_IFD_SIZE_1 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+ #else
+  #ifndef USB_IFD_NUM_2
+   #define USB_IFD_NUM_2  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+   #define USB_IFD_SIZE_2 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+  #else
+   #ifndef USB_IFD_NUM_3
+    #define USB_IFD_NUM_3  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+    #define USB_IFD_SIZE_3 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+   #else
+    #ifndef USB_IFD_NUM_4
+     #define USB_IFD_NUM_4  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+     #define USB_IFD_SIZE_4 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+    #else
+     #ifndef USB_IFD_NUM_5
+      #define USB_IFD_NUM_5  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+      #define USB_IFD_SIZE_5 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+     #else
+      #ifndef USB_IFD_NUM_6
+       #define USB_IFD_NUM_6  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+       #define USB_IFD_SIZE_6 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+      #else
+       #ifndef USB_IFD_NUM_7
+        #define USB_IFD_NUM_7  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+        #define USB_IFD_SIZE_7 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+       #else
+        #ifndef USB_IFD_NUM_8
+         #define USB_IFD_NUM_8  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+         #define USB_IFD_SIZE_8 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+        #else
+         #ifndef USB_IFD_NUM_9
+          #define USB_IFD_NUM_9  USB_IFD_NUM_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+          #define USB_IFD_SIZE_9 USB_IFD_SIZE_${module.el.ux.interface_descriptor_hid.bInterfaceNumber}
+         #endif 
+        #endif
+       #endif
+      #endif
+     #endif
+    #endif
+   #endif
+  #endif
+ #endif
+#endif
+            /***********************************************************************************************************************
+             * USB HID Report Descriptor
+             **********************************************************************************************************************/
+            #if (USB_HID_DESCRIPTOR_TYPE == 1)
+            const UCHAR g_hid_report_descriptor[] =
+            {
+                0x05, 0x01, /* Usage Page (Generic Desktop)                    */
+                0x09, 0x06, /* Usage (Keyboard)                                */
+                0xA1, 0x01, /* Collection (Application)                        */
+                0x05, 0x07, /* Usage Page (Key Codes)                          */
+                0x19, 0xE0, /* Usage Minimum (Keyboard LeftControl)            */
+                0x29, 0xE7, /* Usage Maximun (Keyboard Right GUI)              */
+                0x15, 0x00, /* Logical Minimum (0)                             */
+                0x25, 0x01, /* Logical Maximum (1)                             */
+                0x75, 0x01, /* Report Size (1)                                 */
+                0x95, 0x08, /* Report Count (8)                                */
+                0x81, 0x02, /* Input (Data, Variable, Absolute); Modifier byte */
+                0x95, 0x01, /* Report Count (1)                                */
+                0x75, 0x08, /* Report Size (8)                                 */
+                0x81, 0x03, /* Input (Constant); Reserved byte                 */
+                0x95, 0x05, /* Report Count (5)                                */
+                0x75, 0x01, /* Report Size (1)                                 */
+                0x05, 0x08, /* Usage Page (Page# for LEDs)                     */
+                0x19, 0x01, /* Usage Minimum (1)                               */
+                0x29, 0x05, /* Usage Maximum (5)                               */
+                0x91, 0x02, /* Output (Data, Variable, Absolute); LED report   */
+                0x95, 0x01, /* Report Count (1)                                */
+                0x75, 0x03, /* Report Size (3)                                 */
+                0x91, 0x03, /* Output (Constant) ;LED report padding           */
+                0x95, 0x06, /* Report Count (6)                                */
+                0x75, 0x08, /* Report Size (8)                                 */
+                0x15, 0x00, /* Logical Minimum (0)                             */
+                0x25, 0x65, /* Logical Maximum(101)                            */
+                0x05, 0x07, /* Usage Page (Key Codes)                          */
+                0x19, 0x00, /* Usage Minimum (0)                               */
+                0x29, 0x65, /* Usage Maximum (101)                             */
+                0x81, 0x00, /* Input (Data, Array); Key arrays (6 bytes)       */
+                0xc0        /* End Collection                                  */
+            };
+            #elif (USB_HID_DESCRIPTOR_TYPE == 2)
+            const UCHAR g_hid_report_descriptor[] =
+            {
+                0x05, 0x01, /* Usage Page (Generic Desktop)                    */
+                0x09, 0x02, /* Usage (Mouse)                                   */
+                0xA1, 0x01, /* Collection (Application)                        */
+                0x09, 0x01, /* Usage (Pointer)                                 */
+                0xA1, 0x00, /* Collection (Physical)                           */
+                0x05, 0x09, /* Usage Page (Buttons)                            */
+                0x19, 0x01, /* Usage Minimum (01)                              */
+                0x29, 0x03, /* Usage Maximun (03)                              */
+                0x15, 0x00, /* Logical Minimum (0)                             */
+                0x25, 0x01, /* Logical Maximum (1)                             */
+                0x95, 0x03, /* Report Count (3)                                */
+                0x75, 0x01, /* Report Size (1)                                 */
+                0x81, 0x02, /* Input (Data, Variable, Absolute); 3 button bits */
+                0x95, 0x01, /* Report Count (1)                                */
+                0x75, 0x05, /* Report Size (5)                                 */
+                0x81, 0x01, /* Input (Constant), ;5 bit padding                */
+                0x05, 0x01, /* Usage Page (Generic Desktop)                    */
+                0x09, 0x30, /* Usage (X)                                       */
+                0x09, 0x31, /* Usage (Y)                                       */
+                0x15, 0x81, /* Logical Minimum (-127)                          */
+                0x25, 0x7F, /* Logical Maximum (127)                           */
+                0x75, 0x08, /* Report Size (8)                                 */
+                0x95, 0x02, /* Report Count (2)                                */
+                0x81, 0x06, /* Input (Data, Variable, Relative); 2position bytes(X &amp; Y) */
+                0xC0,       /* End Collection                                  */
+                0xC0,       /* End Collection                                  */
+            };
+            #else
+            const UCHAR g_hid_report_descriptor[] = {0};
+            #endif
+            
+        </declarations>
+        <init>
+        </init>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>  
+    <config id="config.framework.sf_el_fx" path="ssp_cfg/framework/sf_el_fx_cfg.h" version="0">
+        <property default="config.framework.sf_el_fx.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_el_fx.param_checking_enable">
+            <option display="Default (BSP)" id="config.framework.sf_el_fx.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_el_fx.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_el_fx.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define SF_EL_FX_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_el_fx.param_checking_enable}</content>
+    </config>   
+    <module config="config.framework.sf_el_fx" display="Framework|File System|${module.framework.sf_el_fx.name} FileX Port Block Media Framework on sf_el_fx" id="module.framework.sf_el_fx" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_fx.${module.framework.sf_el_fx.name}}" === "1"
+        </constraint>       
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_fx.requires.sf_block_media" interface="interface.framework.block_media" display="Add Block Media Driver" />
+        <provides interface="interface.framework.sf_el_fx" />
+        <provides interface="interface.framework.sf_el_fx_on_sf_el_fx" />
+        <provides interface="interface.framework.sf_el_fx.${module.framework.sf_el_fx.name}" />
+        <property id="module.framework.sf_el_fx.name" display="Name" default="g_sf_el_fx${_instance}">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_fx.name}")</constraint>
+        </property>     
+        <header>
+            extern sf_el_fx_t ${module.framework.sf_el_fx.name}_cfg;
+        </header>
+        <includes>
+            #include &quot;sf_el_fx.h&quot;
+        </includes>
+        <declarations>    
+            sf_el_fx_t ${module.framework.sf_el_fx.name}_cfg =
+            {
+                .p_lower_lvl_block_media    = &amp;${module.framework.sf_el_fx.requires.sf_block_media::module.framework.block_media.name}
+            };
+</declarations>
+    </module>
+</synergyModuleDescription>

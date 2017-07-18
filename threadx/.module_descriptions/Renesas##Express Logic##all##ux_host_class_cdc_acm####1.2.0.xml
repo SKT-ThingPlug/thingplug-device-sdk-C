@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_host_class_cdc_acm" path="ssp_cfg/framework/el/ux_host_class_cdc_acm_user.h" version="0">
+        <content>
+        #if (${interface.el.ux_host_class_cdc_acm_src})
+        #include "ux_host_class_cdc_acm_src_user.h"
+        #endif
+        </content>
+    </config>
+    <module config="config.el.ux_host_class_cdc_acm" display="X-Ware|USBX|Host|Classes|CDC-ACM|${module.el.host_class.name} USBX Host Class CDC-ACM" common="100" id="module.el.ux_host_class_cdc_acm" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.ux_host_class_cdc_acm.${module.el.host_class.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_host_class_cdc_acm_src" display="Add USBX Host Class CDC-ACM Source [Optional]" id="module.el.ux_host_class_cdc_acm.requires.ux_host_class_cdc_acm_src" find="false" />
+        <requires id="module.el.host_class.requires.ux_host" interface="interface.el.ux_host" display="Add USB Host Configuration" />
+        <provides interface="interface.el.ux_host_class_cdc_acm" />
+        <provides interface="interface.el.ux_host_class_cdc_acm.${module.el.host_class.name}" />
+        <property default="g_ux_host_class_cdc_acm${_instance}" display="Name" id="module.el.host_class.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.host_class.name}")</constraint>
+        </property>
+        <header>
+            #include "ux_host_class_cdc_acm.h"
+        </header>
+        <macros>
+            #define USB_HOST_CDC_ACM_CLASS_REGISTER
+        </macros>
+        <declarations>
+        </declarations>
+        <init>
+        </init>
+    </module>
+</synergyModuleDescription>

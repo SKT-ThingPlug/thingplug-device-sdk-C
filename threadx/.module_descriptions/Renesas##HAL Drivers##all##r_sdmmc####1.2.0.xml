@@ -1,0 +1,391 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+
+   <!-- Sd/MMC XML START here-->
+
+	<config id="config.driver.sdmmc" path="ssp_cfg/driver/r_sdmmc_cfg.h" version="0">
+		<property default="config.driver.sdmmc.param_checking_enable.bsp" display="Parameter Checking Enable" id="config.driver.sdmmc.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.sdmmc.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.sdmmc.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.sdmmc.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define SDMMC_CFG_PARAM_CHECKING_ENABLE ${config.driver.sdmmc.param_checking_enable}
+</content>
+	</config>
+	<module config="config.driver.sdmmc" display="Driver|Storage|${module.driver.sdmmc.name} SD/MMC Driver on r_sdmmc" id="module.driver.sdmmc_on_sdmmc" version="1">
+        <constraint display="Driver instances must have unique names">
+            "${interface.driver.sdmmc.${module.driver.sdmmc.name}}" === "1"
+        </constraint>
+        <constraint display="Requires SDMMC Access Interrupt (ACCS) enabled">
+            "${module.driver.sdmmc.access_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires lower level transfer driver">
+            testExists("${module.driver.sdmmc_on_sdmmc.requires.transfer::module.driver.transfer.name}")
+        </constraint>
+        <requires id="module.driver.sdmmc_on_sdmmc.requires.transfer" interface="interface.driver.transfer" display="Add Transfer Driver (DMAC or DTC) [Required]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_sci${module.driver.uart.channel}_txi"/>
+        </requires>
+        <provides interface="interface.driver.sdmmc" />
+        <provides interface="interface.driver.sdmmc_on_sdmmc" />
+		<provides interface="interface.driver.sdmmc.${module.driver.sdmmc.name}" />
+        <property default="g_sdmmc${_instance}" display="Name" id="module.driver.sdmmc.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.sdmmc.name}")</constraint>
+        </property>
+        <property default="1" display="Channel" id="module.driver.sdmmc.channel">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.sdmmc.channel}")  &amp;&amp; (("${module.driver.sdmmc.channel}" &gt;= 0) &amp;&amp; ("${module.driver.sdmmc.channel}" &lt; 2))</constraint>
+           </property>	
+		<property default="module.driver.sdmmc.media_type.media_type_embedded" display="Media Type" id="module.driver.sdmmc.media_type">
+			<option display="Embedded" id="module.driver.sdmmc.media_type.media_type_embedded" value="SDMMC_MEDIA_TYPE_EMBEDDED"/>
+			<option display="Card" id="module.driver.sdmmc.media_type.media_type_card" value="SDMMC_MEDIA_TYPE_CARD"/>
+		</property>
+		<property default="module.driver.sdmmc.bus_width.bus_width_4_bits" display="Bus Width" id="module.driver.sdmmc.bus_width">
+			<option display="1 Bit" id="module.driver.sdmmc.bus_width.bus_width_1_bit" value="SDMMC_BUS_WIDTH_1_BIT"/>
+			<option display="4 Bits" id="module.driver.sdmmc.bus_width.bus_width_4_bits" value="SDMMC_BUS_WIDTH_4_BITS"/>
+			<option display="8 Bits" id="module.driver.sdmmc.bus_width.bus_width_8_bits" value="SDMMC_BUS_WIDTH_8_BITS"/>
+		</property>
+	    <property default="512" display="Block Size" id="module.driver.sdmmc.block_size">
+			<constraint display="Value must be an integer between 1 and 512">testInteger("${module.driver.sdmmc.block_size}")  &amp;&amp; ("${module.driver.sdmmc.block_size}" &gt;= 1) &amp;&amp; ("${module.driver.sdmmc.block_size}" &lt;= 512)</constraint>
+        </property>
+        <property default="NULL" display="Callback" id="module.driver.sdmmc.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.sdmmc.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Access Interrupt Priority" id="module.driver.sdmmc.access_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Card Interrupt Priority" id="module.driver.sdmmc.card_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="DMA Request Interrupt Priority" id="module.driver.sdmmc.dma_req_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+		<header>
+            /** SDMMC on SDMMC Instance. */
+			extern const sdmmc_instance_t ${module.driver.sdmmc.name};
+#ifndef ${module.driver.sdmmc.p_callback}
+void ${module.driver.sdmmc.p_callback}(sdmmc_callback_args_t * p_args);
+#endif
+		</header>
+		<includes>#include &quot;r_sdmmc.h&quot;
+#include &quot;r_sdmmc_api.h&quot;</includes>
+		<declarations>
+#if ${module.driver.sdmmc.access_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.sdmmc.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SDMMC${module.driver.sdmmc.channel})
+SSP_VECTOR_DEFINE_CHAN(sdhimmc_accs_isr, SDHIMMC, ACCS, ${module.driver.sdmmc.channel});
+#endif
+#endif
+#if ${module.driver.sdmmc.card_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.sdmmc.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SDMMC${module.driver.sdmmc.channel})
+SSP_VECTOR_DEFINE_CHAN(sdhimmc_card_isr, SDHIMMC, CARD, ${module.driver.sdmmc.channel});
+#endif
+#endif
+#if ${module.driver.sdmmc.dma_req_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.sdmmc.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SDMMC${module.driver.sdmmc.channel})
+SSP_VECTOR_DEFINE_CHAN(sdhimmc_dma_req_isr, SDHIMMC, DMA_REQ, ${module.driver.sdmmc.channel});
+#endif
+#endif
+sdmmc_instance_ctrl_t ${module.driver.sdmmc.name}_ctrl;
+
+/** SDMMC extended configuration */
+const sdmmc_extended_cfg_t ${module.driver.sdmmc.name}_ext_cfg_t =
+{
+    .block_size                              = ${module.driver.sdmmc.block_size},
+};
+		
+sdmmc_cfg_t ${module.driver.sdmmc.name}_cfg =
+{
+    .hw = 
+    {
+        .media_type          = ${module.driver.sdmmc.media_type},
+        .bus_width           = ${module.driver.sdmmc.bus_width},
+        .channel             = ${module.driver.sdmmc.channel},
+    },
+	.p_callback             = ${module.driver.sdmmc.p_callback},
+
+    .p_extend               = (void *)&amp;${module.driver.sdmmc.name}_ext_cfg_t,
+    .p_lower_lvl_transfer   = &amp;${module.driver.sdmmc_on_sdmmc.requires.transfer::module.driver.transfer.name},            
+
+
+    .access_ipl             = ${module.driver.sdmmc.access_ipl},
+    .sdio_ipl               = BSP_IRQ_DISABLED,
+    .card_ipl               = ${module.driver.sdmmc.card_ipl},
+    .dma_req_ipl            = ${module.driver.sdmmc.dma_req_ipl},
+};
+/* Instance structure to use this module. */
+const sdmmc_instance_t ${module.driver.sdmmc.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.sdmmc.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.sdmmc.name}_cfg,
+    .p_api         = &amp;g_sdmmc_on_sdmmc
+};
+
+
+
+
+</declarations>
+	</module>
+<!-- SDIO XML START here-->
+
+	<config id="config.driver.sdio" path="ssp_cfg/driver/r_sdmmc_cfg.h" version="0">
+		<property default="config.driver.sdmmc.param_checking_enable.bsp" display="Parameter Checking Enable" id="config.driver.sdmmc.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.sdmmc.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.sdmmc.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.sdmmc.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define SDMMC_CFG_PARAM_CHECKING_ENABLE ${config.driver.sdmmc.param_checking_enable}
+</content>
+    </config>
+    <module config="config.driver.sdio" display="Driver|Connectivity|${module.driver.sdio.name} SDIO Driver on r_sdmmc" id="module.driver.sdio_on_sdmmc" version="1">
+        <constraint display="Driver instances must have unique names">
+            "${interface.driver.sdio.${module.driver.sdio.name}}" === "1"
+        </constraint>
+        <constraint display="Requires SDIO Access Interrupt enabled">
+            "${module.driver.sdio.access_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires SDIO SDIO Interrupt enabled">
+            "${module.driver.sdio.sdio_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires lower level transfer driver">
+            testExists("${module.driver.sdio_on_sdmmc.requires.transfer::module.driver.transfer.name}")
+        </constraint>
+	
+        <requires id="module.driver.sdio_on_sdmmc.requires.transfer" interface="interface.driver.transfer" display="Add Transfer Driver (DMAC or DTC) [Required]">
+            <override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+            <override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+            <override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+            <override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+            <override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+            <override property="module.driver.transfer.p_dest" value="NULL"/>
+            <override property="module.driver.transfer.p_src" value="NULL"/>
+            <override property="module.driver.transfer.length" value="0"/>
+            <override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+            <override property="module.driver.transfer.num_blocks" value="0"/>
+            <override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+            <override property="module.driver.transfer.p_callback" value="NULL"/>
+            <override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_sci${module.driver.uart.channel}_txi"/>
+        </requires>
+        <provides interface="interface.driver.sdio" />
+        <provides interface="interface.driver.sdio.${module.driver.sdio.name}" />
+        <provides interface="interface.driver.sdio_on_sdmmc" />
+        <provides interface="interface.driver.sdio_on_sdmmc.${module.driver.sdio.name}" />        
+        <property default="g_sdio${_instance}" display="Name" id="module.driver.sdio.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.sdio.name}")</constraint>
+        </property>
+        <property default="0" display="Channel" id="module.driver.sdio.channel">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.sdio.channel}")  &amp;&amp; (("${module.driver.sdio.channel}" &gt;= 0) &amp;&amp; ("${module.driver.sdio.channel}" &lt; 2))</constraint>
+           </property>	
+		<property default="module.driver.sdio.media_type.media_type_card" display="Media Type" id="module.driver.sdio.media_type">
+			<option display="Card" id="module.driver.sdio.media_type.media_type_card" value="SDMMC_MEDIA_TYPE_CARD"/>
+		</property>
+		<property default="module.driver.sdio.bus_width.bus_width_4_bits" display="Bus Width" id="module.driver.sdio.bus_width">
+			<option display="1 Bit" id="module.driver.sdio.bus_width.bus_width_1_bit" value="SDMMC_BUS_WIDTH_1_BIT"/>
+			<option display="4 Bits" id="module.driver.sdio.bus_width.bus_width_4_bits" value="SDMMC_BUS_WIDTH_4_BITS"/>
+		</property>
+	    <property default="512" display="Block Size" id="module.driver.sdio.block_size">
+			<constraint display="Value must be an integer between 1 and 512">testInteger("${module.driver.sdio.block_size}")  &amp;&amp; ("${module.driver.sdio.block_size}" &gt;= 1) &amp;&amp; ("${module.driver.sdio.block_size}" &lt;= 512)</constraint>
+        </property>
+        <property default="NULL" display="Callback" id="module.driver.sdio.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.sdio.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Access Interrupt Priority" id="module.driver.sdio.access_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Card Interrupt Priority" id="module.driver.sdio.card_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="SDIO Interrupt Priority" id="module.driver.sdio.sdio_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="DMA Request Interrupt Priority" id="module.driver.sdio.dma_req_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+		<header>
+            /** SDIO on SDMMC Instance. */
+			extern const sdmmc_instance_t ${module.driver.sdio.name};
+#ifndef ${module.driver.sdio.p_callback}
+void ${module.driver.sdio.p_callback}(sdmmc_callback_args_t * p_args);
+#endif
+		</header>
+		<includes>#include &quot;r_sdmmc.h&quot;
+#include &quot;r_sdmmc_api.h&quot;
+        </includes>
+		<declarations>
+#if ${module.driver.sdio.access_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.sdio.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SDMMC${module.driver.sdio.channel})
+SSP_VECTOR_DEFINE_CHAN(sdhimmc_accs_isr, SDHIMMC, ACCS, ${module.driver.sdio.channel});
+#endif
+#endif
+#if ${module.driver.sdio.sdio_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.sdio.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SDMMC${module.driver.sdio.channel})
+SSP_VECTOR_DEFINE_CHAN(sdhimmc_sdio_isr, SDHIMMC, SDIO, ${module.driver.sdio.channel});
+#endif
+#endif
+#if ${module.driver.sdio.card_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.sdio.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SDMMC${module.driver.sdio.channel})
+SSP_VECTOR_DEFINE_CHAN(sdhimmc_card_isr, SDHIMMC, CARD, ${module.driver.sdio.channel});
+#endif
+#endif
+#if ${module.driver.sdio.dma_req_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.sdio.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SDMMC${module.driver.sdio.channel})
+SSP_VECTOR_DEFINE_CHAN(sdhimmc_dma_req_isr, SDHIMMC, DMA_REQ, ${module.driver.sdio.channel});
+#endif
+#endif
+sdmmc_instance_ctrl_t ${module.driver.sdio.name}_ctrl;
+
+/** SDIO extended configuration */
+const sdmmc_extended_cfg_t ${module.driver.sdio.name}_ext_cfg_t =
+{
+    .block_size                              = ${module.driver.sdio.block_size},
+};
+
+sdmmc_cfg_t ${module.driver.sdio.name}_cfg =
+{
+    .hw =
+    {
+        .bus_width           = ${module.driver.sdio.bus_width},
+        .media_type          = ${module.driver.sdio.media_type},
+        .channel             = ${module.driver.sdio.channel},
+    },
+	.p_callback             = ${module.driver.sdio.p_callback},
+    .p_extend               = (void *)&amp;${module.driver.sdio.name}_ext_cfg_t,
+    .p_lower_lvl_transfer   = &amp;${module.driver.sdio_on_sdmmc.requires.transfer::module.driver.transfer.name},
+    .access_ipl             = ${module.driver.sdio.access_ipl},
+    .sdio_ipl               = ${module.driver.sdio.sdio_ipl},
+    .card_ipl               = ${module.driver.sdio.card_ipl},
+    .dma_req_ipl            = ${module.driver.sdio.dma_req_ipl},
+
+};
+/* Instance structure to use this module. */
+const sdmmc_instance_t ${module.driver.sdio.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.sdio.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.sdio.name}_cfg,
+    .p_api         = &amp;g_sdmmc_on_sdmmc
+};
+
+</declarations>
+	</module>	
+</synergyModuleDescription>

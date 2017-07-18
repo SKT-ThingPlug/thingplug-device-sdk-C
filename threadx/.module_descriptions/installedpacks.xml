@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<synergyEditorModuleInfo>
+  <synergyEditorPacksList>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_mcu_s128.1.2.0.pack" shortname="Renesas.Synergy_mcu_s128.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_board_s3a7_dk.1.2.0.pack" shortname="Renesas.Synergy_board_s3a7_dk.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy.1.2.0.pack" shortname="Renesas.Synergy.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_touch_panel_i2c_sx8654.1.2.0.pack" shortname="Renesas.Synergy_touch_panel_i2c_sx8654.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_touch_panel_i2c_ft5x06.1.2.0.pack" shortname="Renesas.Synergy_touch_panel_i2c_ft5x06.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_board_custom.1.2.0.pack" shortname="Renesas.Synergy_board_custom.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_board_s7g2_dk.1.2.0.pack" shortname="Renesas.Synergy_board_s7g2_dk.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.SynergyBlinky.1.2.0.pack" shortname="Renesas.SynergyBlinky.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_mcu_s5d9.1.2.0.pack" shortname="Renesas.Synergy_mcu_s5d9.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_board_s7g2_sk.1.2.0.pack" shortname="Renesas.Synergy_board_s7g2_sk.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.SynergyBlinkyThreadX.1.2.0.pack" shortname="Renesas.SynergyBlinkyThreadX.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_board_s124_dk.1.2.0.pack" shortname="Renesas.Synergy_board_s124_dk.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_mcu_s124.1.2.0.pack" shortname="Renesas.Synergy_mcu_s124.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_board_s7g2_pe_hmi1.1.2.0.pack" shortname="Renesas.Synergy_board_s7g2_pe_hmi1.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_board_s5d9_pk.1.2.0.pack" shortname="Renesas.Synergy_board_s5d9_pk.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_mcu_s7g2.1.2.0.pack" shortname="Renesas.Synergy_mcu_s7g2.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_mcu_s3a7.1.2.0.pack" shortname="Renesas.Synergy_mcu_s3a7.1.2.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Renesas\e2_studio\internal\projectgen\arm\packs\Renesas.Synergy_mcu_s3a3.1.2.0.pack" shortname="Renesas.Synergy_mcu_s3a3.1.2.0.pack"/>
+  </synergyEditorPacksList>
+</synergyEditorModuleInfo>

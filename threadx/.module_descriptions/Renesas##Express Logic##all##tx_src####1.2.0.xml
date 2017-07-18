@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.tx_src" path="ssp_cfg/framework/el/tx_src_user.h" version="0">
+        <property id="config.el.tx_src.error_checking" display="Error Checking" default="config.el.tx_src.error_checking.enabled">
+            <option id="config.el.tx_src.error_checking.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.tx_src.error_checking.disabled" display="Disabled" value="0" />                
+        </property>
+        <property default="" display="Timer Ticks Per Second" id="config.el.tx_src.timer_ticks_per_second" description="Define the number of times the system timer runs per second. Default is 100 ticks per second, which results in a tick every 10ms.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.tx_src.timer_ticks_per_second}".length === 0) || ("${config.el.tx_src.timer_ticks_per_second}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Max Priorities" id="config.el.tx_src.max_priorities" description="Define the priority levels for ThreadX. Legal values range from 32 to 1024 and MUST be evenly divisible by 32.">
+            <constraint display="Value must be a multiple of 32 or empty">("${config.el.tx_src.max_priorities}".length === 0) || ("${config.el.tx_src.max_priorities}" % 32 === 0)</constraint>
+        </property>
+        <property default="" display="Minimum Stack" id="config.el.tx_src.minimum_stack" description="Define the minimum stack for a ThreadX thread on this processor. If the size supplied during thread creation is less than this value, the thread create call will return an error.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.tx_src.minimum_stack}".length === 0) || ("${config.el.tx_src.minimum_stack}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Timer Thread Stack Size" id="config.el.tx_src.timer_thread_stack_size" description="Define the system timer thread's default stack size and priority. These are only applicable if TX_TIMER_PROCESS_IN_ISR is disabled.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.tx_src.timer_thread_stack_size}".length === 0) || ("${config.el.tx_src.timer_thread_stack_size}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Timer Thread Priority" id="config.el.tx_src.timer_thread_priority" description="Define the system timer thread's default stack size and priority. These are only applicable if TX_TIMER_PROCESS_IN_ISR is disabled.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.tx_src.timer_thread_priority}".length === 0) || ("${config.el.tx_src.timer_thread_priority}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Trace Time Mask" id="config.el.tx_src.trace_time_mask" description="Enable interrupts">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.tx_src.trace_time_mask}".length === 0) || ("${config.el.tx_src.trace_time_mask}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.tx_src.timer_process_in_isr" display="Timer Process In ISR" default="config.el.tx_src.timer_process_in_isr.enabled" description="Determine if timer expirations (application timers, timeouts, and tx_thread_sleep calls should be processed within the a system timer thread or directly in the timer ISR. By default, the timer thread is used. When the following is enabled, the timer expiration processing is done directly from the timer ISR, thereby eliminating the timer thread control block, stack, and context switching to activate it.">
+            <option id="config.el.tx_src.timer_process_in_isr.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.tx_src.timer_process_in_isr.disabled" display="Disabled" value="0" />                
+        </property>
+        <property id="config.el.tx_src.reactivate_inline" display="Reactivate Inline" default="config.el.tx_src.reactivate_inline.disabled" description="Determine if in-line timer reactivation should be used within the timer expiration processing. By default, this is disabled and a function call is used. When the following is enabled, reactivating is performed in-line resulting in faster timer processing but slightly larger code size.">
+            <option id="config.el.tx_src.reactivate_inline.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.reactivate_inline.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.stack_filling" display="Stack Filling" default="config.el.tx_src.stack_filling.enabled" description="Determine is stack filling is enabled. By default, ThreadX stack filling is enabled, which places an 0xEF pattern in each byte of each thread's stack. This is used by debuggers with ThreadX-awareness and by the ThreadX run-time stack checking feature.">
+            <option id="config.el.tx_src.stack_filling.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.tx_src.stack_filling.disabled" display="Disabled" value="0" />                
+        </property>
+        <property id="config.el.tx_src.stack_checking" display="Stack Checking" default="config.el.tx_src.stack_checking.disabled" description="Determine whether or not stack checking is enabled. By default, ThreadX stack checking is disabled. When the following is enabled, ThreadX thread stack checking is enabled. If stack checking is enabled (TX_ENABLE_STACK_CHECKING is enabled), the TX_DISABLE_STACK_FILLING define is negated, thereby forcing the stack fill which is necessary for the stack checking logic.">
+            <option id="config.el.tx_src.stack_checking.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.stack_checking.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.preemption_threshold" display="Preemption Threshold" default="config.el.tx_src.preemption_threshold.disabled" description="Determine if preemption-threshold should be disabled. By default, preemption-threshold is disabled. If the application does not use preemption-threshold, it may be disabled to reduce code size and improve performance.">
+            <option id="config.el.tx_src.preemption_threshold.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.preemption_threshold.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.redundant_clearing" display="Redundant Clearing" default="config.el.tx_src.redundant_clearing.enabled" description="Determine if global ThreadX variables should be cleared. If the compiler startup code clears the .bss section prior to ThreadX running, the define can be used to eliminate unnecessary clearing of ThreadX global variables.">
+            <option id="config.el.tx_src.redundant_clearing.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.tx_src.redundant_clearing.disabled" display="Disabled" value="0" />                
+        </property>
+        <property id="config.el.tx_src.no_timer" display="No Timer" default="config.el.tx_src.no_timer.disabled" description="Determine if no timer processing is required. This option will help eliminate the timer processing when not needed. The user will also have to comment out the call to tx_timer_interrupt, which is typically made from assembly language in tx_initialize_low_level.">
+            <option id="config.el.tx_src.no_timer.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.no_timer.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.notify_callbacks" display="Notify Callbacks" default="config.el.tx_src.notify_callbacks.disabled" description="Determine if the notify callback option should be disabled. By default, notify callbacks are enabled. If the application does not use notify callbacks, they may be disabled to reduce code size and improve performance.">
+            <option id="config.el.tx_src.notify_callbacks.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.notify_callbacks.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.inline_thread_resume_suspend" display="Inline Thread Resume Suspend" default="config.el.tx_src.inline_thread_resume_suspend.disabled" description="Determine if the tx_thread_resume and tx_thread_suspend services should have their internal code in-line. This results in a larger image, but improves the performance of the thread resume and suspend services.">
+            <option id="config.el.tx_src.inline_thread_resume_suspend.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.inline_thread_resume_suspend.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.not_interruptable" display="Not Interruptable" default="config.el.tx_src.not_interruptable.disabled" description="Determine if the internal ThreadX code is non-interruptable. This results in smaller code size and less processing overhead, but increases the interrupt lockout time.">
+            <option id="config.el.tx_src.not_interruptable.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.not_interruptable.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.event_trace" display="Event Trace" default="config.el.tx_src.event_trace.disabled" description="Determine if the trace event logging code should be enabled. This causes slight increases in code size and overhead, but provides the ability to generate system trace information which is available for viewing in TraceX.">
+            <option id="config.el.tx_src.event_trace.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.event_trace.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property default="g_tx_trace_buffer" display="Trace Buffer Name" id="config.el.tx_src.trace_buf_name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${config.el.tx_src.trace_buf_name}")</constraint>
+        </property>
+        <property id="config.el.tx_src.trace_buf_size" display="Trace Buffer Size" default="65536">
+            <constraint display="Value must be greater than 0">("${config.el.tx_src.trace_buf_size}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.tx_src.num_registries" display="Trace Buffer Number of Registries" default="30">
+            <constraint display="Value must be greater than 0">("${config.el.tx_src.num_registries}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.tx_src.block_pool_performance_info" display="Block Pool Performance Info" default="config.el.tx_src.block_pool_performance_info.disabled" description="Determine if block pool performance gathering is required by the application. When the following is enabled, ThreadX gathers various block pool performance information.">
+            <option id="config.el.tx_src.block_pool_performance_info.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.block_pool_performance_info.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.byte_pool_performance_info" display="Byte Pool Performance Info" default="config.el.tx_src.byte_pool_performance_info.disabled" description="Determine if byte pool performance gathering is required by the application. When the following is enabled, ThreadX gathers various byte pool performance information.">
+            <option id="config.el.tx_src.byte_pool_performance_info.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.byte_pool_performance_info.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.event_flags_performance_info" display="Event Flags Performance Info" default="config.el.tx_src.event_flags_performance_info.disabled" description="Determine if event flags performance gathering is required by the application. When the following is enabled, ThreadX gathers various event flags performance information.">
+            <option id="config.el.tx_src.event_flags_performance_info.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.event_flags_performance_info.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.mutex_performance_info" display="Mutex Performance Info" default="config.el.tx_src.mutex_performance_info.disabled" description="Determine if mutex performance gathering is required by the application. When the following is enabled, ThreadX gathers various mutex performance information.">
+            <option id="config.el.tx_src.mutex_performance_info.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.mutex_performance_info.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.queue_performance_info" display="Queue Performance Info" default="config.el.tx_src.queue_performance_info.disabled" description="Determine if queue performance gathering is required by the application. When the following is enabled, ThreadX gathers various queue performance information.">
+            <option id="config.el.tx_src.queue_performance_info.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.queue_performance_info.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.semaphore_performance_info" display="Semaphore Performance Info" default="config.el.tx_src.semaphore_performance_info.disabled" description="Determine if semaphore performance gathering is required by the application. When the following is enabled, ThreadX gathers various semaphore performance information.">
+            <option id="config.el.tx_src.semaphore_performance_info.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.semaphore_performance_info.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.thread_performance_info" display="Thread Performance Info" default="config.el.tx_src.thread_performance_info.disabled" description="Determine if thread performance gathering is required by the application. When the following is enabled, ThreadX gathers various thread performance information.">
+            <option id="config.el.tx_src.thread_performance_info.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.thread_performance_info.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.timer_performance_info" display="Timer Performance Info" default="config.el.tx_src.timer_performance_info.disabled" description="Determine if timer performance gathering is required by the application. When the following is enabled, ThreadX gathers various timer performance information.">
+            <option id="config.el.tx_src.timer_performance_info.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.timer_performance_info.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.hw_stack_monitoring" display="Hardware Thread Stack Monitoring" default="config.el.tx_src.hw_stack_monitoring.enabled" description="Use Synergy Hardware Stack Monitors to monitor thread stacks for overflow.">
+            <option id="config.el.tx_src.hw_stack_monitoring.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.tx_src.hw_stack_monitoring.disabled" display="Disabled" value="0" />                
+        </property>
+        <property id="config.el.tx_src.iar_library_support" display="IAR Library Support" default="config.el.tx_src.iar_library_support.disabled" description="Enable IAR library support (IAR compiler only).">
+            <option id="config.el.tx_src.iar_library_support.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.iar_library_support.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.tx_src.epk_support" display="EPK Support" default="config.el.tx_src.epk_support.disabled" description="Enable EPK (Execution Profile Kit) support.">
+            <option id="config.el.tx_src.epk_support.enabled" display="Enabled" value="1" />
+            <option id="config.el.tx_src.epk_support.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property default="" id="config.el.tx_src.tx_thread_extension_0" display="TX_THREAD_EXTENSION_0"/>
+        <property default="" id="config.el.tx_src.tx_thread_extension_1" display="TX_THREAD_EXTENSION_1"/>
+        <property default="" id="config.el.tx_src.tx_thread_extension_2" display="TX_THREAD_EXTENSION_2"/>
+        <property default="" id="config.el.tx_src.tx_block_pool_extension" display="TX_BLOCK_POOL_EXTENSION"/>
+        <property default="" id="config.el.tx_src.tx_byte_pool_extension" display="TX_BYTE_POOL_EXTENSION"/>
+        <property default="" id="config.el.tx_src.tx_event_flags_group_extension" display="TX_EVENT_FLAGS_GROUP_EXTENSION"/>
+        <property default="" id="config.el.tx_src.tx_mutex_extension" display="TX_MUTEX_EXTENSION"/>
+        <property default="" id="config.el.tx_src.tx_queue_extension" display="TX_QUEUE_EXTENSION"/>
+        <property default="" id="config.el.tx_src.tx_semaphore_extension" display="TX_SEMAPHORE_EXTENSION"/>
+        <property default="" id="config.el.tx_src.tx_timer_extension" display="TX_TIMER_EXTENSION"/>
+        <property default="" id="config.el.tx_src.tx_thread_user_extension" display="TX_THREAD_USER_EXTENSION"/>
+        <property default="" id="config.el.tx_src.tx_thread_create_extension" display="TX_THREAD_CREATE_EXTENSION(thread_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_thread_delete_extension" display="TX_THREAD_DELETE_EXTENSION(thread_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_thread_completed_extension" display="TX_THREAD_COMPLETED_EXTENSION(thread_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_thread_terminated_extension" display="TX_THREAD_TERMINATED_EXTENSION(thread_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_block_pool_create_extension" display="TX_BLOCK_POOL_CREATE_EXTENSION(pool_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_byte_pool_create_extension" display="TX_BYTE_POOL_CREATE_EXTENSION(pool_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_event_flags_group_create_extension" display="TX_EVENT_FLAGS_GROUP_CREATE_EXTENSION(group_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_mutex_create_extension" display="TX_MUTEX_CREATE_EXTENSION(mutex_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_queue_create_extension" display="TX_QUEUE_CREATE_EXTENSION(queue_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_semaphore_create_extension" display="TX_SEMAPHORE_CREATE_EXTENSION(semaphore_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_timer_create_extension" display="TX_TIMER_CREATE_EXTENSION(timer_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_block_pool_delete_extension" display="TX_BLOCK_POOL_DELETE_EXTENSION(pool_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_byte_pool_delete_extension" display="TX_BYTE_POOL_DELETE_EXTENSION(pool_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_event_flags_group_delete_extension" display="TX_EVENT_FLAGS_GROUP_DELETE_EXTENSION(group_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_mutex_delete_extension" display="TX_MUTEX_DELETE_EXTENSION(mutex_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_queue_delete_extension" display="TX_QUEUE_DELETE_EXTENSION(queue_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_semaphore_delete_extension" display="TX_SEMAPHORE_DELETE_EXTENSION(semaphore_ptr)"/>
+        <property default="" id="config.el.tx_src.tx_timer_delete_extension" display="TX_TIMER_DELETE_EXTENSION(timer_ptr)"/>
+        <content>
+#if (!${config.el.tx_src.error_checking})
+#define TX_DISABLE_ERROR_CHECKING
+#endif
+#if (${config.el.tx_src.timer_ticks_per_second}+0)
+#define TX_TIMER_TICKS_PER_SECOND (${config.el.tx_src.timer_ticks_per_second})
+#endif
+#if (${config.el.tx_src.max_priorities}+0)
+#define TX_MAX_PRIORITIES (${config.el.tx_src.max_priorities})
+#endif
+#if (${config.el.tx_src.minimum_stack}+0)
+#define TX_MINIMUM_STACK (${config.el.tx_src.minimum_stack})
+#endif
+#if (${config.el.tx_src.timer_thread_stack_size}+0)
+#define TX_TIMER_THREAD_STACK_SIZE (${config.el.tx_src.timer_thread_stack_size})
+#endif
+#if (${config.el.tx_src.timer_thread_priority}+0)
+#define TX_TIMER_THREAD_PRIORITY (${config.el.tx_src.timer_thread_priority})
+#endif
+#if (${config.el.tx_src.trace_time_mask}+0)
+#define TX_TRACE_TIME_MASK (${config.el.tx_src.trace_time_mask})
+#endif
+#if (!${config.el.tx_src.timer_process_in_isr})
+#undef TX_TIMER_PROCESS_IN_ISR
+#endif
+#if (${config.el.tx_src.reactivate_inline})
+#define TX_REACTIVATE_INLINE
+#endif
+#if (!${config.el.tx_src.stack_filling})
+#define TX_DISABLE_STACK_FILLING
+#endif
+#if (${config.el.tx_src.stack_checking})
+#define TX_ENABLE_STACK_CHECKING
+#endif
+#if (${config.el.tx_src.preemption_threshold})
+#undef TX_DISABLE_PREEMPTION_THRESHOLD
+#endif
+#if (!${config.el.tx_src.redundant_clearing})
+#define TX_DISABLE_REDUNDANT_CLEARING
+#endif
+#if (${config.el.tx_src.no_timer})
+#define TX_NO_TIMER
+#endif
+#if (${config.el.tx_src.notify_callbacks})
+#undef TX_DISABLE_NOTIFY_CALLBACKS
+#endif
+#if (${config.el.tx_src.inline_thread_resume_suspend})
+#define TX_INLINE_THREAD_RESUME_SUSPEND
+#endif
+#if (${config.el.tx_src.not_interruptable})
+#define TX_NOT_INTERRUPTABLE
+#endif
+#if (${config.el.tx_src.event_trace})
+#define TX_ENABLE_EVENT_TRACE
+#endif
+#if (${config.el.tx_src.block_pool_performance_info})
+#define TX_BLOCK_POOL_ENABLE_PERFORMANCE_INFO
+#endif
+#if (${config.el.tx_src.byte_pool_performance_info})
+#define TX_BYTE_POOL_ENABLE_PERFORMANCE_INFO
+#endif
+#if (${config.el.tx_src.event_flags_performance_info})
+#define TX_EVENT_FLAGS_ENABLE_PERFORMANCE_INFO
+#endif
+#if (${config.el.tx_src.mutex_performance_info})
+#define TX_MUTEX_ENABLE_PERFORMANCE_INFO
+#endif
+#if (${config.el.tx_src.queue_performance_info})
+#define TX_QUEUE_ENABLE_PERFORMANCE_INFO
+#endif
+#if (${config.el.tx_src.semaphore_performance_info})
+#define TX_SEMAPHORE_ENABLE_PERFORMANCE_INFO
+#endif
+#if (${config.el.tx_src.thread_performance_info})
+#define TX_THREAD_ENABLE_PERFORMANCE_INFO
+#endif
+#if (${config.el.tx_src.timer_performance_info})
+#define TX_TIMER_ENABLE_PERFORMANCE_INFO
+#endif
+#if (${config.el.tx_src.hw_stack_monitoring})
+#define TX_HW_STACK_MONITOR_ENABLE
+#endif
+#if (${config.el.tx_src.event_trace}) // Event trace enabled
+#define TX_USER_TRACE_BUFFER_DECLARE static uint8_t ${config.el.tx_src.trace_buf_name}[${config.el.tx_src.trace_buf_size}];
+#define TX_USER_ENABLE_TRACE  tx_trace_enable(&amp;${config.el.tx_src.trace_buf_name}[0], ${config.el.tx_src.trace_buf_size}, ${config.el.tx_src.num_registries});
+#else
+#define TX_USER_TRACE_BUFFER_DECLARE
+#define TX_USER_ENABLE_TRACE
+#endif
+#if (${config.el.tx_src.iar_library_support})
+#define TX_ENABLE_IAR_LIBRARY_SUPPORT
+#endif
+#if (${config.el.tx_src.epk_support})
+#define TX_ENABLE_EPK_SUPPORT
+#endif
+#define TX_THREAD_EXTENSION_0                   ${config.el.tx_src.tx_thread_extension_0}
+#define TX_THREAD_EXTENSION_1                   ${config.el.tx_src.tx_thread_extension_1}
+#ifdef  TX_ENABLE_IAR_LIBRARY_SUPPORT
+#define TX_THREAD_EXTENSION_2                   ULONG       tx_thread_vfp_stack_frame;  \
+                                                VOID        *tx_thread_iar_tls_pointer; \
+                                                ${config.el.tx_src.tx_thread_extension_2}
+#else
+#define TX_THREAD_EXTENSION_2                   ULONG       tx_thread_vfp_stack_frame;  \
+                                                ${config.el.tx_src.tx_thread_extension_2}
+#endif
+
+/* Define the port extensions of the remaining ThreadX objects.  */
+
+#define TX_BLOCK_POOL_EXTENSION                 ${config.el.tx_src.tx_block_pool_extension}
+#define TX_BYTE_POOL_EXTENSION                  ${config.el.tx_src.tx_byte_pool_extension}
+#define TX_EVENT_FLAGS_GROUP_EXTENSION          ${config.el.tx_src.tx_event_flags_group_extension}
+#define TX_MUTEX_EXTENSION                      ${config.el.tx_src.tx_mutex_extension}
+#define TX_QUEUE_EXTENSION                      ${config.el.tx_src.tx_queue_extension}
+#define TX_SEMAPHORE_EXTENSION                  ${config.el.tx_src.tx_semaphore_extension}
+#define TX_TIMER_EXTENSION                      ${config.el.tx_src.tx_timer_extension}
+
+/* Define the user extension field of the thread control block.  */
+
+#define TX_THREAD_USER_EXTENSION                ${config.el.tx_src.tx_thread_user_extension}
+
+/* Define the macros for processing extensions in tx_thread_create, tx_thread_delete,
+   tx_thread_shell_entry, and tx_thread_terminate.  */
+
+#ifdef  TX_ENABLE_IAR_LIBRARY_SUPPORT
+#define TX_THREAD_CREATE_EXTENSION(thread_ptr)      thread_ptr -> tx_thread_iar_tls_pointer =  __iar_dlib_perthread_allocate();  \
+                                                    ${config.el.tx_src.tx_thread_create_extension}
+#else
+#define TX_THREAD_CREATE_EXTENSION(thread_ptr)      ${config.el.tx_src.tx_thread_create_extension}
+#endif
+#ifdef  TX_ENABLE_IAR_LIBRARY_SUPPORT
+#define TX_THREAD_DELETE_EXTENSION(thread_ptr)      __iar_dlib_perthread_deallocate(thread_ptr -> tx_thread_iar_tls_pointer); \
+                                                    thread_ptr -> tx_thread_iar_tls_pointer =  TX_NULL;                       \
+                                                    ${config.el.tx_src.tx_thread_delete_extension}
+#else
+#define TX_THREAD_DELETE_EXTENSION(thread_ptr)      ${config.el.tx_src.tx_thread_delete_extension}
+#endif
+#ifdef  TX_ENABLE_IAR_LIBRARY_SUPPORT
+#define TX_PORT_SPECIFIC_PRE_SCHEDULER_INITIALIZATION   __iar_dlib_perthread_access(0);
+#endif
+#define TX_THREAD_COMPLETED_EXTENSION(thread_ptr)   ${config.el.tx_src.tx_thread_completed_extension}
+#define TX_THREAD_TERMINATED_EXTENSION(thread_ptr)  ${config.el.tx_src.tx_thread_terminated_extension}
+
+/* Define the ThreadX object creation extensions for the remaining objects.  */
+
+#define TX_BLOCK_POOL_CREATE_EXTENSION(pool_ptr)          ${config.el.tx_src.tx_block_pool_create_extension}
+#define TX_BYTE_POOL_CREATE_EXTENSION(pool_ptr)           ${config.el.tx_src.tx_byte_pool_create_extension}
+#define TX_EVENT_FLAGS_GROUP_CREATE_EXTENSION(group_ptr)  ${config.el.tx_src.tx_event_flags_group_create_extension}
+#define TX_MUTEX_CREATE_EXTENSION(mutex_ptr)              ${config.el.tx_src.tx_mutex_create_extension}
+#define TX_QUEUE_CREATE_EXTENSION(queue_ptr)              ${config.el.tx_src.tx_queue_create_extension}
+#define TX_SEMAPHORE_CREATE_EXTENSION(semaphore_ptr)      ${config.el.tx_src.tx_semaphore_create_extension}
+#define TX_TIMER_CREATE_EXTENSION(timer_ptr)              ${config.el.tx_src.tx_timer_create_extension}
+
+/* Define the ThreadX object deletion extensions for the remaining objects.  */
+
+#define TX_BLOCK_POOL_DELETE_EXTENSION(pool_ptr)          ${config.el.tx_src.tx_block_pool_delete_extension}
+#define TX_BYTE_POOL_DELETE_EXTENSION(pool_ptr)           ${config.el.tx_src.tx_byte_pool_delete_extension}
+#define TX_EVENT_FLAGS_GROUP_DELETE_EXTENSION(group_ptr)  ${config.el.tx_src.tx_event_flags_group_delete_extension}
+#define TX_MUTEX_DELETE_EXTENSION(mutex_ptr)              ${config.el.tx_src.tx_mutex_delete_extension}
+#define TX_QUEUE_DELETE_EXTENSION(queue_ptr)              ${config.el.tx_src.tx_queue_delete_extension}
+#define TX_SEMAPHORE_DELETE_EXTENSION(semaphore_ptr)      ${config.el.tx_src.tx_semaphore_delete_extension}
+#define TX_TIMER_DELETE_EXTENSION(timer_ptr)              ${config.el.tx_src.tx_timer_delete_extension}
+        </content>
+    </config>
+    <module config="config.el.tx_src" id="module.framework.tx_src" display="X-Ware|ThreadX|ThreadX Source" common="1" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.tx_src.linkage_warning}" === "module.el.tx_src.linkage_warning.disabled"
+        </constraint>
+
+        <constraint display="Requires one ThreadX Library module">
+            "${interface.framework.tx}" >= "1"
+        </constraint>
+        <requires interface="interface.framework.tx"  />                
+        <provides interface="interface.framework.tx_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.tx_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.tx_src.linkage_warning">
+            <option display="Enabled" id="module.el.tx_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.tx_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

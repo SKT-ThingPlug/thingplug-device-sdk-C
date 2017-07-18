@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.bsp.s128.ssp" path="ssp_cfg/bsp/bsp_mcu_family_cfg.h" version="0">
+       <property default="config.bsp.s128.ssp.OFS0_Register.default" display="OFS0 register settings" id="config.bsp.s128.ssp.OFS0">
+			<option display="Select fields below" id="config.bsp.s128.ssp.OFS0_Register.default" value="(0)"/>
+        </property>
+		<property default="config.bsp.s128.ssp.OFS0.iwdt_start_mode.disabled" display="     IWDT Start Mode" id="config.bsp.s128.ssp.OFS0.iwdt_start_mode">
+			 <option display="IWDT is Disabled" id="config.bsp.s128.ssp.OFS0.iwdt_start_mode.disabled" value="1 &lt;&lt; 1"/>
+			 <option display="IWDT is automatically activated after a reset (Autostart mode)" id="config.bsp.s128.ssp.OFS0.iwdt_start_mode.enabled" value="0 &lt;&lt; 1"/>
+		</property>
+		<property default="config.bsp.s128.ssp.OFS0.iwdt_timeout.2048" display="     IWDT Timeout Period" id="config.bsp.s128.ssp.OFS0.iwdt_timeout">
+			 <option display="128 cycles" id="config.bsp.s128.ssp.OFS0.iwdt_timeout.128" value="0 &lt;&lt; 2"/>
+			 <option display="512 cycles" id="config.bsp.s128.ssp.OFS0.iwdt_timeout.512" value="1 &lt;&lt; 2"/>
+			 <option display="1024 cycles" id="config.bsp.s128.ssp.OFS0.iwdt_timeout.1024" value="2 &lt;&lt; 2"/>
+			 <option display="2048 cycles" id="config.bsp.s128.ssp.OFS0.iwdt_timeout.2048" value="3 &lt;&lt; 2"/>
+		</property>	
+		<property default="config.bsp.s128.ssp.OFS0.iwdt_divisor.128" display="     IWDT Dedicated Clock Frequency Divisor" id="config.bsp.s128.ssp.OFS0.iwdt_divisor">
+			 <option display="1" id="config.bsp.s128.ssp.OFS0.iwdt_divisor.1" value="0 &lt;&lt; 4"/>
+			 <option display="16" id="config.bsp.s128.ssp.OFS0.iwdt_divisor.16" value="2 &lt;&lt; 4"/>
+			 <option display="32" id="config.bsp.s128.ssp.OFS0.iwdt_divisor.32" value="3 &lt;&lt; 4"/>
+			 <option display="64" id="config.bsp.s128.ssp.OFS0.iwdt_divisor.64" value="4 &lt;&lt; 4"/>
+			 <option display="128" id="config.bsp.s128.ssp.OFS0.iwdt_divisor.128" value="15 &lt;&lt; 4"/>
+			 <option display="256" id="config.bsp.s128.ssp.OFS0.iwdt_divisor.256" value="5 &lt;&lt; 4"/>
+		</property>			
+		<property default="config.bsp.s128.ssp.OFS0.iwdt_window_end.0" display="     IWDT Window End Position" id="config.bsp.s128.ssp.OFS0.iwdt_window_end">
+			 <option display="75%" id="config.bsp.s128.ssp.OFS0.iwdt_window_end.75" value="0 &lt;&lt; 8"/>
+			 <option display="50%" id="config.bsp.s128.ssp.OFS0.iwdt_window_end.50" value="1 &lt;&lt; 8"/>
+			 <option display="25%" id="config.bsp.s128.ssp.OFS0.iwdt_window_end.25" value="2 &lt;&lt; 8"/>
+			 <option display=" 0% (no window end position)" id="config.bsp.s128.ssp.OFS0.iwdt_window_end.0" value="3 &lt;&lt; 8"/>
+		</property>			
+		<property default="config.bsp.s128.ssp.OFS0.iwdt_window_start.100" display="     IWDT Window Start Position" id="config.bsp.s128.ssp.OFS0.iwdt_window_start">
+			 <option display="25%" id="config.bsp.s128.ssp.OFS0.iwdt_window_start.25" value="0 &lt;&lt; 10"/>
+			 <option display="50%" id="config.bsp.s128.ssp.OFS0.iwdt_window_start.50" value="1 &lt;&lt; 10"/>
+			 <option display="75%" id="config.bsp.s128.ssp.OFS0.iwdt_window_start.75" value="2 &lt;&lt; 10"/>
+			 <option display="100% (no window start position)" id="config.bsp.s128.ssp.OFS0.iwdt_window_start.100" value="3 &lt;&lt; 10"/>
+		</property>	
+		<property default="config.bsp.s128.ssp.OFS0.iwdt_reset_interrupt.Reset" display="     IWDT Reset Interrupt Request Select" id="config.bsp.s128.ssp.OFS0.iwdt_reset_interrupt">
+			 <option display="NMI request or interrupt request is enabled" id="config.bsp.s128.ssp.OFS0.iwdt_reset_interrupt.NMI" value="0 &lt;&lt; 12"/>
+			 <option display="Reset is enabled" id="config.bsp.s128.ssp.OFS0.iwdt_reset_interrupt.Reset" value="1 &lt;&lt; 12"/>
+		</property>
+		<property default="config.bsp.s128.ssp.OFS0.iwdt_stop_control.stops" display="     IWDT Stop Control" id="config.bsp.s128.ssp.OFS0.iwdt_stop_control">
+			 <option display="Counting continues" id="config.bsp.s128.ssp.OFS0.iwdt_stop_control.continues" value="0 &lt;&lt; 14"/>
+			 <option display="Stop counting when in Sleep, Snooze mode, Software Standby, or Deep Software Standby mode" id="config.bsp.s128.ssp.OFS0.iwdt_stop_control.stops" value="1 &lt;&lt; 14"/>
+		</property>
+		<property default="config.bsp.s128.ssp.OFS0.wdt_start_mode.register" display="     WDT Start Mode Select" id="config.bsp.s128.ssp.OFS0.wdt_start_mode">
+			 <option display="Automatically activate WDT after a reset (auto-start mode)" id="config.bsp.s128.ssp.OFS0.wdt_start_mode.auto" value="0 &lt;&lt; 17"/>
+			 <option display="Stop WDT after a reset (register-start mode)" id="config.bsp.s128.ssp.OFS0.wdt_start_mode.register" value="1 &lt;&lt; 17"/>
+		</property>
+		<property default="config.bsp.s128.ssp.OFS0.wdt_timeout.16384" display="     WDT Timeout Period" id="config.bsp.s128.ssp.OFS0.wdt_timeout">
+			 <option display="1024 cycles" id="config.bsp.s128.ssp.OFS0.wdt_timeout.1024" value="0 &lt;&lt; 18"/>
+			 <option display="4096 cycles" id="config.bsp.s128.ssp.OFS0.wdt_timeout.4096" value="1 &lt;&lt; 18"/>
+			 <option display="8192 cycles" id="config.bsp.s128.ssp.OFS0.wdt_timeout.8192" value="2 &lt;&lt; 18"/>
+			 <option display="16384 cycles" id="config.bsp.s128.ssp.OFS0.wdt_timeout.16384" value="3 &lt;&lt; 18"/>
+		</property>	
+		<property default="config.bsp.s128.ssp.OFS0.wdt_divisor.128" display="     WDT Clock Frequency Division Ratio" id="config.bsp.s128.ssp.OFS0.wdt_divisor">
+			 <option display="4" id="config.bsp.s128.ssp.OFS0.wdt_divisor.4" value="1 &lt;&lt; 20"/>
+			 <option display="64" id="config.bsp.s128.ssp.OFS0.wdt_divisor.64" value="4 &lt;&lt; 20"/>
+			 <option display="128" id="config.bsp.s128.ssp.OFS0.wdt_divisor.128" value="15 &lt;&lt; 20"/>
+			 <option display="512" id="config.bsp.s128.ssp.OFS0.wdt_divisor.512" value="6 &lt;&lt; 20"/>
+			 <option display="2048" id="config.bsp.s128.ssp.OFS0.wdt_divisor.2048" value="7 &lt;&lt; 20"/>
+			 <option display="8192" id="config.bsp.s128.ssp.OFS0.wdt_divisor.8192" value="8 &lt;&lt; 20"/>
+		</property>			
+		<property default="config.bsp.s128.ssp.OFS0.wdt_window_end.0" display="     WDT Window End Position" id="config.bsp.s128.ssp.OFS0.wdt_window_end">
+			 <option display="75%" id="config.bsp.s128.ssp.OFS0.wdt_window_end.75" value="0 &lt;&lt; 24"/>
+			 <option display="50%" id="config.bsp.s128.ssp.OFS0.wdt_window_end.50" value="1 &lt;&lt; 24"/>
+			 <option display="25%" id="config.bsp.s128.ssp.OFS0.wdt_window_end.25" value="2 &lt;&lt; 24"/>
+			 <option display=" 0% (no window end position)" id="config.bsp.s128.ssp.OFS0.wdt_window_end.0" value="3 &lt;&lt; 24"/>
+		</property>			
+		<property default="config.bsp.s128.ssp.OFS0.wdt_window_start.100" display="     WDT Window Start Position" id="config.bsp.s128.ssp.OFS0.wdt_window_start">
+			 <option display="25%" id="config.bsp.s128.ssp.OFS0.wdt_window_start.25" value="0 &lt;&lt; 26"/>
+			 <option display="50%" id="config.bsp.s128.ssp.OFS0.wdt_window_start.50" value="1 &lt;&lt; 26"/>
+			 <option display="75%" id="config.bsp.s128.ssp.OFS0.wdt_window_start.75" value="2 &lt;&lt; 26"/>
+			 <option display="100% (no window start position)" id="config.bsp.s128.ssp.OFS0.wdt_window_start.100" value="3 &lt;&lt; 26"/>
+		</property>	
+		<property default="config.bsp.s128.ssp.OFS0.wdt_reset_interrupt.Reset" display="     WDT Reset Interrupt Request" id="config.bsp.s128.ssp.OFS0.wdt_reset_interrupt">
+			 <option display="NMI" id="config.bsp.s128.ssp.OFS0.wdt_reset_interrupt.NMI" value="0 &lt;&lt; 28"/>
+			 <option display="Reset" id="config.bsp.s128.ssp.OFS0.wdt_reset_interrupt.Reset" value="1 &lt;&lt; 28"/>
+		</property>
+		<property default="config.bsp.s128.ssp.OFS0.wdt_stop_control.stops" display="     WDT Stop Control" id="config.bsp.s128.ssp.OFS0.wdt_stop_control">
+			 <option display="Counting continues" id="config.bsp.s128.ssp.OFS0.wdt_stop_control.continues" value="0 &lt;&lt; 30"/>
+			 <option display="Stop counting when entering Sleep mode" id="config.bsp.s128.ssp.OFS0.wdt_stop_control.stops" value="1 &lt;&lt; 30"/>
+		</property>	
+				
+       <property default="config.bsp.s128.ssp.OFS1_Register.default" display="OFS1 register settings" id="config.bsp.s128.ssp.OFS1">
+			<option display="Select fields below" id="config.bsp.s128.ssp.OFS1_Register.default" value="(0)"/>
+        </property>		
+		<property default="config.bsp.s128.ssp.OFS1.voltage_detection0.start.disabled" display="     Voltage Detection 0 Circuit Start" id="config.bsp.s128.ssp.OFS1.voltage_detection0.start">
+			 <option display="Voltage monitor 0 reset is enabled after reset" id="config.bsp.s128.ssp.OFS1.voltage_detection0.start.enabled" value="0 &lt;&lt; 2"/>
+			 <option display="Voltage monitor 0 reset is disabled after reset" id="config.bsp.s128.ssp.OFS1.voltage_detection0.start.disabled" value="1 &lt;&lt; 2"/>
+		</property>
+		
+		<property default="config.bsp.s128.ssp.OFS1.voltage_detection0_level.190" display="     Voltage Detection 0 Level" id="config.bsp.s128.ssp.OFS1.voltage_detection0_level">
+			 <option display="3.84 V" id="config.bsp.s128.ssp.OFS1.voltage_detection0_level.384" value="0 &lt;&lt; 3"/>
+			 <option display="2.82 V" id="config.bsp.s128.ssp.OFS1.voltage_detection0_level.282" value="1 &lt;&lt; 3"/>
+			 <option display="2.51 V" id="config.bsp.s128.ssp.OFS1.voltage_detection0_level.251" value="2 &lt;&lt; 3"/>
+			 <option display="1.90 V" id="config.bsp.s128.ssp.OFS1.voltage_detection0_level.190" value="3 &lt;&lt; 3"/>
+			 <option display="1.70 V" id="config.bsp.s128.ssp.OFS1.voltage_detection0_level.170" value="4 &lt;&lt; 3"/>
+		</property>	
+		
+		<property default="config.bsp.s128.ssp.OFS1.hoco_osc.disabled" display="     HOCO OScillation Enable" id="config.bsp.s128.ssp.OFS1.hoco_osc">
+			 <option display="HOCO oscillation is enabled after reset" id="config.bsp.s128.ssp.OFS1.hoco_osc.enabled" value="0 &lt;&lt; 8"/>
+			 <option display="HOCO oscillation is disabled after reset" id="config.bsp.s128.ssp.OFS1.hoco_osc.disabled" value="1 &lt;&lt; 8"/>
+		</property>	
+		
+		<property id="config.bsp.s128.ssp.mpu_pc0_enable" display="MPU - Enable or disable PC Region 0" default="config.bsp.s128.ssp.mpu_pc0_enable.disabled">
+            <option id="config.bsp.s128.ssp.mpu_pc0_enable.enabled" display="Enabled" value="0" />
+            <option id="config.bsp.s128.ssp.mpu_pc0_enable.disabled" display="Disabled" value="1" />
+        </property>			
+        <property id="config.bsp.s128.ssp.mpu_pc0_start" display="MPU - PC0 Start" default="0x000FFFFC" macro="BSP_CFG_ROM_REG_MPU_PC0_START">  
+            <constraint display="Value must be an integer between 0 and 0x000FFFFC (ROM) or between 0x1FF00000 and 0x200FFFFC (RAM)">testInteger("${config.bsp.s128.ssp.mpu_pc0_start}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_pc0_start}" &gt;= 0) &amp;&amp;("${config.bsp.s128.ssp.mpu_pc0_start}" &lt;= 0x000FFFFC)) ||
+            (("${config.bsp.s128.ssp.mpu_pc0_start}" &gt;= 0x1FF00000) &amp;&amp;("${config.bsp.s128.ssp.mpu_pc0_start}" &lt;= 0x200FFFFC))
+           </constraint>		
+        </property>		
+        <property id="config.bsp.s128.ssp.mpu_pc0_end" display="MPU - PC0 End" default="0x000FFFFF" macro="BSP_CFG_ROM_REG_MPU_PC0_END">
+            <constraint display="Value must be an integer between 0x00000003 and 0x000FFFFF (ROM) or between 0x1FF00003 and 0x200FFFFF (RAM)">testInteger("${config.bsp.s128.ssp.mpu_pc0_end}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_pc0_end}" &gt;= 0x00000003) &amp;&amp;("${config.bsp.s128.ssp.mpu_pc0_end}" &lt;= 0x000FFFFF)) ||
+			(("${config.bsp.s128.ssp.mpu_pc0_end}" &gt;= 0x1FF00003) &amp;&amp;("${config.bsp.s128.ssp.mpu_pc0_end}" &lt;= 0x200FFFFF))
+			</constraint>		
+        </property>		
+        <property id="config.bsp.s128.ssp.mpu_pc1_enable" display="MPU - Enable or disable PC Region 1" default="config.bsp.s128.ssp.mpu_pc1_enable.disabled">
+            <option id="config.bsp.s128.ssp.mpu_pc1_enable.enabled" display="Enabled" value="0" />
+            <option id="config.bsp.s128.ssp.mpu_pc1_enable.disabled" display="Disabled" value="1" />
+        </property>					
+        <property id="config.bsp.s128.ssp.mpu_pc1_start" display="MPU - PC1 Start" default="0x000FFFFC" macro="BSP_CFG_ROM_REG_MPU_PC1_START">  
+            <constraint display="Value must be an integer between 0 and 0x000FFFFC (ROM) or between 0x1FF00000 and 0x200FFFFC (RAM)">testInteger("${config.bsp.s128.ssp.mpu_pc1_start}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_pc1_start}" &gt;= 0) &amp;&amp;("${config.bsp.s128.ssp.mpu_pc1_start}" &lt;= 0x000FFFFC)) ||
+            (("${config.bsp.s128.ssp.mpu_pc1_start}" &gt;= 0x1FF00000) &amp;&amp;("${config.bsp.s128.ssp.mpu_pc1_start}" &lt;= 0x200FFFFC))
+           </constraint>		
+        </property>		
+        <property id="config.bsp.s128.ssp.mpu_pc1_end" display="MPU - PC1 End" default="0x000FFFFF" macro="BSP_CFG_ROM_REG_MPU_PC1_END">
+            <constraint display="Value must be an integer between 0x00000003 and 0x000FFFFF (ROM) or between 0x1FF00003 and 0x200FFFFF (RAM)">testInteger("${config.bsp.s128.ssp.mpu_pc1_end}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_pc1_end}" &gt;= 0x00000003) &amp;&amp;("${config.bsp.s128.ssp.mpu_pc1_end}" &lt;= 0x000FFFFF)) ||
+			(("${config.bsp.s128.ssp.mpu_pc1_end}" &gt;= 0x1FF00003) &amp;&amp;("${config.bsp.s128.ssp.mpu_pc1_end}" &lt;= 0x200FFFFF))
+			</constraint>		
+        </property>				
+       <property id="config.bsp.s128.ssp.mpu_reg0_enable" display="MPU - Enable or disable Memory Region 0" default="config.bsp.s128.ssp.mpu_reg0_enable.disabled">
+            <option id="config.bsp.s128.ssp.mpu_reg0_enable.enabled" display="Enabled" value="0" />
+            <option id="config.bsp.s128.ssp.mpu_reg0_enable.disabled" display="Disabled" value="1" />
+        </property>			
+        <property id="config.bsp.s128.ssp.mpu_reg0_start" display="MPU - Memory Region 0 Start" default="0x000FFFFC" macro="BSP_CFG_ROM_REG_MPU_REGION0_START">
+            <constraint display="Value must be an integer between 0 and 0x000FFFFC">testInteger("${config.bsp.s128.ssp.mpu_reg0_start}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_reg0_start}" &gt;= 0) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg0_start}" &lt;= 0x000FFFFC))
+           </constraint>		
+        </property>				
+        <property id="config.bsp.s128.ssp.mpu_reg0_end" display="MPU - Memory Region 0 End" default="0x000FFFFF" macro="BSP_CFG_ROM_REG_MPU_REGION0_END">
+            <constraint display="Value must be an integer between 0x00000003 and 0x000FFFFF">testInteger("${config.bsp.s128.ssp.mpu_reg0_end}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_reg0_end}" &gt;= 0x00000003) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg0_end}" &lt;= 0x000FFFFF))
+			</constraint>		
+        </property>					
+        <property id="config.bsp.s128.ssp.mpu_reg1_enable" display="MPU - Enable or disable Memory Region 1" default="config.bsp.s128.ssp.mpu_reg1_enable.disabled">
+            <option id="config.bsp.s128.ssp.mpu_reg1_enable.enabled" display="Enabled" value="0" />
+            <option id="config.bsp.s128.ssp.mpu_reg1_enable.disabled" display="Disabled" value="1" />
+        </property>				
+        <property id="config.bsp.s128.ssp.mpu_reg1_start" display="MPU - Memory Region 1 Start" default="0x200FFFFC" macro="BSP_CFG_ROM_REG_MPU_REGION1_START">
+            <constraint display="Value must be an integer between 0x1FF00000 and 0x200FFFFC">testInteger("${config.bsp.s128.ssp.mpu_reg1_start}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_reg1_start}" &gt;= 0x1FF00000) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg1_start}" &lt;= 0x200FFFFC))
+			</constraint>				
+        </property>
+        <property id="config.bsp.s128.ssp.mpu_reg1_end" display="MPU - Memory Region 1 End" default="0x200FFFFF" macro="BSP_CFG_ROM_REG_MPU_REGION1_END">
+            <constraint display="Value must be an integer between 0x1FF00003 and 0x200FFFFF">testInteger("${config.bsp.s128.ssp.mpu_reg1_end}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_reg1_end}" &gt;= 0x1FF00003) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg1_end}" &lt;= 0x200FFFFF))
+			</constraint>				
+        </property>		
+        <property id="config.bsp.s128.ssp.mpu_reg2_enable" display="MPU - Enable or disable Memory Region 2" default="config.bsp.s128.ssp.mpu_reg2_enable.disabled">
+            <option id="config.bsp.s128.ssp.mpu_reg2_enable.enabled" display="Enabled" value="0" />
+            <option id="config.bsp.s128.ssp.mpu_reg2_enable.disabled" display="Disabled" value="1" />
+        </property>		
+        <property id="config.bsp.s128.ssp.mpu_reg2_start" display="MPU - Memory Region 2 Start" default="0x407FFFFC" macro="BSP_CFG_ROM_REG_MPU_REGION2_START">
+            <constraint display="Value must be an integer between 0x400C0000 and 0x400DFFFC or between 0x40100000 and 0x407FFFFC">testInteger("${config.bsp.s128.ssp.mpu_reg2_start}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_reg2_start}" &gt;= 0x400C0000) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg2_start}" &lt;= 0x400DFFFC)) ||
+			(("${config.bsp.s128.ssp.mpu_reg2_start}" &gt;= 0x40100000) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg2_start}" &lt;= 0x407FFFFC))
+			</constraint>				
+        </property>
+        <property id="config.bsp.s128.ssp.mpu_reg2_end" display="MPU - Memory Region 2 End" default="0x400DFFFF" macro="BSP_CFG_ROM_REG_MPU_REGION2_END">
+            <constraint display="Value must be an integer between 0x400C0003 and 0x400DFFFF or between 0x40100003 and 0x407FFFFF">testInteger("${config.bsp.s128.ssp.mpu_reg2_end}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_reg2_end}" &gt;= 0x400C0003) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg2_end}" &lt;= 0x400DFFFF)) ||
+			(("${config.bsp.s128.ssp.mpu_reg2_end}" &gt;= 0x40100003) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg2_end}" &lt;= 0x407FFFFF))
+			</constraint>				
+        </property>		
+        <property id="config.bsp.s128.ssp.mpu_reg3_enable" display="MPU - Enable or disable Memory Region 3" default="config.bsp.s128.ssp.mpu_reg3_enable.disabled">
+            <option id="config.bsp.s128.ssp.mpu_reg3_enable.enabled" display="Enabled" value="0" />
+            <option id="config.bsp.s128.ssp.mpu_reg3_enable.disabled" display="Disabled" value="1" />
+        </property>		
+        <property id="config.bsp.s128.ssp.mpu_reg3_start" display="MPU - Memory Region 3 Start" default="0x400DFFFC" macro="BSP_CFG_ROM_REG_MPU_REGION3_START">
+            <constraint display="Value must be an integer between 0x400C0000 and 0x400DFFFC or between 0x40100000 and 0x407FFFFC">testInteger("${config.bsp.s128.ssp.mpu_reg3_start}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_reg3_start}" &gt;= 0x400C0000) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg3_start}" &lt;= 0x400DFFFC)) ||
+			(("${config.bsp.s128.ssp.mpu_reg3_start}" &gt;= 0x40100000) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg3_start}" &lt;= 0x407FFFFC))
+			</constraint>				
+        </property>
+        <property id="config.bsp.s128.ssp.mpu_reg3_end" display="MPU - Memory Region 3 End" default="0x400DFFFF" macro="BSP_CFG_ROM_REG_MPU_REGION3_END">
+            <constraint display="Value must be an integer between 0x400C0003 and 0x400DFFFF or between 0x40100003 and 0x407FFFFF">testInteger("${config.bsp.s128.ssp.mpu_reg3_end}") &amp;&amp; 
+			(("${config.bsp.s128.ssp.mpu_reg3_end}" &gt;= 0x400C0003) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg3_end}" &lt;= 0x400DFFFF)) ||
+			(("${config.bsp.s128.ssp.mpu_reg3_end}" &gt;= 0x40100003) &amp;&amp;("${config.bsp.s128.ssp.mpu_reg3_end}" &lt;= 0x407FFFFF))
+			</constraint>				
+        </property>		
+        <content>
+            #include "bsp_mcu_device_pn_cfg.h"
+            #include "bsp_mcu_device_cfg.h"
+            #include "../../../synergy/ssp/src/bsp/mcu/s128/bsp_mcu_info.h"
+            #include "bsp_clock_cfg.h"
+            #define BSP_MCU_GROUP_S128 (1)
+            #define BSP_LOCO_HZ                 (32768)
+            #define BSP_MOCO_HZ                 (8000000)
+            #define BSP_SUB_CLOCK_HZ            (32768)
+            #if   BSP_CFG_HOCO_FREQUENCY == 0
+                #define BSP_HOCO_HZ             (24000000)
+            #elif BSP_CFG_HOCO_FREQUENCY == 2
+                #define BSP_HOCO_HZ             (32000000)
+            #elif BSP_CFG_HOCO_FREQUENCY == 4
+                #define BSP_HOCO_HZ             (48000000)
+            #elif BSP_CFG_HOCO_FREQUENCY == 5
+                #define BSP_HOCO_HZ             (64000000)
+            #else
+                #error "Invalid HOCO frequency chosen (BSP_CFG_HOCO_FREQUENCY) in bsp_clock_cfg.h"
+            #endif
+
+            #define BSP_CORTEX_VECTOR_TABLE_ENTRIES    (16U)
+            #define BSP_VECTOR_TABLE_MAX_ENTRIES       (48U)
+
+            #define OFS_SEQ1 0xA001A001 | (${config.bsp.s128.ssp.OFS0.iwdt_start_mode}) | (${config.bsp.s128.ssp.OFS0.iwdt_timeout})
+            #define OFS_SEQ2 (${config.bsp.s128.ssp.OFS0.iwdt_divisor}) | (${config.bsp.s128.ssp.OFS0.iwdt_window_end}) | (${config.bsp.s128.ssp.OFS0.iwdt_window_start})
+            #define OFS_SEQ3 (${config.bsp.s128.ssp.OFS0.iwdt_reset_interrupt}) | (${config.bsp.s128.ssp.OFS0.iwdt_stop_control}) | (${config.bsp.s128.ssp.OFS0.wdt_start_mode})
+            #define OFS_SEQ4 (${config.bsp.s128.ssp.OFS0.wdt_timeout}) |(${config.bsp.s128.ssp.OFS0.wdt_divisor}) | (${config.bsp.s128.ssp.OFS0.wdt_window_end}) | (${config.bsp.s128.ssp.OFS0.wdt_window_start})
+            #define OFS_SEQ5 (${config.bsp.s128.ssp.OFS0.wdt_reset_interrupt}) | (${config.bsp.s128.ssp.OFS0.wdt_stop_control})           
+            #define BSP_CFG_ROM_REG_OFS0 (OFS_SEQ1 | OFS_SEQ2 | OFS_SEQ3 | OFS_SEQ4 | OFS_SEQ5)
+            #define BSP_CFG_ROM_REG_OFS1 (0xFFFFFEC3 | (${config.bsp.s128.ssp.OFS1.voltage_detection0.start}) | (${config.bsp.s128.ssp.OFS1.voltage_detection0_level}) | (${config.bsp.s128.ssp.OFS1.hoco_osc}))
+            #define BSP_CFG_ROM_REG_MPU_PC0_ENABLE (${config.bsp.s128.ssp.mpu_pc0_enable})
+            #define BSP_CFG_ROM_REG_MPU_PC0_START (${config.bsp.s128.ssp.mpu_pc0_start})
+            #define BSP_CFG_ROM_REG_MPU_PC0_END (${config.bsp.s128.ssp.mpu_pc0_end})
+            #define BSP_CFG_ROM_REG_MPU_PC1_ENABLE (${config.bsp.s128.ssp.mpu_pc1_enable})
+            #define BSP_CFG_ROM_REG_MPU_PC1_START (${config.bsp.s128.ssp.mpu_pc1_start})
+            #define BSP_CFG_ROM_REG_MPU_PC1_END (${config.bsp.s128.ssp.mpu_pc1_end})
+            #define BSP_CFG_ROM_REG_MPU_REGION0_ENABLE (${config.bsp.s128.ssp.mpu_reg0_enable})
+            #define BSP_CFG_ROM_REG_MPU_REGION0_START (${config.bsp.s128.ssp.mpu_reg0_start})
+            #define BSP_CFG_ROM_REG_MPU_REGION0_END (${config.bsp.s128.ssp.mpu_reg0_end})
+            #define BSP_CFG_ROM_REG_MPU_REGION1_ENABLE (${config.bsp.s128.ssp.mpu_reg1_enable})
+            #define BSP_CFG_ROM_REG_MPU_REGION1_START (${config.bsp.s128.ssp.mpu_reg1_start})
+            #define BSP_CFG_ROM_REG_MPU_REGION1_END (${config.bsp.s128.ssp.mpu_reg1_end})
+            #define BSP_CFG_ROM_REG_MPU_REGION2_ENABLE (${config.bsp.s128.ssp.mpu_reg2_enable})
+            #define BSP_CFG_ROM_REG_MPU_REGION2_START (${config.bsp.s128.ssp.mpu_reg2_start})
+            #define BSP_CFG_ROM_REG_MPU_REGION2_END (${config.bsp.s128.ssp.mpu_reg2_end})
+            #define BSP_CFG_ROM_REG_MPU_REGION3_ENABLE (${config.bsp.s128.ssp.mpu_reg3_enable})
+            #define BSP_CFG_ROM_REG_MPU_REGION3_START (${config.bsp.s128.ssp.mpu_reg3_start})
+            #define BSP_CFG_ROM_REG_MPU_REGION3_END (${config.bsp.s128.ssp.mpu_reg3_end})
+        </content>
+    </config>
+    <bsp id="bsp.s128.ssp" config="config.bsp.s128.ssp" display="S128 Family" version="0">
+        <clock>	
+            <node id="board.clock.xtal.freq" xhint="0" yhint="0" default="16000000" tooltip="Click to edit the XTAL frequency.">
+                <option id="_edit" display="XTAL ${value}Hz" macroName="BSP_CFG_XTAL_HZ" macroValue="(${value})" />
+            </node>
+            <node id="board.clock.hoco.freq" xhint="0" yhint="4" default="board.clock.hoco.freq.48m">
+                <option id="board.clock.hoco.freq.24m" display="HOCO 24MHz" mul="24000000" macroName="BSP_CFG_HOCO_FREQUENCY" macroValue="(0)" />
+                <option id="board.clock.hoco.freq.32m" display="HOCO 32MHz" mul="32000000" macroName="BSP_CFG_HOCO_FREQUENCY" macroValue="(2)" />
+                <option id="board.clock.hoco.freq.48m" display="HOCO 48MHz" mul="48000000" macroName="BSP_CFG_HOCO_FREQUENCY" macroValue="(4)" />
+                <option id="board.clock.hoco.freq.64m" display="HOCO 64MHz" mul="64000000" macroName="BSP_CFG_HOCO_FREQUENCY" macroValue="(5)" />
+            </node>
+            <node id="board.clock.loco.freq" xhint="0" yhint="1" default="board.clock.loco.freq.32768">
+                <option id="board.clock.loco.freq.32768" display="LOCO 32768Hz" mul="32768" />
+            </node>
+            <node id="board.clock.moco.freq" xhint="0" yhint="2" default="board.clock.moco.freq.8m">
+                <option id="board.clock.moco.freq.8m" display="MOCO 8MHz" mul="8000000" />
+            </node>
+            <node id="board.clock.subclk.freq" xhint="0" yhint="3" default="board.clock.subclk.freq.32768">
+                <option id="board.clock.subclk.freq.32768" display="SUBCLK 32768Hz" mul="32768" />
+            </node>
+            <node id="board.clock.clock.source" xhint="2" yhint="2" default="board.clock.clock.source.hoco">
+                <option id="board.clock.clock.source.hoco" display="Clock Src: HOCO" input="board.clock.hoco.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_HOCO)" />
+                <option id="board.clock.clock.source.moco" display="Clock Src: MOCO" input="board.clock.moco.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_MOCO)" />
+                <option id="board.clock.clock.source.loco" display="Clock Src: LOCO" input="board.clock.loco.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_LOCO)" />
+                <option id="board.clock.clock.source.xtal" display="Clock Src: XTAL" input="board.clock.xtal.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_MAIN_OSC)" />
+                <option id="board.clock.clock.source.subclk" display="Clock Src: SUBCLK" input="board.clock.subclk.freq" macroName="BSP_CFG_CLOCK_SOURCE" macroValue="(CGC_CLOCK_SUBCLOCK)" />
+            </node>
+            <node id="board.clock.iclk.div" xhint="3" yhint="0" default="board.clock.iclk.div.2">
+                <option id="board.clock.iclk.div.1" display="ICLK Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.iclk.div.2" display="ICLK Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.iclk.div.4" display="ICLK Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.iclk.div.8" display="ICLK Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.iclk.div.16" display="ICLK Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.iclk.div.32" display="ICLK Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.iclk.div.64" display="ICLK Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_ICK_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.iclk.display" xhint="4" yhint="0" tooltip="The system clock (ICLK) is used as the operating clock of the CPU, DMAC, DTC, ROM and RAM.">
+                <option id="board.clock.iclk.display.value" input="board.clock.iclk.div" display="ICLK ${value}Hz" maxValue="240000000" />
+            </node>
+            <node id="board.clock.pclkb.div" xhint="3" yhint="1" default="board.clock.pclkb.div.2">
+                <option id="board.clock.pclkb.div.1" display="PCLKB Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.pclkb.div.2" display="PCLKB Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.pclkb.div.4" display="PCLKB Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.pclkb.div.8" display="PCLKB Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.pclkb.div.16" display="PCLKB Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.pclkb.div.32" display="PCLKB Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.pclkb.div.64" display="PCLKB Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_PCKB_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.pclkb.display" xhint="4" yhint="1" tooltip="The Peripheral clock B (PCLKB) is used as the operating clock for all other modules not supported by PCLKA, PCLKC and PCLKD.">
+                <option id="board.clock.pclkb.display.value" input="board.clock.pclkb.div" display="PCLKB ${value}Hz" maxValue="60000000" />
+            </node>
+            <node id="board.clock.pclkd.div" xhint="3" yhint="2" default="board.clock.pclkd.div.1">
+                <option id="board.clock.pclkd.div.1" display="PCLKD Div /1" div="1" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_1)" />
+                <option id="board.clock.pclkd.div.2" display="PCLKD Div /2" div="2" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_2)" />
+                <option id="board.clock.pclkd.div.4" display="PCLKD Div /4" div="4" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_4)" />
+                <option id="board.clock.pclkd.div.8" display="PCLKD Div /8" div="8" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_8)" />
+                <option id="board.clock.pclkd.div.16" display="PCLKD Div /16" div="16" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_16)" />
+                <option id="board.clock.pclkd.div.32" display="PCLKD Div /32" div="32" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_32)" />
+                <option id="board.clock.pclkd.div.64" display="PCLKD Div /64" div="64" input="board.clock.clock.source" macroName="BSP_CFG_PCKD_DIV" macroValue="(CGC_SYS_CLOCK_DIV_64)" />
+            </node>
+            <node id="board.clock.pclkd.display" xhint="4" yhint="2" tooltip="The Peripheral clock D (PCLKD) is used as the operating clock for the GPT module.">
+                <option id="board.clock.pclkd.display.value" input="board.clock.pclkd.div" display="PCLKD ${value}Hz" maxValue="120000000" />
+            </node>            
+            <node id="board.clock.uclk.display" xhint="4" yhint="4" tooltip="The USB clock (UCLK) is an operating clock for the USBFS module.\nA 48-MHz clock must be supplied to the USB module.\nWhen the USB module is used, setting must be made so that UCLK is 48 MHz.">
+                <option id="board.clock.uclk.display.value" input="board.clock.hoco.freq" display="UCLK ${value}Hz" minValue="48000000" maxValue="48000000" />
+            </node>            
+        </clock>
+    </bsp>
+</synergyModuleDescription>

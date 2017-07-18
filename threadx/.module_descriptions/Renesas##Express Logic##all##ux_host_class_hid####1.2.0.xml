@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_host_class_hid" path="ssp_cfg/framework/el/ux_host_class_hid_user.h" version="0">
+        <content>
+        #if (${interface.el.ux_host_class_hid_src})
+        #include "ux_host_class_hid_src_user.h"
+        #endif
+        </content>
+    </config>
+    <module config="config.el.ux_host_class_hid" display="X-Ware|USBX|Host|Classes|HID|${module.el.ux_host_class.name} USBX Host Class HID" common="100" id="module.el.ux_host_class_hid" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.ux_host_class_hid.${module.el.ux_host_class.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_host_class_hid_src" display="Add USBX Host Class HID Source [Optional]" id="module.el.ux_host_class_hid.requires.ux_host_class_hid_src" find="false" />
+        <requires id="module.el.ux_host_class.requires.ux_host" interface="interface.el.ux_host" display="Add USB Host Configuration" />
+        <provides interface="interface.el.ux_host_class_hid" />
+        <provides interface="interface.el.ux_host_class_hid.${module.el.ux_host_class.name}" />
+        <property default="g_ux_host_class_hid${_instance}" display="Name" id="module.el.ux_host_class.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_host_class.name}")</constraint>
+        </property>
+        <property default="module.el.ux_host_class.keyboard_support.enable" display="HID Client - Keyboard Support" id="module.el.ux_host_class.keyboard_support">
+            <option display="Enable"  id="module.el.ux_host_class.keyboard_support.enable"  value="1"/>
+            <option display="Disable" id="module.el.ux_host_class.keyboard_support.disable" value="0"/>
+        </property>
+        <property default="module.el.ux_host_class.mouse_support.enable" display="HID Client - Mouse Support" id="module.el.ux_host_class.mouse_support">
+            <option display="Enable"  id="module.el.ux_host_class.mouse_support.enable"  value="1"/>
+            <option display="Disable" id="module.el.ux_host_class.mouse_support.disable" value="0"/>
+        </property>
+        <property default="module.el.ux_host_class.remote_control_support.enable" display="HID Client - Remote Control Support" id="module.el.ux_host_class.remote_control_support">
+            <option display="Enable"  id="module.el.ux_host_class.remote_control_support.enable"  value="1"/>
+            <option display="Disable" id="module.el.ux_host_class.remote_control_support.disable" value="0"/>
+        </property>
+        <header>
+            #include "ux_host_class_hid.h"
+            #include "ux_host_class_hid_keyboard.h"
+            #include "ux_host_class_hid_mouse.h"
+            #include "ux_host_class_hid_remote_control.h"
+
+            void  ${module.el.ux_host_class.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <macros>
+            #define USB_HOST_HID_CLASS_REGISTER
+        </macros>
+        <declarations>
+#ifndef UX_HOST_CLASS_HID_CLIENTS_REGISTER
+#define UX_HOST_CLASS_HID_CLIENTS_REGISTER
+
+            #if defined(__ICCARM__)
+            #define  ${module.el.ux_host_class.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak  ${module.el.ux_host_class.name}_err_callback  =  ${module.el.ux_host_class.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define  ${module.el.ux_host_class.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.ux_host_class.name}_err_callback_internal")))
+            #endif
+            void  ${module.el.ux_host_class.name}_err_callback(void * p_instance, void * p_data)  ${module.el.ux_host_class.name}_err_callback_WEAK_ATTRIBUTE;
+
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void  ${module.el.ux_host_class.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void  ${module.el.ux_host_class.name}_err_callback_internal(void * p_instance, void * p_data);
+            void  ${module.el.ux_host_class.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+
+            /***********************************************************************************************************************
+             * Function to register HID clients.
+             **********************************************************************************************************************/
+            static void ux_host_class_hid_clients_register (void)
+            {
+                UINT status_ux_host_hid_clients_register;
+#if (${module.el.ux_host_class.keyboard_support})
+                /* Register the HID Keyboard client. */
+                status_ux_host_hid_clients_register =  ux_host_class_hid_client_register(
+                                                                        _ux_system_host_class_hid_client_keyboard_name, 
+                                                                        ux_host_class_hid_keyboard_entry);
+                if (UX_SUCCESS != status_ux_host_hid_clients_register)
+                {
+                     ${module.el.ux_host_class.name}_err_callback(NULL, &amp;status_ux_host_hid_clients_register);
+                }
+#endif
+#if (${module.el.ux_host_class.mouse_support})
+                /* Register the HID Mouse client. */
+                status_ux_host_hid_clients_register =  ux_host_class_hid_client_register(
+                                                                        _ux_system_host_class_hid_client_mouse_name,
+                                                                        ux_host_class_hid_mouse_entry);
+                if (UX_SUCCESS != status_ux_host_hid_clients_register)
+                {
+                     ${module.el.ux_host_class.name}_err_callback(NULL ,&amp;status_ux_host_hid_clients_register);
+                }
+#endif
+#if (${module.el.ux_host_class.remote_control_support})
+                /* Register the HID Remote Control client. */
+                status_ux_host_hid_clients_register =  ux_host_class_hid_client_register(
+                                                                        _ux_system_host_class_hid_client_remote_control_name,
+                                                                        ux_host_class_hid_remote_control_entry);
+                if (UX_SUCCESS != status_ux_host_hid_clients_register)
+                {
+                     ${module.el.ux_host_class.name}_err_callback(NULL ,&amp;status_ux_host_hid_clients_register);
+                }
+#endif
+            } /* End of function ux_host_class_hid_clients_register() */
+#endif /* UX_HOST_CLASS_HID_CLIENTS_REGISTER */
+
+        </declarations>
+        <init>
+        </init>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,301 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.sci_uart" path="ssp_cfg/driver/r_sci_uart_cfg.h" version="0">
+        <property default="config.driver.sci_uart.external_rts_operation.disabled" display="External RTS Operation" id="config.driver.sci_uart.external_rts_operation">
+            <option display="Enable" id="config.driver.sci_uart.external_rts_operation.enabled" value="(1)"/>
+            <option display="Disable" id="config.driver.sci_uart.external_rts_operation.disabled" value="(0)"/>
+        </property>
+        <property default="config.driver.sci_uart.uart_rx_enable.enabled" display="Reception" id="config.driver.sci_uart.uart_rx_enable">
+            <option display="Enable" id="config.driver.sci_uart.uart_rx_enable.enabled" value="(1)"/>
+            <option display="Disable" id="config.driver.sci_uart.uart_rx_enable.disabled" value="(0)"/>
+        </property>
+        <property default="config.driver.sci_uart.uart_tx_enable.enabled" display="Transmission" id="config.driver.sci_uart.uart_tx_enable">
+            <option display="Enable" id="config.driver.sci_uart.uart_tx_enable.enabled" value="(1)"/>
+            <option display="Disable" id="config.driver.sci_uart.uart_tx_enable.disabled" value="(0)"/>
+        </property>
+        <property default="config.driver.sci_uart.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.sci_uart.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sci_uart.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.sci_uart.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.sci_uart.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define SCI_UART_CFG_EXTERNAL_RTS_OPERATION ${config.driver.sci_uart.external_rts_operation}
+            #define SCI_UART_CFG_RX_ENABLE ${config.driver.sci_uart.uart_rx_enable}
+            #define SCI_UART_CFG_TX_ENABLE ${config.driver.sci_uart.uart_tx_enable}
+            #define SCI_UART_CFG_PARAM_CHECKING_ENABLE ${config.driver.sci_uart.param_checking_enable}
+        </content>
+    </config>
+    <module config="config.driver.sci_uart" display="Driver|Connectivity|${module.driver.uart.name} UART Driver on r_sci_uart" id="module.driver.uart_on_sci_uart" version="1">
+        <constraint display="Requires SCI Receive Interrupt (RXI) enabled">
+            "${module.driver.uart.rxi_ipl}" != "board.icu.common.irq.disabled" || "config.driver.sci_uart.uart_rx_enable.disabled" === "${config.driver.sci_uart.uart_rx_enable}"
+        </constraint>
+        <constraint display="Requires SCI Transmit Interrupt (TXI) enabled">
+            "${module.driver.uart.txi_ipl}" != "board.icu.common.irq.disabled" || "config.driver.sci_uart.uart_tx_enable.disabled" === "${config.driver.sci_uart.uart_tx_enable}"
+        </constraint>
+		<constraint display="Requires SCI Transmit End Interrupt (TEI) enabled">
+            "${module.driver.uart.tei_ipl}" != "board.icu.common.irq.disabled" || "config.driver.sci_uart.uart_tx_enable.disabled" === "${config.driver.sci_uart.uart_tx_enable}"
+        </constraint>
+        <constraint display="Receive Transfer cannot be used (must be NULL) if RTS callback is used">
+            ("NULL" === "${module.driver.uart.callback.rts_pin_ctrl}") || (!testExists("${module.driver.uart_on_sci_uart.requires.transfer_rx::module.driver.transfer.name}"))
+        </constraint>
+		<constraint display="Unique name required for each instance">
+            "${interface.driver.uart.${module.driver.uart.name}}" === "1"
+	    </constraint>
+		<requires id="module.driver.uart_on_sci_uart.requires.transfer_tx" interface="interface.driver.transfer_on_dtc" display="Add DTC Driver for Transmission [Recommended but optional]">
+			<override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+			<override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+			<override property="module.driver.transfer.p_dest" value="NULL"/>
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="0"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="0"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+			<override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_sci${module.driver.uart.channel}_txi"/>
+		</requires>
+        <requires id="module.driver.uart_on_sci_uart.requires.transfer_rx" interface="interface.driver.transfer_on_dtc" display="Add DTC Driver for Reception [Recommended but optional]">
+			<override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+			<override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_fixed"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_destination"/>
+			<override property="module.driver.transfer.p_dest" value="NULL"/>
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="0"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="0"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+			<override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_sci${module.driver.uart.channel}_rxi"/>
+		</requires>		
+        <provides interface="interface.driver.uart" />        
+        <provides interface="interface.driver.uart_on_sci_uart" />
+        <provides interface="interface.driver.uart.${module.driver.uart.name}" />
+        <property default="g_uart${_instance}" display="Name" id="module.driver.uart.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.uart.name}")</constraint>
+        </property>
+        
+        <!-- UART interface configuration -->
+        <property default="0" display="Channel" id="module.driver.uart.channel">
+            <constraint display="Value must be an integer between 0 and 9">testInteger("${module.driver.uart.channel}")  &amp;&amp; ("${module.driver.uart.channel}" &gt;= 0) &amp;&amp; ("${module.driver.uart.channel}" &lt; 10)</constraint>
+        </property>
+        <property default="9600" display="Baud Rate" id="module.driver.uart.baud_rate">
+            <constraint display="Value must be an integer">testInteger("${module.driver.uart.baud_rate}")</constraint>
+        </property>
+        <property default="module.driver.uart.data_bits.data_bits_8" display="Data Bits" id="module.driver.uart.data_bits">
+            <option display="8bits" id="module.driver.uart.data_bits.data_bits_8" value="UART_DATA_BITS_8"/>
+            <option display="7bits" id="module.driver.uart.data_bits.data_bits_7" value="UART_DATA_BITS_7"/>
+            <option display="9bits" id="module.driver.uart.data_bits.data_bits_9" value="UART_DATA_BITS_9"/>
+        </property>
+        <property default="module.driver.uart.parity.parity_off" display="Parity" id="module.driver.uart.parity">
+            <option display="None" id="module.driver.uart.parity.parity_off" value="UART_PARITY_OFF"/>
+            <option display="Odd" id="module.driver.uart.parity.parity_odd" value="UART_PARITY_ODD"/>
+            <option display="Even" id="module.driver.uart.parity.parity_even" value="UART_PARITY_EVEN"/>
+        </property>
+        <property default="module.driver.uart.stop_bits.stop_bits_1" display="Stop Bits" id="module.driver.uart.stop_bits">
+            <option display="1bit" id="module.driver.uart.stop_bits.stop_bits_1" value="UART_STOP_BITS_1"/>
+            <option display="2bits" id="module.driver.uart.stop_bits.stop_bits_2" value="UART_STOP_BITS_2"/>
+        </property>
+        <property default="module.driver.uart.ctsrts_en.false" display="CTS/RTS Selection" id="module.driver.uart.ctsrts_en">
+            <option display="CTS (Note that RTS is available when enabling External RTS Operation mode which uses 1 GPIO pin)" id="module.driver.uart.ctsrts_en.true" value="true"/>
+            <option display="RTS (CTS is disabled)" id="module.driver.uart.ctsrts_en.false" value="false"/>
+        </property>
+
+        <!-- External defined callback function -->
+        <property default="user_uart_callback" display="Name of UART callback function to be defined by user" id="module.driver.uart.callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.uart.callback}")</constraint>
+        </property>
+        <property default="NULL" display="Name of UART callback function for the RTS external pin control to be defined by user" id="module.driver.uart.callback.rts_pin_ctrl">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.uart.callback.rts_pin_ctrl}")</constraint>
+        </property>
+
+        <!-- UART Extended configuration -->
+        <property default="module.driver.uart.clk_src.int_clk" display="Clock Source" id="module.driver.uart.clk_src">
+            <option display="Internal Clock" id="module.driver.uart.clk_src.int_clk" value="SCI_CLK_SRC_INT"/>
+            <option display="External Clock 8x baudrate" id="module.driver.uart.clk_src.ext_clk_8x" value="SCI_CLK_SRC_EXT8X"/>
+            <option display="External Clock 16x baudrate" id="module.driver.uart.clk_src.ext_clk_16x" value="SCI_CLK_SRC_EXT16X"/>
+        </property>
+        <property default="module.driver.uart.baudclk_out.false" display="Baudrate Clock Output from SCK pin" id="module.driver.uart.baudclk_out">
+            <option display="Enable" id="module.driver.uart.baudclk_out.true" value="true"/>
+            <option display="Disable" id="module.driver.uart.baudclk_out.false" value="false"/>
+        </property>
+        <property default="module.driver.uart.rx_edge_start.true" display="Start bit detection" id="module.driver.uart.rx_edge_start">
+            <option display="Falling Edge" id="module.driver.uart.rx_edge_start.true" value="true"/>
+            <option display="Low Level" id="module.driver.uart.rx_edge_start.false" value="false"/>
+        </property>
+        <property default="module.driver.uart.noisecancel_en.false" display="Noise Cancel" id="module.driver.uart.noisecancel_en">
+            <option display="Enable" id="module.driver.uart.noisecancel_en.true" value="true"/>
+            <option display="Disable" id="module.driver.uart.noisecancel_en.false" value="false"/>
+        </property>
+        <property default="module.driver.uart.bitrate_modulation.true" display="Bit Rate Modulation Enable" id="module.driver.uart.bitrate_modulation">
+            <option display="Enable" id="module.driver.uart.bitrate_modulation.true" value="true"/>
+            <option display="Disable" id="module.driver.uart.bitrate_modulation.false" value="false"/>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Receive Interrupt Priority" id="module.driver.uart.rxi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Transmit Interrupt Priority" id="module.driver.uart.txi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Transmit End Interrupt Priority" id="module.driver.uart.tei_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Error Interrupt Priority" id="module.driver.uart.eri_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <header>
+            /** UART on SCI Instance. */
+            extern const uart_instance_t      ${module.driver.uart.name};
+            #ifdef ${module.driver.uart.callback.rts_pin_ctrl}
+            #else
+            extern void             ${module.driver.uart.callback.rts_pin_ctrl} (uint32_t channel, uint32_t level);
+            #endif
+#ifndef ${module.driver.uart.callback}
+void ${module.driver.uart.callback}(uart_callback_args_t * p_args);
+#endif
+        </header>
+        <includes>
+            #include &quot;r_sci_uart.h&quot;
+            #include &quot;r_uart_api.h&quot;
+        </includes>
+        <declarations>
+#if ${module.driver.uart.rxi_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.uart.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SCI${module.driver.uart.channel})
+SSP_VECTOR_DEFINE_CHAN(sci_uart_rxi_isr, SCI, RXI, ${module.driver.uart.channel});
+#endif
+#endif
+#if ${module.driver.uart.txi_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.uart.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SCI${module.driver.uart.channel})
+SSP_VECTOR_DEFINE_CHAN(sci_uart_txi_isr, SCI, TXI, ${module.driver.uart.channel});
+#endif
+#endif
+#if ${module.driver.uart.tei_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.uart.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SCI${module.driver.uart.channel})
+SSP_VECTOR_DEFINE_CHAN(sci_uart_tei_isr, SCI, TEI, ${module.driver.uart.channel});
+#endif
+#endif
+#if ${module.driver.uart.eri_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.uart.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SCI${module.driver.uart.channel})
+SSP_VECTOR_DEFINE_CHAN(sci_uart_eri_isr, SCI, ERI, ${module.driver.uart.channel});
+#endif
+#endif
+            sci_uart_instance_ctrl_t     ${module.driver.uart.name}_ctrl;
+
+            /** UART extended configuration for UARTonSCI HAL driver */
+            const uart_on_sci_cfg_t ${module.driver.uart.name}_cfg_extend =
+            {
+                .clk_src             = ${module.driver.uart.clk_src},
+                .baudclk_out         = ${module.driver.uart.baudclk_out},
+                .rx_edge_start       = ${module.driver.uart.rx_edge_start},
+                .noisecancel_en      = ${module.driver.uart.noisecancel_en},
+                .p_extpin_ctrl       = ${module.driver.uart.callback.rts_pin_ctrl},
+                .bitrate_modulation  = ${module.driver.uart.bitrate_modulation}
+            };
+
+            /** UART interface configuration */
+            const uart_cfg_t ${module.driver.uart.name}_cfg =
+            {
+                .channel             = ${module.driver.uart.channel},
+                .baud_rate           = ${module.driver.uart.baud_rate},
+                .data_bits           = ${module.driver.uart.data_bits},
+                .parity              = ${module.driver.uart.parity},
+                .stop_bits           = ${module.driver.uart.stop_bits},
+                .ctsrts_en           = ${module.driver.uart.ctsrts_en},
+                .p_callback          = ${module.driver.uart.callback},
+                .p_context           = &amp;${module.driver.uart.name},
+                .p_extend            = &amp;${module.driver.uart.name}_cfg_extend,
+#define SYNERGY_NOT_DEFINED (1)                        
+#if (SYNERGY_NOT_DEFINED == ${module.driver.uart_on_sci_uart.requires.transfer_tx::module.driver.transfer.name})
+                .p_transfer_tx       = NULL,
+#else
+                .p_transfer_tx       = &amp;${module.driver.uart_on_sci_uart.requires.transfer_tx::module.driver.transfer.name},
+#endif            
+#if (SYNERGY_NOT_DEFINED == ${module.driver.uart_on_sci_uart.requires.transfer_rx::module.driver.transfer.name})
+                .p_transfer_rx       = NULL,
+#else
+                .p_transfer_rx       = &amp;${module.driver.uart_on_sci_uart.requires.transfer_rx::module.driver.transfer.name},
+#endif   
+#undef SYNERGY_NOT_DEFINED            
+                .rxi_ipl             = ${module.driver.uart.rxi_ipl},
+                .txi_ipl             = ${module.driver.uart.txi_ipl},
+                .tei_ipl             = ${module.driver.uart.tei_ipl},
+                .eri_ipl             = ${module.driver.uart.eri_ipl},
+            };
+
+/* Instance structure to use this module. */
+const uart_instance_t ${module.driver.uart.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.uart.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.uart.name}_cfg,
+    .p_api         = &amp;g_uart_on_sci
+};            
+
+        </declarations>
+    </module>
+</synergyModuleDescription>

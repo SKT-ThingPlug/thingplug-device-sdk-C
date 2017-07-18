@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_console" path="ssp_cfg/framework/sf_console_cfg.h" version="0">
+        <property default="config.framework.sf_console.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_console.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_console.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_console.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="128" display="Maximum Input String Length" id="config.framework.sf_console.max_input_length">
+            <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_console.max_input_length}")  &amp;&amp; ("${config.framework.sf_console.max_input_length}" &gt;= 0)</constraint>
+        </property>
+        <property default="128" display="Maximum Write String Length" id="config.framework.sf_console.max_write_length">
+            <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_console.max_write_length}")  &amp;&amp; ("${config.framework.sf_console.max_write_length}" &gt;= 0)</constraint>
+        </property>
+        <content>
+                 #define SF_CONSOLE_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_console.param_checking_enable}
+                 #define SF_CONSOLE_MAX_INPUT_LENGTH ${config.framework.sf_console.max_input_length}
+                 #define SF_CONSOLE_MAX_WRITE_LENGTH ${config.framework.sf_console.max_write_length}
+        </content>
+    </config>
+    <module config="config.framework.sf_console" display="Framework|Services|${module.framework.sf_console.name} Console Framework on sf_console" id="module.framework.sf_console" version="1">
+        <constraint display="Module instances must have unique names">
+                 "${interface.framework.sf_console.${module.framework.sf_console.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_console.requires.sf_comms" interface="interface.framework.sf_comms" display="Add Communications Framework" />        
+        <provides interface="interface.framework.sf_console" />
+        <provides interface="interface.framework.sf_console_on_sf_console" />
+        <provides interface="interface.framework.sf_console.${module.framework.sf_console.name}" />
+        <property default="g_sf_console${_instance}" display="Name" id="module.framework.sf_console.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_console.name}")</constraint>
+        </property>
+        <property id="module.framework.sf_console.initial_menu" display="Name of Initial Menu (Application Defined)" default="g_sf_console_root_menu">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_console.initial_menu}")</constraint>
+        </property>
+        <property default="module.framework.sf_console.echo.true" display="Echo" id="module.framework.sf_console.echo">
+            <option display="True" id="module.framework.sf_console.echo.true" value="true"/>
+            <option display="False" id="module.framework.sf_console.echo.false" value="false"/>
+        </property>
+        <property default="module.framework.sf_console.autostart.false" display="Autostart" id="module.framework.sf_console.autostart">
+            <option display="True" id="module.framework.sf_console.autostart.true" value="true"/>
+            <option display="False" id="module.framework.sf_console.autostart.false" value="false"/>
+        </property>
+        <property default="sf_console_init${_instance}" display="Name of the sf console initialization function" id="module.framework.sf_console.init_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_console.init_function}")</constraint>
+        </property>
+        <property default="module.framework.sf_console.init.enable" display="Auto sf console Initialization" id="module.framework.sf_console.init">
+            <option display="Enable"  id="module.framework.sf_console.init.enable"  value="1"/>
+            <option display="Disable" id="module.framework.sf_console.init.disable" value="0"/>
+        </property>
+        <header>
+            extern const sf_console_instance_t ${module.framework.sf_console.name};
+            extern const sf_console_menu_t ${module.framework.sf_console.initial_menu};
+            void ${module.framework.sf_console.name}_err_callback(void * p_instance, void * p_data);
+         void ${module.framework.sf_console.init_function}(void);
+        </header>
+        <includes>
+             #include &quot;sf_console.h&quot;
+             #include &quot;sf_console_api.h&quot;
+        </includes>
+        <declarations>
+              #if defined(__ICCARM__)
+              #define ${module.framework.sf_console.name}_err_callback_WEAK_ATTRIBUTE
+              #pragma weak ${module.framework.sf_console.name}_err_callback  = ${module.framework.sf_console.name}_err_callback_internal
+              #elif defined(__GNUC__)
+              #define ${module.framework.sf_console.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_console.name}_err_callback_internal")))
+              #endif
+              void ${module.framework.sf_console.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_console.name}_err_callback_WEAK_ATTRIBUTE;
+              sf_console_instance_ctrl_t ${module.framework.sf_console.name}_ctrl;
+              const sf_console_cfg_t ${module.framework.sf_console.name}_cfg =
+              {
+                  .p_comms             = &amp;${module.framework.sf_console.requires.sf_comms::module.framework.sf_comms.name},
+                  .p_initial_menu      = &amp;${module.framework.sf_console.initial_menu},
+                  .echo                = ${module.framework.sf_console.echo},
+                  .autostart           = ${module.framework.sf_console.autostart},
+              };
+              /* Instance structure to use this module. */
+              const sf_console_instance_t ${module.framework.sf_console.name} = 
+              {
+                  .p_ctrl        = &amp;${module.framework.sf_console.name}_ctrl,
+                  .p_cfg         = &amp;${module.framework.sf_console.name}_cfg,
+                  .p_api         = &amp;g_sf_console_on_sf_console
+              };
+              /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.framework.sf_console.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+               **********************************************************************************************************************/
+              void ${module.framework.sf_console.name}_err_callback_internal(void * p_instance, void * p_data);
+              void ${module.framework.sf_console.name}_err_callback_internal(void * p_instance, void * p_data)
+              {
+                /** Suppress compiler warning for not using parameters. */
+                SSP_PARAMETER_NOT_USED(p_instance);
+                SSP_PARAMETER_NOT_USED(p_data);
+
+                /** An error has occurred. Please check function arguments for more information. */
+                BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+              }
+              
+              /*******************************************************************************************************************//**
+               * @brief     This is sf console initialization function. User Can call this function in the application if required with the below mentioned prototype.
+               *            - void ${module.framework.sf_console.init_function}(void)
+               **********************************************************************************************************************/
+              void ${module.framework.sf_console.init_function}(void)
+              {
+               ssp_err_t ssp_err_${module.framework.sf_console.name};
+                 ssp_err_${module.framework.sf_console.name} = ${module.framework.sf_console.name}.p_api->open(${module.framework.sf_console.name}.p_ctrl, ${module.framework.sf_console.name}.p_cfg);
+                 if (SSP_SUCCESS != ssp_err_${module.framework.sf_console.name})
+                   {
+                     ${module.framework.sf_console.name}_err_callback((void *)&amp;${module.framework.sf_console.name},&amp;ssp_err_${module.framework.sf_console.name});
+                   }
+              }
+        </declarations>
+        <init>
+               /** Call sf console initialization function. User Can call at later time as well if required. */
+               #if (${module.framework.sf_console.init})
+                   ${module.framework.sf_console.init_function}(); 
+               #endif 
+        </init>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_message" path="ssp_cfg/framework/sf_message_cfg.h" version="0">
+        <property default="config.framework.sf_message.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_message.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_message.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_message.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_message.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="16" display="Message Queue Depth (Total number of messages to be enqueued in a Message Queue)" id="config.framework.sf_message.queue_depth">
+            <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_message.queue_depth}") &amp;&amp; ("${config.framework.sf_message.queue_depth}" &gt; 0)</constraint>
+        </property>
+        <content>
+            #define SF_MESSAGE_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_message.param_checking_enable}
+            #define SF_MESSAGE_CFG_QUEUE_SIZE (${config.framework.sf_message.queue_depth} * 4) 
+        </content>
+    </config>
+    <module config="config.framework.sf_message" display="Framework|Services|${module.framework.sf_message.name} Messaging Framework on sf_message" id="module.framework.sf_message" common="1" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_message.${module.framework.sf_message.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <provides interface="interface.framework.sf_message"/>
+        <provides interface="interface.framework.sf_message_on_sf_message"/>
+        <provides interface="interface.framework.sf_message.${module.framework.sf_message.name}"/>
+        <property default="g_sf_message${_instance}" display="Name" id="module.framework.sf_message.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_message.name}")</constraint>
+        </property>
+        <property default="2048" display="Work memory size in bytes" id="module.framework.sf_message.work_memory_size">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.framework.sf_message.work_memory_size}") &amp;&amp; ("${module.framework.sf_message.work_memory_size}" &gt; 0)</constraint>
+        </property>
+        <property default="p_subscriber_lists" display="Pointer to subscriber list array" id="module.framework.sf_message.pp_subscriber_lists">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_message.pp_subscriber_lists}")</constraint>
+        </property>
+        <property default="sf_msg_blk_pool" display="name of the block pool internally used in the messaging framework" id="module.framework.sf_message.p_blk_pool_name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_message.p_blk_pool_name}")</constraint>
+        </property>
+        <event id="module.framework.sf_message.event.eventUnused"  display="Unused" value="SF_MESSAGE_EVENT_UNUSED" />
+        <event id="module.framework.sf_message.event.eventNewData" display="New Data" value="SF_MESSAGE_EVENT_NEW_DATA" />
+        <header>
+            extern void g_message_init(void);
+
+            /* SF Message on SF Message Instance. */
+            extern const sf_message_instance_t ${module.framework.sf_message.name};
+        void ${module.framework.sf_message.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include &quot;sf_message.h&quot;
+            #include &quot;sf_message_payloads.h&quot;
+        </includes>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.framework.sf_message.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.framework.sf_message.name}_err_callback  = ${module.framework.sf_message.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.framework.sf_message.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_message.name}_err_callback_internal")))
+            #endif
+            void ${module.framework.sf_message.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_message.name}_err_callback_WEAK_ATTRIBUTE;
+            extern sf_message_subscriber_list_t * ${module.framework.sf_message.pp_subscriber_lists}[];
+            sf_message_instance_ctrl_t ${module.framework.sf_message.name}_ctrl;
+            static uint8_t    ${module.framework.sf_message.name}_work_buffer[${module.framework.sf_message.work_memory_size}];
+            /* Configures the messaging framework */
+            sf_message_cfg_t ${module.framework.sf_message.name}_cfg =
+            {
+                .p_work_memory_start    = &amp;${module.framework.sf_message.name}_work_buffer,
+                .work_memory_size_bytes = ${module.framework.sf_message.work_memory_size},
+                .buffer_size            = sizeof(sf_message_payload_t),
+                .pp_subscriber_lists    = ${module.framework.sf_message.pp_subscriber_lists},
+                .p_block_pool_name      = (uint8_t *)"${module.framework.sf_message.p_blk_pool_name}"
+            };
+            /* Instance structure to use this module. */
+            const sf_message_instance_t ${module.framework.sf_message.name} = 
+            {
+                .p_ctrl        = &amp;${module.framework.sf_message.name}_ctrl,
+                .p_cfg         = &amp;${module.framework.sf_message.name}_cfg,
+                .p_api         = &amp;g_sf_message_on_sf_message
+            };  
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.framework.sf_message.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.framework.sf_message.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.framework.sf_message.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+                /** Suppress compiler warning for not using parameters. */
+                 SSP_PARAMETER_NOT_USED(p_instance);
+                 SSP_PARAMETER_NOT_USED(p_data);
+
+                /** An error has occurred. Please check function arguments for more information. */
+                 BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            ssp_err_t ssp_err_${module.framework.sf_message.name};
+
+            /* Initializes Messaging Framework Queues */
+            g_message_init();
+
+            /* Opens the messaging framework */
+            ssp_err_${module.framework.sf_message.name} = ${module.framework.sf_message.name}.p_api->open(${module.framework.sf_message.name}.p_ctrl, ${module.framework.sf_message.name}.p_cfg);
+            if (SSP_SUCCESS != ssp_err_${module.framework.sf_message.name})
+            {
+                /* Error returns, check the cause. */
+                ${module.framework.sf_message.name}_err_callback((void *)&amp;${module.framework.sf_message.name},&amp;ssp_err_${module.framework.sf_message.name});
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

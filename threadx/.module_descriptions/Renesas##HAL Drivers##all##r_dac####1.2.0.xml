@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.dac" path="ssp_cfg/driver/r_dac_cfg.h" version="0">
+        <property default="config.driver.dac.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.dac.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.dac.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.dac.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.dac.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define DAC_CFG_PARAM_CHECKING_ENABLE ${config.driver.dac.param_checking_enable}
+</content>
+    </config>
+    <module config="config.driver.dac" display="Driver|Analog|${module.driver.dac.name} DAC Driver on r_dac" id="module.driver.dac_on_dac" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.dac.${module.driver.dac.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.dac" />
+        <provides interface="interface.driver.dac_on_dac" />
+        <provides interface="interface.driver.dac.${module.driver.dac.name}" />
+        <property default="g_dac${_instance}" display="Name" id="module.driver.dac.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.dac.name}")</constraint>
+        </property>
+           <property default="0" display="Channel" id="module.driver.dac.channel_id">
+            <constraint display="Value must be an integer greater than or equal to 0">testInteger("${module.driver.dac.channel_id}")  &amp;&amp; ("${module.driver.dac.channel_id}" &gt;= 0)</constraint>
+           </property>
+        <property default="module.driver.dac.ad_da_synchronized.false" display="Synchronize with ADC" id="module.driver.dac.ad_da_synchronized">
+            <option display="Enabled" id="module.driver.dac.ad_da_synchronized.true" value="true"/>
+            <option display="Disabled" id="module.driver.dac.ad_da_synchronized.false" value="false"/>
+        </property>
+        <property default="module.driver.dac.data_format.data_format_flush_right" display="Data Format" id="module.driver.dac.data_format">
+            <option display="Right Justified" id="module.driver.dac.data_format.data_format_flush_right" value="DAC_DATA_FORMAT_FLUSH_RIGHT"/>
+            <option display="Left Justified" id="module.driver.dac.data_format.data_format_flush_left" value="DAC_DATA_FORMAT_FLUSH_LEFT"/>
+        </property>
+        <property default="module.driver.dac.output_amplifier_enabled.false" display="Output Amplifier" id="module.driver.dac.output_amplifier_enabled">
+            <option display="Enable" id="module.driver.dac.output_amplifier_enabled.true" value="true"/>
+            <option display="Disable" id="module.driver.dac.output_amplifier_enabled.false" value="false"/>
+        </property>
+        <header>
+            /** DAC on DAC Instance. */
+            extern const dac_instance_t ${module.driver.dac.name};
+        </header>
+        <includes>#include &quot;r_dac.h&quot;
+#include &quot;r_dac_api.h&quot;</includes>
+        <declarations>dac_instance_ctrl_t ${module.driver.dac.name}_ctrl;
+const dac_cfg_t ${module.driver.dac.name}_cfg =
+{
+    .channel             = ${module.driver.dac.channel_id},
+    .ad_da_synchronized  = ${module.driver.dac.ad_da_synchronized},
+    .data_format         = ${module.driver.dac.data_format},
+    .output_amplifier_enabled = ${module.driver.dac.output_amplifier_enabled},
+    .p_extend            = NULL
+};
+/* Instance structure to use this module. */
+const dac_instance_t ${module.driver.dac.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.dac.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.dac.name}_cfg,
+    .p_api         = &amp;g_dac_on_dac
+};
+</declarations>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.doc" path="ssp_cfg/driver/r_doc_cfg.h" version="1">
+        <property default="config.driver.doc.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.doc.param_checking_enable">
+            <option display="Default (BSP)" id="config.doc.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.doc.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.doc.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define DOC_CFG_PARAM_CHECKING_ENABLE ${config.driver.doc.param_checking_enable}
+        </content>
+     </config>
+    <module config="config.driver.doc" display="Driver|Monitoring|${module.driver.doc.name} Data Operation Circuit Driver on r_doc" id="module.driver.doc_on_doc" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.doc.${module.driver.doc.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.doc" />
+        <provides interface="interface.driver.doc_on_doc" />
+        <provides interface="interface.driver.doc.${module.driver.doc.name}" />
+        <property default="g_doc${_instance}" display="Name" id="module.driver.doc.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.doc.name}")</constraint>
+        </property>
+        <property default="module.driver.doc.doc_event.comparison_mismatch" display="Event" id="module.driver.doc.doc_event.event">
+            <option display="Comparison mismatch" id="module.driver.doc.doc_event.comparison_mismatch" value="DOC_EVENT_COMPARISON_MISMATCH"/>
+            <option display="Comparison match" id="module.driver.doc.doc_event.comparison_match" value="DOC_EVENT_COMPARISON_MATCH"/>
+            <option display="Addition overflow" id="module.driver.doc.doc_event.addition" value="DOC_EVENT_ADDITION"/>
+            <option display="Subtraction underflow" id="module.driver.doc.doc_event.subtraction" value="DOC_EVENT_SUBTRACTION"/>
+        </property>
+        <property default="NULL" display="Callback" id="module.driver.doc.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.doc.p_callback}")</constraint>
+        </property>
+
+        <property default="board.icu.common.irq.disabled" display="DOC Interrupt Priority" id="module.driver.doc.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+
+        <header>
+        extern const doc_instance_t ${module.driver.doc.name};
+
+#ifndef ${module.driver.doc.p_callback}
+void ${module.driver.doc.p_callback}(doc_callback_args_t * p_args);
+#endif
+        </header>
+
+        <includes>#include &quot;r_doc.h&quot;
+#include &quot;r_doc_api.h&quot;</includes>
+        <declarations>
+#if ${module.driver.doc.irq_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.doc.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_DOC)
+SSP_VECTOR_DEFINE(doc_int_isr, DOC, INT);
+#endif
+#endif
+static doc_instance_ctrl_t ${module.driver.doc.name}_ctrl;
+
+
+static const doc_cfg_t ${module.driver.doc.name}_cfg =
+{
+    .event          = ${module.driver.doc.doc_event.event},
+    .p_callback     = ${module.driver.doc.p_callback},
+    .p_context      = &amp;${module.driver.doc.name},
+    .irq_ipl        = ${module.driver.doc.irq_ipl},
+};
+/* Instance structure to use this module. */
+const doc_instance_t ${module.driver.doc.name} =
+{
+    .p_ctrl        = &amp;${module.driver.doc.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.doc.name}_cfg,
+    .p_api         = &amp;g_doc_on_doc
+};
+
+#if DOC_CALLBACK_USED
+void ${module.driver.doc.p_callback}_internal(doc_callback_args_t * p_args);
+
+/*******************************************************************************************************************//**
+ * @brief      This is a weak example callback function.  It should be overridden by defining a user callback function
+ *             with the prototype below.
+ *               - void ${module.driver.doc.p_callback}(doc_callback_args_t * p_args)
+ *
+ *
+ * @param[in]  p_args  Callback arguments used to identify what caused the callback.
+ **********************************************************************************************************************/
+void ${module.driver.doc.p_callback}_internal(doc_callback_args_t * p_args)
+{
+    /** Do nothing. */
+    SSP_PARAMETER_NOT_USED(p_args);
+}
+#endif
+</declarations>
+    </module>
+</synergyModuleDescription>

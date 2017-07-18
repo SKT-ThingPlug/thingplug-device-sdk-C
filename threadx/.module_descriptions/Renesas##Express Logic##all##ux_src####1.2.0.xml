@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.ux_src" path="ssp_cfg/framework/el/ux_src_user.h" version="0">
+        <property default="" display="Ticks per seconds for USBX system" id="config.el.ux_src.periodic_rate" description="This value represents how many ticks per seconds.">
+            <constraint display="Value must be greater than 0">("${config.el.ux_src.periodic_rate}".length === 0) || ("${config.el.ux_src.periodic_rate}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Classes" id="config.el.ux_src.max_classes" description="When set, this value is the maximum number of classes that can be loaded by USBX. This value represents the class container and not the number of instances of a class. For instance, if a particular implementation of USBX needs the hub class, the printer class, and the storage class, then the UX_MAX_CLASSES value can be set to 3 regardless of the number of devices that belong to these classes.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_classes}".length === 0) || ("${config.el.ux_src.max_classes}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Slave Classes" id="config.el.ux_src.max_slave_classes" description="When set, this value is the maximum number of classes in the device stack that can be loaded by USBX.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_slave_classes}".length === 0) || ("${config.el.ux_src.max_slave_classes}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Slave Interfaces" id="config.el.ux_src.max_slave_interfaces" description="When set, this value is the maximum number of interfaces in the device framework.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_slave_interfaces}".length === 0) || ("${config.el.ux_src.max_slave_interfaces}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Host Class Containers" id="config.el.ux_src.class_driver" description="When set, this value represents the maximum number of host classes that can be loaded by USBX.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.class_driver}".length === 0) || ("${config.el.ux_src.class_driver}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Device Class Containers" id="config.el.ux_src.device_class_driver" description="When set, this value represents the maximum number of device classes that can be loaded by USBX.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.device_class_driver}".length === 0) || ("${config.el.ux_src.device_class_driver}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Host Controllers" id="config.el.ux_src.max_hcd" description="When set, this value represents the number of different host controllers available in the system. For USB 1.1 support, this value will usually be 1. For USB 2.0 support, this value can be more than 1. This value represents the number of concurrent host controllers running at the same time. If for instance there are two instances of OHCI running, or one EHCI and one OHCI controller running, the UX_MAX_HCD should be set to 2.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_hcd}".length === 0) || ("${config.el.ux_src.max_hcd}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Devices" id="config.el.ux_src.max_devices" description="When set, this value represents the maximum number of devices that can be attached to the USB. Normally, the theoretical maximum number on a single USB is 127 devices. This value can be scaled down to conserve memory. Note that this value represents the total number of devices regardless of the number of USB buses in the system.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_devices}".length === 0) || ("${config.el.ux_src.max_devices}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum EDs" id="config.el.ux_src.max_ed" description="When set, this value represents the maximum number of EDs for a controller.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_ed}".length === 0) || ("${config.el.ux_src.max_ed}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum TDs" id="config.el.ux_src.max_td" description="When set, this value represents the maximum number of TDs for a controller.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_td}".length === 0) || ("${config.el.ux_src.max_td}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Isochronous TDs" id="config.el.ux_src.max_iso_td" description="When set, this value represents the maximum number of Isochronous TDs for a controller.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_iso_td}".length === 0) || ("${config.el.ux_src.max_iso_td}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Stack size for USBX threads" id="config.el.ux_src.thread_stack_size" description="When set, this value represents the size of the stack in bytes for the USBX threads.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.thread_stack_size}".length === 0) || ("${config.el.ux_src.thread_stack_size}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="USBX Enumeration Thread Priority" id="config.el.ux_src.thread_pri_enum" description="When set, this represents the ThreadX priority value for the USBX enumeration thread.">
+            <constraint display="Value must be greater than 0 or equal to  or empty">("${config.el.ux_src.thread_pri_enum}".length === 0) || ("${config.el.ux_src.thread_pri_enum}" &gt;= 0)</constraint>
+        </property>
+        <property default="" display="USBX Standard Thread Priority" id="config.el.ux_src.thread_pri_class" description="When set, this represents the ThreadX priority value for the standard USBX thread.">
+            <constraint display="Value must be greater than 0 or equal to  or empty">("${config.el.ux_src.thread_pri_class}".length === 0) || ("${config.el.ux_src.thread_pri_class}" &gt;= 0)</constraint>
+        </property>
+        <property default="" display="USBX HID Keyboard Class Thread Priority" id="config.el.ux_src.thread_pri_keyboard" description="When set, this represents the ThreadX priority value for the USBX HID keyboard class.">
+            <constraint display="Value must be greater than 0 or equal to  or empty">("${config.el.ux_src.thread_pri_keyboard}".length === 0) || ("${config.el.ux_src.thread_pri_keyboard}" &gt;= 0)</constraint>
+        </property>
+        <property default="" display="USBX HCD Thread Priority" id="config.el.ux_src.thread_pri_hcd" description="When set, this represents the ThreadX priority value for the host controller thread.">
+            <constraint display="Value must be greater than or equal to 0 or empty">("${config.el.ux_src.thread_pri_hcd}".length === 0) || ("${config.el.ux_src.thread_pri_hcd}" &gt;= 0)</constraint>
+        </property>
+        <property id="config.el.ux_src.no_time_slice" display="No Use of Time Slice" default="config.el.ux_src.no_time_slice.disabled" description="When enabled, the ThreadX target port does not use time slice.">
+            <option id="config.el.ux_src.no_time_slice.enabled" display="Enabled" value="1" />
+            <option id="config.el.ux_src.no_time_slice.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property default="" display="Maximum Slave Logical Units" id="config.el.ux_src.max_slave_lun" description="When set, this value represents the current number of SCSI logical units represented in the device storage class driver.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_slave_lun}".length === 0) || ("${config.el.ux_src.max_slave_lun}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Host Logical Units" id="config.el.ux_src.max_host_lun" description="When set, this value represents the maximum number of SCSI logical units represented in the host storage class driver.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.max_host_lun}".length === 0) || ("${config.el.ux_src.max_host_lun}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Slave Request Control Maximum Length" id="config.el.ux_src.slave_request_control_max_length" description="When set, this value represents the maximum number of bytes received on a control endpoint in the device stack. The default is 256 bytes but can be reduced in memory constraint environments.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.slave_request_control_max_length}".length === 0) || ("${config.el.ux_src.slave_request_control_max_length}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Slave Request Data Maximum Length" id="config.el.ux_src.slave_request_data_max_length" description="When set, this value represents the maximum number of bytes received on a bulk endpoint in the device stack.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_src.slave_request_data_max_length}".length === 0) || ("${config.el.ux_src.slave_request_data_max_length}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.ux_src.enforce_safe_alignment" display="Enforce Safe Alignment" default="config.el.ux_src.enforce_safe_alignment.disabled" description="When enabled, this value forces the memory allocation scheme to enforce alignement of memory with the UX_SAFE_ALIGN field">
+            <option id="config.el.ux_src.enforce_safe_alignment.enabled" display="Enabled" value="1" />
+            <option id="config.el.ux_src.enforce_safe_alignment.disabled" display="Disabled (default)" value="0" />
+        </property>
+
+        <content>
+#if (${config.el.ux_src.periodic_rate}+0)
+#define UX_PERIODIC_RATE (${config.el.ux_src.periodic_rate})
+#endif
+#if (${config.el.ux_src.max_classes}+0)
+#define UX_MAX_CLASSES (${config.el.ux_src.max_classes})
+#endif
+#if (${config.el.ux_src.max_slave_classes}+0)
+#define UX_MAX_SLAVE_CLASSES (${config.el.ux_src.max_slave_classes})
+#endif
+#if (${config.el.ux_src.max_slave_interfaces}+0)
+#define UX_MAX_SLAVE_INTERFACES (${config.el.ux_src.max_slave_interfaces})
+#endif
+#if (${config.el.ux_src.class_driver}+0)
+#define UX_MAX_CLASS_DRIVER (${config.el.ux_src.class_driver})
+#endif
+#if (${config.el.ux_src.device_class_driver}+0)
+#define UX_MAX_SLAVE_CLASS_DRIVER (${config.el.ux_src.device_class_driver})
+#endif
+#if (${config.el.ux_src.max_hcd}+0)
+#define UX_MAX_HCD (${config.el.ux_src.max_hcd})
+#endif
+#if (${config.el.ux_src.max_devices}+0)
+#define UX_MAX_DEVICES (${config.el.ux_src.max_devices})
+#endif
+#if (${config.el.ux_src.max_ed}+0)
+#define UX_MAX_ED (${config.el.ux_src.max_ed})
+#endif
+#if (${config.el.ux_src.max_td}+0)
+#define UX_MAX_TD (${config.el.ux_src.max_td})
+#endif
+#if (${config.el.ux_src.max_iso_td}+0)
+#define UX_MAX_ISO_TD (${config.el.ux_src.max_iso_td})
+#endif
+#if (${config.el.ux_src.thread_stack_size}+0)
+#define UX_THREAD_STACK_SIZE (${config.el.ux_src.thread_stack_size})
+#endif
+#if (${config.el.ux_src.thread_pri_enum}+0)
+#define UX_THREAD_PRIORITY_ENUM (${config.el.ux_src.thread_pri_enum})
+#endif
+#if (${config.el.ux_src.thread_pri_class}+0)
+#define UX_THREAD_PRIORITY_CLASS (${config.el.ux_src.thread_pri_class})
+#endif
+#if (${config.el.ux_src.thread_pri_keyboard}+0)
+#define UX_THREAD_PRIORITY_KEYBOARD (${config.el.ux_src.thread_pri_keyboard})
+#endif
+#if (${config.el.ux_src.thread_pri_hcd}+0)
+#define UX_THREAD_PRIORITY_HCD (${config.el.ux_src.thread_pri_hcd})
+#endif
+#if (${config.el.ux_src.no_time_slice})
+#define UX_NO_TIME_SLICE (${config.el.ux_src.no_time_slice})
+#endif
+#if (${config.el.ux_src.max_slave_lun}+0)
+#define UX_MAX_SLAVE_LUN (${config.el.ux_src.max_slave_lun})
+#endif
+#if (${config.el.ux_src.max_host_lun}+0)
+#define UX_MAX_HOST_LUN (${config.el.ux_src.max_host_lun})
+#endif
+#if (${config.el.ux_src.slave_request_control_max_length}+0)
+#define UX_SLAVE_REQUEST_CONTROL_MAX_LENGTH (${config.el.ux_src.slave_request_control_max_length})
+#endif
+#if (${config.el.ux_src.slave_request_data_max_length}+0)
+#define UX_SLAVE_REQUEST_DATA_MAX_LENGTH (${config.el.ux_src.slave_request_data_max_length})
+#endif
+#if (${config.el.ux_src.enforce_safe_alignment})
+#define UX_ENFORCE_SAFE_ALIGNMENT
+#endif
+
+        </content>
+    </config>
+    <module config="config.el.ux_src" id="module.el.ux_src" display="X-Ware|USBX|Common|USBX Source" common="1" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.ux_src.linkage_warning}" === "module.el.ux_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.ux_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.ux_src.linkage_warning">
+            <option display="Enabled" id="module.el.ux_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.ux_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

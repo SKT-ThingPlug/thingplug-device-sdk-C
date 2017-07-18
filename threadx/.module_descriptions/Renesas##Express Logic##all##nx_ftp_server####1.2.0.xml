@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nx_ftp_server" path="ssp_cfg/framework/el/nx_ftp_server_cfg.h" version="0">
+        <property default="16" display="Internal thread priority" id="config.el.nx_ftp_server.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.priority}")  &amp;&amp; ("${config.el.nx_ftp_server.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="4" display="Maximum clients to serve simultaneously" id="config.el.nx_ftp_server.max_clients">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.max_clients}")  &amp;&amp; ("${config.el.nx_ftp_server.max_clients}" &gt;= 0)
+            </constraint>
+        </property>
+
+        <property default="400" display="Control window size (bytes)" id="config.el.nx_ftp_server.control_window_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.control_window_size}")  &amp;&amp; ("${config.el.nx_ftp_server.control_window_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2048" display="Data window size (bytes)" id="config.el.nx_ftp_server.data_window_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.data_window_size}")  &amp;&amp; ("${config.el.nx_ftp_server.data_window_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="100" display="Duration internal services will suspend for (seconds)" id="config.el.nx_ftp_server.server_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.server_timeout}")  &amp;&amp; ("${config.el.nx_ftp_server.server_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Maximum username length (bytes)" id="config.el.nx_ftp_server.username_size">
+            <constraint display="Value must be a non-negative integer"> testInteger("${config.el.nx_ftp_server.username_size}")  &amp;&amp; ("${config.el.nx_ftp_server.username_size}" &gt;= 0)</constraint>
+        </property>
+        <property default="20" display="Maximum password length (bytes)" id="config.el.nx_ftp_server.password_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.password_size}")  &amp;&amp; ("${config.el.nx_ftp_server.password_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="240" display="Duration allowed with no activity (seconds)" id="config.el.nx_ftp_server.activity_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.activity_timeout}")  &amp;&amp; ("${config.el.nx_ftp_server.activity_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2" display="Duration for initial timeout (seconds)" id="config.el.nx_ftp_server.retry_seconds">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.retry_seconds}")  &amp;&amp; ("${config.el.nx_ftp_server.retry_seconds}" &gt;= 0)
+            </constraint>
+        </property>
+
+        <property default="20" display="Maximum queued transmit packets" id="config.el.nx_ftp_server.transmit_queue_depth">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.transmit_queue_depth}")  &amp;&amp; ("${config.el.nx_ftp_server.transmit_queue_depth}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Maximum retries per packet" id="config.el.nx_ftp_server.retry_max">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.retry_max}")  &amp;&amp; ("${config.el.nx_ftp_server.retry_max}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1" display="Binary left shift as multiplier for retry duration" id="config.el.nx_ftp_server.retry_shift">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_ftp_server.retry_shift}")  &amp;&amp; ("${config.el.nx_ftp_server.retry_shift}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+         #define  NX_FTP_SERVER_PRIORITY                                   ${config.el.nx_ftp_server.priority}
+         #define  NX_FTP_MAX_CLIENTS                                       ${config.el.nx_ftp_server.max_clients}
+         #define  NX_FTP_CONTROL_WINDOW_SIZE                               ${config.el.nx_ftp_server.control_window_size}
+         #define  NX_FTP_DATA_WINDOW_SIZE                                  ${config.el.nx_ftp_server.data_window_size}
+         #define  NX_FTP_SERVER_TIMEOUT                                    (${config.el.nx_ftp_server.server_timeout} * NX_IP_PERIODIC_RATE)
+         #define  NX_FTP_USERNAME_SIZE                                     ${config.el.nx_ftp_server.username_size}
+         #define  NX_FTP_PASSWORD_SIZE                                     ${config.el.nx_ftp_server.password_size}
+         #define  NX_FTP_ACTIVITY_TIMEOUT                                  (${config.el.nx_ftp_server.activity_timeout} * NX_IP_PERIODIC_RATE)
+         #define  NX_FTP_SERVER_RETRY_SECONDS                              ${config.el.nx_ftp_server.retry_seconds}
+         #define  NX_FTP_SERVER_TRANSMIT_QUEUE_DEPTH                       ${config.el.nx_ftp_server.transmit_queue_depth}
+         #define  NX_FTP_SERVER_RETRY_MAX                                  ${config.el.nx_ftp_server.retry_max}
+         #define  NX_FTP_SERVER_RETRY_SHIFT                                ${config.el.nx_ftp_server.retry_shift}
+        </content>
+    </config>
+    <module config="config.el.nx_ftp_server" display="X-Ware|NetX|Protocols|${module.el.nx_ftp_server.name} NetX FTP Server" id="module.el.nx_ftp_server" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_ftp_server.${module.el.nx_ftp_server.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_ftp_server.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.tcp" value="module.el.nx.ip.tcp.enable" />
+        </requires>
+        <requires id="module.el.nx_ftp_server.requires.nx.packet_pool" interface="interface.el.nx_original.packet_pool" display="Add NetX Packet Pool" />
+        <requires id="module.el.nx_ftp_server.requires.fx" interface="interface.el.fx" display="Add FileX" />
+        <requires id="module.el.nx_ftp_server.requires.ftp_common" interface="interface.el.nx_ftp_common" display="Add FTP Common" />        
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_ftp_server" />
+        <provides interface="interface.el.nx_ftp_server.${module.el.nx_ftp_server.name}" />
+        <!-- NetX only -->
+        <provides interface="interface.el.nx_original_ftp_server" />
+        <provides interface="interface.el.nx_original_ftp_server.${module.el.nx_ftp_server.name}" />
+        
+        <property default="g_ftp_server${_instance}" display="Name" id="module.el.nx_ftp_server.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_ftp_server.name}")</constraint>
+        </property>
+        <property default="4096" display="Internal thread stack size (bytes)" id="module.el.nx_ftp_server.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_ftp_server.stack_size}")  &amp;&amp; (("${module.el.nx_ftp_server.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <property default="ftp_login" display="Name of Login Function" id="module.el.nx_ftp_server.login_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_ftp_server.login_function}")</constraint>
+        </property>
+        <property default="ftp_logout" display="Name of Logout Function" id="module.el.nx_ftp_server.logout_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_ftp_server.logout_function}")</constraint>
+        </property>
+        <header>
+            extern NX_FTP_SERVER ${module.el.nx_ftp_server.name};
+            #if !defined(${module.el.nx_ftp_server.login_function})
+            UINT ${module.el.nx_ftp_server.login_function}(struct NX_FTP_SERVER_STRUCT *ftp_server_ptr, ULONG client_ip_address, UINT client_port, CHAR *name, CHAR *password, CHAR *extra_info);
+            #endif
+            #if !defined(${module.el.nx_ftp_server.logout_function})
+            UINT ${module.el.nx_ftp_server.logout_function}(struct NX_FTP_SERVER_STRUCT *ftp_server_ptr, ULONG client_ip_address, UINT client_port, CHAR *name, CHAR *password, CHAR *extra_info);
+            #endif
+            void ${module.el.nx_ftp_server.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_ftp_server.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_ftp_server.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_ftp_server.name}_err_callback  = ${module.el.nx_ftp_server.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_ftp_server.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_ftp_server.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_ftp_server.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_ftp_server.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_FTP_SERVER   ${module.el.nx_ftp_server.name};
+            uint8_t         ${module.el.nx_ftp_server.name}_stack_memory[${module.el.nx_ftp_server.stack_size}];
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.el.nx_ftp_server.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_ftp_server.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_ftp_server.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_ftp_server.name}_err;
+            /* Create FTP Server. */
+            ${module.el.nx_ftp_server.name}_err = nx_ftp_server_create(&amp;${module.el.nx_ftp_server.name},
+                                                                       "${module.el.nx_ftp_server.name} FTP Server",
+                                                                       &amp;${module.el.nx_ftp_server.requires.nx.ip::module.el.nx.ip.name},
+                                                                       &amp;${module.el.nx_ftp_server.requires.fx::module.framework.fx.name},
+                                                                       &amp;${module.el.nx_ftp_server.name}_stack_memory[0],
+                                                                       ${module.el.nx_ftp_server.stack_size},
+                                                                       &amp;${module.el.nx_ftp_server.requires.nx.packet_pool::module.el.nx.packet_pool.name},
+                                                                       ${module.el.nx_ftp_server.login_function},
+                                                                       ${module.el.nx_ftp_server.logout_function});
+            if (NX_SUCCESS != ${module.el.nx_ftp_server.name}_err)
+            {
+                ${module.el.nx_ftp_server.name}_err_callback((void *)&amp;${module.el.nx_ftp_server.name},&amp;${module.el.nx_ftp_server.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

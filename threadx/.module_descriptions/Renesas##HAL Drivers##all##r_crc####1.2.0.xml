@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.crc" path="ssp_cfg/driver/r_crc_cfg.h" version="0">
+        <property id="config.driver.crc.checking" display="Parameter Checking" default="config.driver.crc.checking.system">
+            <option id="config.driver.crc.checking.system" display="Default (BSP)" value="(BSP_CFG_PARAM_CHECKING_ENABLE)" />        
+            <option id="config.driver.crc.checking.enabled" display="Enabled" value="(1)" />
+            <option id="config.driver.crc.checking.disabled" display="Disabled" value="(0)" />               
+        </property>         
+        <content>#define CRC_CFG_PARAM_CHECKING_ENABLE ${config.driver.crc.checking}</content>
+    </config>        
+	<module config="config.driver.crc" display="Driver|Monitoring|${module.driver.crc.name} CRC Driver on r_crc" id="module.driver.crc_on_crc" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.crc.${module.driver.crc.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.crc" />
+        <provides interface="interface.driver.crc_on_crc" />
+        <provides interface="interface.driver.crc.${module.driver.crc.name}" />
+        <property default="g_crc${_instance}" display="Name" id="module.driver.crc.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.crc.name}")</constraint>
+        </property>
+		<property default="module.driver.crc.crc_polynomial.gps_crc_32c" display="CRC Polynomial" id="module.driver.crc.crc_polynomial">
+			<option display="CRC-8" id="module.driver.crc.crc_polynomial.gps_crc_8" value="CRC_POLYNOMIAL_CRC_8"/>
+			<option display="CRC-16" id="module.driver.crc.crc_polynomial.gps_crc_16" value="CRC_POLYNOMIAL_CRC_16"/>
+			<option display="CRC-CCITT" id="module.driver.crc.crc_polynomial.gps_crc_ccitt" value="CRC_POLYNOMIAL_CRC_CCITT"/>
+			<option display="CRC-32" id="module.driver.crc.crc_polynomial.gps_crc_32" value="CRC_POLYNOMIAL_CRC_32"/>
+			<option display="CRC-32C" id="module.driver.crc.crc_polynomial.gps_crc_32c" value="CRC_POLYNOMIAL_CRC_32C"/>
+		</property>
+		<property default="module.driver.crc.crc_bit_order.lms_msb" display="Bit Order" id="module.driver.crc.crc_bit_order">
+			<option display="LSB" id="module.driver.crc.crc_bit_order.lms_lsb" value="CRC_BIT_ORDER_LMS_LSB"/>
+			<option display="MSB" id="module.driver.crc.crc_bit_order.lms_msb" value="CRC_BIT_ORDER_LMS_MSB"/>
+		</property>
+        <header>
+        	extern const crc_instance_t ${module.driver.crc.name};
+        </header>		
+		<includes>#include &quot;r_crc.h&quot;
+#include &quot;r_crc_api.h&quot;</includes>
+		<declarations>static crc_instance_ctrl_t ${module.driver.crc.name}_ctrl;
+const crc_cfg_t ${module.driver.crc.name}_cfg =
+{
+    .polynomial      = ${module.driver.crc.crc_polynomial},
+    .bit_order       = ${module.driver.crc.crc_bit_order},
+};
+/* Instance structure to use this module. */
+const crc_instance_t ${module.driver.crc.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.crc.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.crc.name}_cfg,
+    .p_api         = &amp;g_crc_on_crc
+};
+</declarations>
+	</module>
+</synergyModuleDescription>

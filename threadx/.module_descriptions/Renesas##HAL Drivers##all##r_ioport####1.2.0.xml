@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.ioport" path="ssp_cfg/driver/r_ioport_cfg.h" version="0">
+		<property id="config.driver.ioport.checking" display="Parameter Checking" default="config.driver.ioport.checking.system">
+			<option id="config.driver.ioport.checking.system" display="Default (BSP)" value="(BSP_CFG_PARAM_CHECKING_ENABLE)" />		
+	 		<option id="config.driver.ioport.checking.enabled" display="Enabled" value="(1)" />
+			<option id="config.driver.ioport.checking.disabled" display="Disabled" value="(0)" />				
+		</property>			
+		<content>#define IOPORT_CFG_PARAM_CHECKING_ENABLE ${config.driver.ioport.checking}</content>
+	</config>
+	<module config="config.driver.ioport" display="Driver|System|${module.driver.ioport.name} I/O Port Driver on r_ioport" id="module.driver.ioport_on_ioport" version="1">		
+        <constraint display="Only one IOPORT driver instance is allowed">
+            "${interface.driver.ioport}" === "1"
+        </constraint>
+        <requires interface="_hal" />
+        <provides interface="interface.driver.ioport" />
+        <property default="g_ioport" display="Name [Fixed]" id="module.driver.ioport.name">
+            <constraint display="Name must be g_ioport">"${module.driver.ioport.name}" == "g_ioport"</constraint>
+        </property>        
+		<header>
+		/** IOPORT Instance */
+		extern const ioport_instance_t ${module.driver.ioport.name};
+		</header>
+		<includes>
+		#include &quot;r_ioport.h&quot;
+		#include &quot;r_ioport_api.h&quot;
+		</includes>
+		<declarations>
+		const ioport_instance_t ${module.driver.ioport.name} = 
+        {
+            .p_api = &amp;g_ioport_on_ioport,
+            .p_cfg = NULL
+        };
+		</declarations>
+    </module>
+</synergyModuleDescription>

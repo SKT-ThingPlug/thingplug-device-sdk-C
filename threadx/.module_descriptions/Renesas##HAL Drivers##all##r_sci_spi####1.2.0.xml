@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.sci_spi" path="ssp_cfg/driver/r_sci_spi_cfg.h" version="0">
+		<property default="config.driver.sci_spi.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.sci_spi.param_checking_enable">
+		    <option display="Default (BSP)" id="config.driver.sci_spi.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.sci_spi.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.sci_spi.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define SCI_SPI_CFG_PARAM_CHECKING_ENABLE ${config.driver.sci_spi.param_checking_enable}
+</content>
+	</config>
+	<module config="config.driver.sci_spi" display="Driver|Connectivity|${module.driver.spi.name} SPI Driver on r_sci_spi" id="module.driver.spi_on_sci_spi" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.spi.${module.driver.spi.name}}" === "1"
+        </constraint>        
+        <constraint display="Requires same priority for RXI and TXI interrupts">
+            "${module.driver.spi.rxi_ipl}" == "${module.driver.spi.txi_ipl}"
+        </constraint>
+        <requires id="module.driver.spi_on_sci_spi.requires.transfer_tx" interface="interface.driver.transfer_on_dtc" display="Add DTC Driver for Transmission [Recommended but optional]">
+			<override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+			<override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+			<override property="module.driver.transfer.p_dest" value="NULL"/>
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="0"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="0"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+			<override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_sci${module.driver.spi.channel}_txi"/>
+		</requires>
+        <requires id="module.driver.spi_on_sci_spi.requires.transfer_rx" interface="interface.driver.transfer_on_dtc" display="Add DTC Driver for Reception [Recommended but optional]">
+			<override property="module.driver.transfer.size" value="module.driver.transfer.size.size_1_byte"/>
+			<override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_fixed"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_destination"/>
+			<override property="module.driver.transfer.p_dest" value="NULL"/>
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="0"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="0"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+			<override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_sci${module.driver.spi.channel}_rxi"/>
+		</requires>
+        <provides interface="interface.driver.spi" />
+        <provides interface="interface.driver.spi_on_sci_spi" />
+		<provides interface="interface.driver.spi.${module.driver.spi.name}" />
+        <property default="g_spi${_instance}" display="Name" id="module.driver.spi.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.spi.name}")</constraint>
+        </property>
+	    <property default="0" display="Channel" id="module.driver.spi.channel">
+			<constraint display="Value must be an integer between 0 and 9">testInteger("${module.driver.spi.channel}")  &amp;&amp; ("${module.driver.spi.channel}" &gt;= 0) &amp;&amp; ("${module.driver.spi.channel}" &lt;= 9)</constraint>
+           </property>
+		<property default="module.driver.spi.operating_mode.mode_master" display="Operating Mode" id="module.driver.spi.operating_mode">
+			<option display="Master" id="module.driver.spi.operating_mode.mode_master" value="SPI_MODE_MASTER"/>
+			<!--option display="Mode Slave" id="module.driver.spi.operating_mode.mode_slave" value="SPI_MODE_SLAVE"/>-->
+		</property>
+		<property default="module.driver.spi.clk_phase.clk_phase_edge_odd" display="Clock Phase" id="module.driver.spi.clk_phase">
+			<option display="Data sampling on odd edge, data variation on even edge" id="module.driver.spi.clk_phase.clk_phase_edge_odd" value="SPI_CLK_PHASE_EDGE_ODD"/>
+			<option display="Data sampling on even edge, data variation on odd edge" id="module.driver.spi.clk_phase.clk_phase_edge_even" value="SPI_CLK_PHASE_EDGE_EVEN"/>
+		</property>
+		<property default="module.driver.spi.clk_polarity.clk_polarity_low" display="Clock Polarity" id="module.driver.spi.clk_polarity">
+			<option display="Low when idle" id="module.driver.spi.clk_polarity.clk_polarity_low" value="SPI_CLK_POLARITY_LOW"/>
+			<option display="High when idle" id="module.driver.spi.clk_polarity.clk_polarity_high" value="SPI_CLK_POLARITY_HIGH"/>
+		</property>
+		<property default="module.driver.spi.mode_fault.mode_fault_error_disable" display="Mode Fault Error" id="module.driver.spi.mode_fault">
+			<option display="Enable" id="module.driver.spi.mode_fault.mode_fault_error_enable" value="SPI_MODE_FAULT_ERROR_ENABLE"/>
+			<option display="Disable" id="module.driver.spi.mode_fault.mode_fault_error_disable" value="SPI_MODE_FAULT_ERROR_DISABLE"/>
+		</property>
+		<property default="module.driver.spi.bit_order.bit_order_msb_first" display="Bit Order" id="module.driver.spi.bit_order">
+			<option display="MSB First" id="module.driver.spi.bit_order.bit_order_msb_first" value="SPI_BIT_ORDER_MSB_FIRST"/>
+			<option display="LSB First" id="module.driver.spi.bit_order.bit_order_lsb_first" value="SPI_BIT_ORDER_LSB_FIRST"/>
+		</property>
+		<property default="100000" display="Bitrate" id="module.driver.spi.bitrate">
+			<constraint display="Value must be an integer greater than 0">testInteger("${module.driver.spi.bitrate}")  &amp;&amp; ("${module.driver.spi.bitrate}" &gt; 0)</constraint>
+        </property>
+        <property default="module.driver.spi.bitrate_modulation.true" display="Bit Rate Modulation Enable" id="module.driver.spi.bitrate_modulation">
+            <option display="Enable" id="module.driver.spi.bitrate_modulation.true" value="true"/>
+            <option display="Disable" id="module.driver.spi.bitrate_modulation.false" value="false"/>
+        </property>
+        <property default="NULL" display="Callback" id="module.driver.spi.p_callback">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.spi.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Receive Interrupt Priority" id="module.driver.spi.rxi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Transmit Interrupt Priority" id="module.driver.spi.txi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Transmit End Interrupt Priority" id="module.driver.spi.tei_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Error Interrupt Priority" id="module.driver.spi.eri_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <header>
+		extern const spi_cfg_t ${module.driver.spi.name}_cfg;
+             /** SPI on SCI Instance. */
+            extern const spi_instance_t ${module.driver.spi.name};
+#ifndef ${module.driver.spi.p_callback}
+void ${module.driver.spi.p_callback}(spi_callback_args_t * p_args);
+#endif
+        </header>
+		<includes>
+#include &quot;r_sci_spi.h&quot;
+#include &quot;r_spi_api.h&quot;</includes>
+		<declarations>
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.spi.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SCI${module.driver.spi.channel})
+SSP_VECTOR_DEFINE_CHAN(sci_spi_txi_rxi_tei_isr, SCI, RXI, ${module.driver.spi.channel});
+#endif
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.spi.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SCI${module.driver.spi.channel})
+SSP_VECTOR_DEFINE_CHAN(sci_spi_txi_rxi_tei_isr, SCI, TXI, ${module.driver.spi.channel});
+#endif
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.spi.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SCI${module.driver.spi.channel})
+SSP_VECTOR_DEFINE_CHAN(sci_spi_txi_rxi_tei_isr, SCI, TEI, ${module.driver.spi.channel});
+#endif
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.spi.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_SCI${module.driver.spi.channel})
+SSP_VECTOR_DEFINE_CHAN(sci_spi_eri_isr, SCI, ERI, ${module.driver.spi.channel});
+#endif
+sci_spi_instance_ctrl_t ${module.driver.spi.name}_ctrl;
+
+/** SPI extended configuration */
+const sci_spi_extended_cfg ${module.driver.spi.name}_cfg_extend =
+{
+    .bitrate_modulation  = ${module.driver.spi.bitrate_modulation}
+};
+
+const spi_cfg_t ${module.driver.spi.name}_cfg =
+{
+    .channel             = ${module.driver.spi.channel},
+    .operating_mode      = ${module.driver.spi.operating_mode},
+    .clk_phase           = ${module.driver.spi.clk_phase},
+    .clk_polarity        = ${module.driver.spi.clk_polarity},
+    .mode_fault          = ${module.driver.spi.mode_fault},
+    .bit_order           = ${module.driver.spi.bit_order},
+    .bitrate             = ${module.driver.spi.bitrate},
+#define SYNERGY_NOT_DEFINED (1)             
+#if (SYNERGY_NOT_DEFINED == ${module.driver.spi_on_sci_spi.requires.transfer_tx::module.driver.transfer.name})
+                .p_transfer_tx       = NULL,
+#else
+                .p_transfer_tx       = &amp;${module.driver.spi_on_sci_spi.requires.transfer_tx::module.driver.transfer.name},
+#endif
+#if (SYNERGY_NOT_DEFINED == ${module.driver.spi_on_sci_spi.requires.transfer_rx::module.driver.transfer.name})
+                .p_transfer_rx       = NULL,
+#else
+                .p_transfer_rx       = &amp;${module.driver.spi_on_sci_spi.requires.transfer_rx::module.driver.transfer.name},
+#endif
+#undef SYNERGY_NOT_DEFINED	
+	.p_callback          = ${module.driver.spi.p_callback},
+	.p_context           = (void *)&amp;${module.driver.spi.name},
+    .rxi_ipl             = ${module.driver.spi.rxi_ipl},
+    .txi_ipl             = ${module.driver.spi.txi_ipl},
+    .tei_ipl             = ${module.driver.spi.tei_ipl},
+    .eri_ipl             = ${module.driver.spi.eri_ipl},
+	.p_extend            = &amp;${module.driver.spi.name}_cfg_extend,	
+};
+/* Instance structure to use this module. */
+const spi_instance_t ${module.driver.spi.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.spi.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.spi.name}_cfg,
+    .p_api         = &amp;g_spi_on_sci
+};
+
+</declarations>
+	</module>
+</synergyModuleDescription>

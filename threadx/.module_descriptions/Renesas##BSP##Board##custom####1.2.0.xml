@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<synergyModuleDescription>
+    <config id="config.board.custom" path="ssp_cfg/bsp/bsp_board_cfg.h" version="0">
+        <content/>
+    </config>
+    <board id="board.custom" display="Custom User Board (Any Device)" device="R7FS7G27G2A01CBD" config="config.board.custom" version="0" />
+</synergyModuleDescription>

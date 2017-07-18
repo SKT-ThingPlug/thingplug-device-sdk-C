@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+        <config id="config.el.nx_tftp_server" path="ssp_cfg/framework/el/nx_tftp_server_cfg.h" version="0">
+        <property default="config.el.nx_tftp_server.filex.enable" display="FileX support" id="config.el.nx_tftp_server.filex">
+            <option display="Disable" id="config.el.nx_tftp_server.filex.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_tftp_server.filex.enable" value="1"/>
+        </property>        
+        <property default="config.el.nx_tftp_server.retransmit.disable" display="Retransmission on client request support" id="config.el.nx_tftp_server.retransmit">
+            <option display="Disable" id="config.el.nx_tftp_server.retransmit.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_tftp_server.retransmit.enable" value="1"/>
+        </property>
+         <property default="16" display="Internal thread priority" id="config.el.nx_tftp_server.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_tftp_server.priority}")  &amp;&amp; ("${config.el.nx_tftp_server.priority}" &gt;= 0)
+            </constraint>
+        </property>
+         <property default="10" display="Maximum clients to serve simultaneously" id="config.el.nx_tftp_server.tftp_max_clients">
+            <constraint display="Value must be between 1 to 10">
+                testInteger("${config.el.nx_tftp_server.tftp_max_clients}")  &amp;&amp; ("${config.el.nx_tftp_server.tftp_max_clients}" &gt;= 1)  &amp;&amp; ("${config.el.nx_tftp_server.tftp_max_clients}" &lt;= 10)
+            </constraint>
+        </property>
+        <property default="2" display="Time slice for internal thread" id="config.el.nx_tftp_server.time_slice">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_tftp_server.time_slice}")  &amp;&amp; ("${config.el.nx_tftp_server.time_slice}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Timeout check period (ticks)" id="config.el.nx_tftp_server.server_time_out">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_tftp_server.server_time_out}")  &amp;&amp; ("${config.el.nx_tftp_server.server_time_out}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nx_tftp_server.server_activity_timeout.disable" display="TFTP server activity timeout enable" id="config.el.nx_tftp_server.server_activity_timeout">
+            <option display="Disable" id="config.el.nx_tftp_server.server_activity_timeout.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_tftp_server.server_activity_timeout.enable" value="1"/>
+        </property>
+        <property default="1000" display="Server activity time out (ticks)" id="config.el.nx_tftp_server.server_activity_time_out">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_tftp_server.server_activity_time_out}")  &amp;&amp; ("${config.el.nx_tftp_server.server_activity_time_out}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="200" display="Ack or data retransmission interval (ticks)" id="config.el.nx_tftp_server.retransmit_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_tftp_server.retransmit_timeout}")  &amp;&amp; ("${config.el.nx_tftp_server.retransmit_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="5" display="Maximum retries for transmission without response" id="config.el.nx_tftp_server.max_retries">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_tftp_server.max_retries}")  &amp;&amp; ("${config.el.nx_tftp_server.max_retries}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2" display="Maximum retries for transmission with duplicate response" id="config.el.nx_tftp_server.max_client_retransmits">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_tftp_server.max_client_retransmits}")  &amp;&amp; ("${config.el.nx_tftp_server.max_client_retransmits}" &gt;= 0)
+            </constraint>
+        </property>
+
+        <content>
+            #if (!${config.el.nx_tftp_server.filex})
+            #define NX_TFTP_NO_FILEX
+            #endif        
+            #if (${config.el.nx_tftp_server.retransmit})
+            #define NX_TFTP_SERVER_RETRANSMIT_ENABLE
+            #endif
+            #if (${config.el.nx_tftp_server.server_activity_timeout})
+            #define NX_TFTP_SERVER_ACTIVITY_TIMEOUT_ENABLE
+            #endif
+            #define NX_TFTP_SERVER_PRIORITY                             (${config.el.nx_tftp_server.priority})
+            #define NX_TFTP_MAX_CLIENTS                                 (${config.el.nx_tftp_server.tftp_max_clients})
+            #define NX_TFTP_SERVER_TIME_SLICE                           (${config.el.nx_tftp_server.time_slice})
+            #define NX_TFTP_SERVER_TIMEOUT_PERIOD                       (${config.el.nx_tftp_server.server_time_out})
+            #define NX_TFTP_SERVER_ACTIVITY_TIMEOUT                     (${config.el.nx_tftp_server.server_activity_time_out})
+            #define NX_TFTP_SERVER_RETRANSMIT_TIMEOUT                   (${config.el.nx_tftp_server.retransmit_timeout})
+            #define NX_TFTP_SERVER_MAX_RETRIES                          (${config.el.nx_tftp_server.max_retries})
+            #define NX_TFTP_MAX_CLIENT_RETRANSMITS                      (${config.el.nx_tftp_server.max_client_retransmits})
+        </content>
+    </config>
+    <module  config="config.el.nx_tftp_server" display="X-Ware|NetX|Protocols|${module.el.nx_tftp_server.name} NetX TFTP Server" id="module.el.nx_tftp_server" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_tftp_server.${module.el.nx_tftp_server.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_tftp_server.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.udp" value="module.el.nx.ip.udp.enable" />
+        </requires>
+        <requires id="module.el.nx_tftp_server.requires.nx.packet_pool" interface="interface.el.nx_original.packet_pool" display="Add NetX Packet Pool" />
+        <requires id="module.el.nx_tftp_server.requires.nx_tftp_common" interface="interface.el.nx_tftp_common" display="Add TFTP Common" />
+        <requires id="module.el.nx_tftp_server.requires.fx" interface="interface.el.fx" display="Add FileX" />
+
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_tftp_server" />
+        <provides interface="interface.el.nx_tftp_server.${module.el.nx_tftp_server.name}" />
+        <!-- NetX only -->
+        <provides interface="interface.el.nx_original_tftp_server" />
+        <provides interface="interface.el.nx_original_tftp_server.${module.el.nx_tftp_server.name}" />
+        
+        
+        <property default="g_tftp_server${_instance}" display="Name" id="module.el.nx_tftp_server.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_tftp_server.name}")</constraint>
+        </property>
+        <property default="2048" display="Internal thread stack size (bytes)" id="module.el.nx_tftp_server.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_tftp_server.stack_size}")  &amp;&amp; (("${module.el.nx_tftp_server.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <header>
+            extern NX_TFTP_SERVER ${module.el.nx_tftp_server.name};
+            void ${module.el.nx_tftp_server.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_tftp_server.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_tftp_server.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_tftp_server.name}_err_callback  = ${module.el.nx_tftp_server.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_tftp_server.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_tftp_server.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_tftp_server.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_tftp_server.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_TFTP_SERVER   ${module.el.nx_tftp_server.name};
+            uint8_t         ${module.el.nx_tftp_server.name}_stack_memory[${module.el.nx_tftp_server.stack_size}];
+            /*******************************************************************************************************************//**
+              * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+              *             with the prototype below.
+              *             - void ${module.el.nx_tftp_server.name}_err_callback(void * p_instance, void * p_data)
+              *
+              * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+              **********************************************************************************************************************/
+             void ${module.el.nx_tftp_server.name}_err_callback_internal(void * p_instance, void * p_data);
+             void ${module.el.nx_tftp_server.name}_err_callback_internal(void * p_instance, void * p_data)
+             {
+               /** Suppress compiler warning for not using parameters. */
+               SSP_PARAMETER_NOT_USED(p_instance);
+               SSP_PARAMETER_NOT_USED(p_data);
+
+               /** An error has occurred. Please check function arguments for more information. */
+               BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+             }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_tftp_server.name}_err;
+            /* Create TFTP Server. */
+            ${module.el.nx_tftp_server.name}_err = nx_tftp_server_create(&amp;${module.el.nx_tftp_server.name},
+                                                                         "${module.el.nx_tftp_server.name} TFTP Server",
+                                                                         &amp;${module.el.nx_tftp_server.requires.nx.ip::module.el.nx.ip.name},
+                                                                         &amp;${module.el.nx_tftp_server.requires.fx::module.framework.fx.name},
+                                                                         &amp;${module.el.nx_tftp_server.name}_stack_memory[0],
+                                                                         ${module.el.nx_tftp_server.stack_size},
+                                                                         &amp;${module.el.nx_tftp_server.requires.nx.packet_pool::module.el.nx.packet_pool.name});
+            if (NX_SUCCESS != ${module.el.nx_tftp_server.name}_err)
+            {
+                ${module.el.nx_tftp_server.name}_err_callback((void *)&amp;${module.el.nx_tftp_server.name},&amp;${module.el.nx_tftp_server.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

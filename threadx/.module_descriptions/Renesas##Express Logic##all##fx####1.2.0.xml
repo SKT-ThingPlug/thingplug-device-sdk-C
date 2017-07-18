@@ -1,0 +1,356 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.fx" path="ssp_cfg/framework/el/fx_user.h" version="0">
+        <content>
+#if (${interface.el.fx_src})
+#include "fx_src_user.h"
+#endif
+        </content>
+    </config>
+    <module config="config.el.fx" display="X-Ware|FileX|FileX Common on fx" id="module.el.fx_common" common="1" version="1">
+        <requires interface="_rtos" />
+        <requires interface="interface.el.fx_src" display="Add FileX Source [Optional]" id="module.el.fx.requires.fx_src" find="false" />
+        <provides interface="interface.el.fx_common" />
+        <includes>
+            #include "fx_api.h"
+        </includes>
+        <init>
+            /** Initialize the FileX system. */
+            fx_system_initialize();
+        </init>
+    </module>
+
+    <module config="config.el.fx_usbmsc" id="module.framework.fx_usbmsc" display="X-Ware|FileX|${module.framework.fx.name} FileX on USB Mass Storage" common="100" version="0">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.fx.${module.framework.fx.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.fx_usbmsc.requires.ux_host_class_storage" interface="interface.el.ux_host_class_storage" display="Add USB Host Mass Storage" />
+        <requires id="module.framework.fx_usbmsc.requires.fx_common"             interface="interface.el.fx_common" display="Add FileX Common" />
+        <provides interface="interface.el.fx" />
+        <provides interface="interface.el.fx.${module.framework.fx.name}" />
+        <provides interface="interface.framework.fx.${module.framework.fx.name}" />
+        <property default="g_fx_media${_instance}" display="Name" id="module.framework.fx.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.fx.name}")</constraint>
+        </property>
+        <property default="fx_media_init_function${_instance}" display="Name of FileX Media Control block initialization" id="module.framework.fx.init_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.fx.init_function}")</constraint>
+        </property>
+        <property default="module.framework.fx_usbmsc.media_init.disable" display="Auto Media Initialization" id="module.framework.fx_usbmsc.media_init">
+            <option display="Enable"  id="module.framework.fx_usbmsc.media_init.enable"  value="1"/>
+            <option display="Disable" id="module.framework.fx_usbmsc.media_init.disable" value="0"/>
+        </property>
+        <property default="1000" display="Timeout ticks for Media Initialization (Specify 0 if no need of thread suspension)" id="module.framework.fx_usbmsc.init_timeout">
+            <constraint display="Value must be a non-negative integer"> testInteger("${module.framework.fx_usbmsc.init_timeout}") &amp;&amp; (("${module.framework.fx_usbmsc.init_timeout}") &gt;= 0)</constraint>
+        </property>
+        <header>
+            /* A pointer to FileX Media Control Block for a USB flash device */
+            extern FX_MEDIA * ${module.framework.fx.name}_ptr;
+
+            /* Pointer to a USBX Host Mass Storage Class Media */
+            extern UX_HOST_CLASS_STORAGE_MEDIA * ${module.framework.fx_usbmsc.requires.ux_host_class_storage::module.el.host_class.name}_media;
+
+            /* Macro to dereference a pointer to FileX Media Control Block for a USB flash device */
+            #define  ${module.framework.fx.name} (*(FX_MEDIA*)${module.framework.fx.name}_ptr)
+
+            /* The function prototype of getting ${module.framework.fx.name} for a USB Mass Storage device. */
+            void ${module.framework.fx.init_function} (void);
+
+            /* FileX media initialization error callback function for USBX Host Mass Storage. User can override the function if needed. */
+            void ${module.framework.fx.name}_err_callback_failed_to_get_fx_media(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "ux_api.h"
+            #include "ux_host_class_storage.h"
+        </includes>
+        <declarations>
+            /* A pointer to FileX Media Control Block for a USB flash device. */
+            FX_MEDIA * ${module.framework.fx.name}_ptr;
+
+            /* Pointer to a USBX Host Mass Storage Class Media. */
+            UX_HOST_CLASS_STORAGE_MEDIA * ${module.framework.fx_usbmsc.requires.ux_host_class_storage::module.el.host_class.name}_media;
+
+            #if defined(__ICCARM__)
+            #define ${module.framework.fx.name}_err_callback_failed_to_get_fx_media_WEAK_ATTRIBUTE
+            #pragma weak ${module.framework.fx.name}_err_callback_failed_to_get_fx_media  = ${module.framework.fx.name}_err_callback_failed_to_get_fx_media_internal
+            #elif defined(__GNUC__)
+            #define ${module.framework.fx.name}_err_callback_failed_to_get_fx_media_WEAK_ATTRIBUTE __attribute__ ((weak, alias("${module.framework.fx.name}_err_callback_failed_to_get_fx_media_internal")))
+            #endif
+            void ${module.framework.fx.name}_err_callback_failed_to_get_fx_media(void * p_instance, void * p_data) ${module.framework.fx.name}_err_callback_failed_to_get_fx_media_WEAK_ATTRIBUTE;
+
+            /* Function prototype for the weak initialization error function. */
+            void ${module.framework.fx.name}_err_callback_failed_to_get_fx_media_internal(void * p_instance, void * p_data);
+
+            /*******************************************************************************************************************//**
+              * @brief      This is a weak example initialization error function.  It should be overridden by defining a user function
+              *             with the prototype below.
+              *             - void ${module.framework.fx.name}_err_callback_failed_to_get_fx_media(void * p_instance, void * p_data)
+              *
+              * @param[in]  p_instance  Not used.
+              * @param[in]  p_data      Not used.
+              **********************************************************************************************************************/
+             void ${module.framework.fx.name}_err_callback_failed_to_get_fx_media_internal(void * p_instance, void * p_data)
+             {
+               /** Suppress compiler warning for not using parameters. */
+               SSP_PARAMETER_NOT_USED(p_instance);
+               SSP_PARAMETER_NOT_USED(p_data);
+
+               /** A FileX media control block for a USB mass storage device was not found. */
+               BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+             }
+
+            /*******************************************************************************************************************//**
+             * @brief      This is the function to get ${module.framework.fx.name} for a USB Mass Storage device.
+             **********************************************************************************************************************/
+             void ${module.framework.fx.init_function} (void)
+             {
+                 /** Suspend the thread until a USB Mass Storage Device inserted. */
+                 UINT err_${module.framework.fx.name}_semaphore_get = tx_semaphore_get (&amp;ux_host_storage_semaphore_insertion, ${module.framework.fx_usbmsc.init_timeout});
+                 if (TX_SUCCESS != err_${module.framework.fx.name}_semaphore_get)
+                 {
+                     ${module.framework.fx.name}_err_callback_failed_to_get_fx_media(&amp;ux_host_storage_semaphore_insertion, &amp;err_${module.framework.fx.name}_semaphore_get);
+                 }
+
+                 /** Initialize the FileX Media Control Block ${module.framework.fx.name} for a USB Mass Storage device. */
+                 /** Get the pointer to a USBX Host Mass Storage Instance. */
+                 ${module.framework.fx_usbmsc.requires.ux_host_class_storage::module.el.host_class.name} = g_ux_new_host_storage_instance;
+
+                 /** Initialize the FileX Media Control Block g_fx_media0 for a USB Mass Storage device. */
+                 UINT err_${module.framework.fx.name}_get = ux_system_host_storage_fx_media_get(g_ux_new_host_storage_instance,
+                                                     &amp;${module.framework.fx_usbmsc.requires.ux_host_class_storage::module.el.host_class.name}_media,
+                                                     &amp;${module.framework.fx.name}_ptr);
+                 if (UX_SUCCESS != err_${module.framework.fx.name}_get)
+                 {
+                     ${module.framework.fx.name}_err_callback_failed_to_get_fx_media(&amp;${module.framework.fx.name}_ptr, &amp;err_${module.framework.fx.name}_get);
+                 }
+             }
+        </declarations>
+        <init>
+#if (${module.framework.fx_usbmsc.media_init})
+            /** Call FileX Media Control Block initialization function. Can call at later time as well. */
+            ${module.framework.fx.init_function}();
+#endif
+        </init>
+    </module>
+
+    <module config="config.el.fx" id="module.framework.fx" display="X-Ware|FileX|${module.framework.fx.name} FileX on Block Media" common="100" version="0">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.fx.${module.framework.fx.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.fx.requires.sf_el_fx" interface="interface.framework.sf_el_fx" display="Add FileX I/O Layer" />        
+        <requires id="module.framework.fx.requires.fx_common" interface="interface.el.fx_common" display="Add FileX Common" />
+        <provides interface="interface.el.fx" />
+        <provides interface="interface.el.fx.${module.framework.fx.name}" />
+        <provides interface="interface.framework.fx.${module.framework.fx.name}" />
+        <property default="g_fx_media${_instance}" display="Name" id="module.framework.fx.name" description="Symbol used for media_ptr parameter in FileX APIs">
+        <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.fx.name}")</constraint>
+        </property>
+        <property default="module.framework.fx.format.disabled" display="Format media during initialization" id="module.framework.fx.format" description="Whether or not to format media.  Note that formatting will erase all contents stored on the media.">
+            <option id="module.framework.fx.format.enabled" display="Enabled" value="1" />
+            <option id="module.framework.fx.format.disabled" display="Disabled" value="0" />
+        </property>
+        <property default="module.framework.fx.fx.true" display="File System is on SDMMC" id="module.framework.fx.fx_on_sdmmc" description="Whether or not SDMMC is used">
+            <option id="module.framework.fx.fx.true" display="True" value="1" />
+            <option id="module.framework.fx.fx.false" display="False" value="0" />
+        </property>
+        <property default="module.framework.fx.format_options.heading" display="Formatting Options" id="module.framework.fx.format_options">
+            <option display="" id="module.framework.fx.format_options.heading" value="(0)"/>
+        </property>
+        <property default="Volume 1" display="    Volume Name" id="module.framework.fx.volume_name" description="Volume name string, which is a maximum of 11 characters. Only used if Format media during initialization is enabled.">
+        <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.fx.volume_name}")</constraint>
+        </property>  
+        <property default="1" display="    Number of FATs" id="module.framework.fx.fat_count" description="Number of FATs in the media. The minimal value is 1 for the primary FAT. Values greater than 1 result in additional FAT copies being maintained at run-time. Only used if Format media during initialization is enabled.">
+            <constraint display="Number of FATs must be an integer greather than 0">testInteger("${module.framework.fx.fat_count}")  &amp;&amp; ("${module.framework.fx.fat_count}" &gt; 0)</constraint>
+        </property>  
+        <property default="256" display="    Directory Entries" id="module.framework.fx.dir_count" description="Number of directory entries in the root directory. Only used if Format media during initialization is enabled.">
+            <constraint display="Number of Directory Entries must be an integer greather than 0">testInteger("${module.framework.fx.dir_count}")  &amp;&amp; ("${module.framework.fx.dir_count}" &gt; 0)</constraint>
+        </property>      
+        <property default="0" display="    Hidden Sectors" id="module.framework.fx.hidden_sectors" description="Number of sectors hidden before this media’s boot sector. This is typical when multiple partitions are present. Only used if Format media during initialization is enabled.">
+            <constraint display="Number of Hidden Sectors must be an integer">testInteger("${module.framework.fx.hidden_sectors}")  &amp;&amp; ("${module.framework.fx.hidden_sectors}" &gt; -1)</constraint>
+        </property> 
+        <property default="3751936" display="    Total Sectors" id="module.framework.fx.total_sectors" description="Total number of sectors in the media. Only used if Format media during initialization is enabled.">
+            <constraint display="Total Sectors must be an integer greater than 0">testInteger("${module.framework.fx.total_sectors}")  &amp;&amp; ("${module.framework.fx.total_sectors}" &gt; 0)</constraint>
+        </property> 
+        <property default="512" display="    Bytes per Sector" id="module.framework.fx.sector_size" description="Number of bytes per sector, which is typically 512. FileX requires this to be a multiple of 32.">
+            <constraint display="Bytes per Sector must be a multiple of 32">testInteger("${module.framework.fx.sector_size}")  &amp;&amp; ((("${module.framework.fx.sector_size}" &#37; 32) === 0) &amp;&amp; ("${module.framework.fx.sector_size}" &gt; 0))</constraint>
+        </property> 
+        <property default="1" display="    Sectors per Cluster" id="module.framework.fx.cluster_size" description="Number of sectors in each cluster. The cluster is the minimum allocation unit in a FAT file system. Only used if Format media during initialization is enabled.">
+            <constraint display="Sectors per Cluster must be an integer greater than 0">testInteger("${module.framework.fx.cluster_size}")  &amp;&amp; ("${module.framework.fx.cluster_size}" &gt; 0)</constraint>
+        </property>
+        <property default="512" display="    Working media memory size" id="module.framework.fx.media_size" description="Memory allocated for file system. Memory size must be an integer greater than the size of one sector.">
+            <constraint display="Memory size must be an integer greater than the size of one sector">testInteger("${module.framework.fx.media_size}")  &amp;&amp; ("${module.framework.fx.media_size}" &gt; "${module.framework.fx.sector_size}")</constraint>
+        </property>  
+        <header>
+            extern FX_MEDIA ${module.framework.fx.name};
+
+            /** Block Media Format Type */
+            typedef struct st_sf_block_media_format
+            {
+                FX_MEDIA       * p_fx_media;
+                sf_el_fx_t     * p_driver_info;
+                uint8_t        * p_memory;
+                uint32_t         memory_size;
+                CHAR           * volume_name;
+                uint32_t         number_of_fats;
+                uint32_t         directory_entries;
+                uint32_t         hidden_sectors;
+                uint32_t         total_sectors;
+                uint32_t         bytes_per_sector;
+                uint32_t         sectors_per_cluster;
+            } sf_block_media_format_t;
+            void ${module.framework.fx.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "fx_api.h" 
+        </includes>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.framework.fx.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.framework.fx.name}_err_callback  = ${module.framework.fx.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.framework.fx.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.fx.name}_err_callback_internal")))
+            #endif
+            void ${module.framework.fx.name}_err_callback(void * p_instance, void * p_data) ${module.framework.fx.name}_err_callback_WEAK_ATTRIBUTE;
+            #define FX_FORMAT_MEDIA_ENABLE (${module.framework.fx.format})
+            #define FILESYSTEM_ON_SDMMC (${module.framework.fx.fx_on_sdmmc})
+            ssp_err_t SF_EL_FX_MediaFormat(sf_block_media_format_t * p_sf_block_media_format);
+            FX_MEDIA ${module.framework.fx.name};
+            uint8_t g_media_memory_${module.framework.fx.name}[${module.framework.fx.media_size}];
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.framework.fx.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.framework.fx.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.framework.fx.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <functions>
+            #if FX_FORMAT_MEDIA_ENABLE == 1
+            ssp_err_t  SF_EL_FX_MediaFormat (sf_block_media_format_t * p_sf_block_media_format)
+            {
+                ssp_err_t                   ret_val = SSP_SUCCESS;
+                uint32_t                    fx_ret_val;
+                sf_block_media_instance_t * p_block_media;
+                uint32_t                    sector_size;
+                uint32_t                    sector_count;
+
+                p_block_media = (sf_block_media_instance_t *) p_sf_block_media_format-&gt;p_driver_info-&gt;p_lower_lvl_block_media;
+
+                #if FILESYSTEM_ON_SDMMC == 1
+                ret_val       = p_block_media-&gt;p_api-&gt;open(p_block_media-&gt;p_ctrl, p_block_media-&gt;p_cfg);
+
+                /* Get actual sector size from media. */
+                if (SSP_SUCCESS == ret_val)
+                {
+                    ret_val = p_block_media-&gt;p_api-&gt;ioctl(p_block_media-&gt;p_ctrl, SSP_COMMAND_GET_SECTOR_SIZE, &amp;sector_size);
+                }
+
+                /* Get actual sector count from media. */
+                if (SSP_SUCCESS == ret_val)
+                {
+                    ret_val =
+                        p_block_media-&gt;p_api-&gt;ioctl(p_block_media-&gt;p_ctrl, SSP_COMMAND_GET_SECTOR_COUNT, &amp;sector_count);
+                }
+
+                /* Close driver.  */
+                if (SSP_SUCCESS == ret_val)
+                {
+                    ret_val =  p_block_media-&gt;p_api-&gt;close(p_block_media-&gt;p_ctrl);
+                }
+                #else
+                sector_count = p_sf_block_media_format-&gt;total_sectors;
+                sector_size = p_sf_block_media_format-&gt;bytes_per_sector;
+                #endif
+
+                /* If media operations were successful and memory size is as large as sector size, format media. */
+                if ((SSP_SUCCESS == ret_val) &amp;&amp; (!(p_sf_block_media_format-&gt;memory_size &lt; sector_size)))
+                {
+                    /* Format media.  */
+                    fx_ret_val = fx_media_format(p_sf_block_media_format-&gt;p_fx_media,          // Pointer to FileX media control block.
+                                                 SF_EL_FX_BlockDriver,                         // Driver entry
+                                                 p_sf_block_media_format-&gt;p_driver_info,       // Pointer to Block Media Driver
+                                                 p_sf_block_media_format-&gt;p_memory,            // Media buffer pointer
+                                                 p_sf_block_media_format-&gt;memory_size,         // Media buffer size
+                                                 (CHAR *) p_sf_block_media_format-&gt;volume_name,         // Volume Name
+                                                 p_sf_block_media_format-&gt;number_of_fats,      // Number of FATs
+                                                 p_sf_block_media_format-&gt;directory_entries,   // Directory Entries
+                                                 p_sf_block_media_format-&gt;hidden_sectors,      // Hidden sectors
+                                                 sector_count,                                 // Total sectors
+                                                 sector_size,                                  // Sector size
+                                                 p_sf_block_media_format-&gt;sectors_per_cluster, // Sectors per cluster
+                                                 1,                                            // Heads 
+                                                 1);                                           // Sectors per track 
+                                                                                               
+                    if (FX_SUCCESS != fx_ret_val)
+                    {
+                        ret_val = SSP_ERR_MEDIA_FORMAT_FAILED;
+                    }
+                }
+                else
+                {
+                    ret_val = SSP_ERR_MEDIA_FORMAT_FAILED;
+                }
+				return ret_val;
+
+           }
+            #endif
+            </functions>
+        <init>
+            ssp_err_t error;
+            uint32_t  fx_ret_val;
+
+            #if FX_FORMAT_MEDIA_ENABLE == 1
+            sf_block_media_format_t ${module.framework.fx.name}_format =
+            {
+                .p_fx_media = &amp;${module.framework.fx.name},
+                .p_driver_info = &amp;${module.framework.fx.requires.sf_el_fx::module.framework.sf_el_fx.name}_cfg,
+                .p_memory = g_media_memory_${module.framework.fx.name},
+                .memory_size = sizeof(g_media_memory_${module.framework.fx.name}),
+                .volume_name = (CHAR *)&quot;${module.framework.fx.volume_name}&quot;,
+                .number_of_fats = ${module.framework.fx.fat_count},
+                .directory_entries = ${module.framework.fx.dir_count},
+                .hidden_sectors = ${module.framework.fx.hidden_sectors},
+                .total_sectors = ${module.framework.fx.total_sectors},
+                .bytes_per_sector = ${module.framework.fx.sector_size},
+                .sectors_per_cluster = ${module.framework.fx.cluster_size}
+            };
+
+            
+            error = SF_EL_FX_MediaFormat(&amp;${module.framework.fx.name}_format);
+
+            if(error != SSP_SUCCESS)
+            {
+                 ${module.framework.fx.name}_err_callback((void *)&amp;${module.framework.fx.name},&amp;error);
+            }
+
+            #endif
+
+
+            fx_ret_val = fx_media_open(
+                &amp;${module.framework.fx.name},
+                (CHAR *)"${module.framework.fx.name}",
+                SF_EL_FX_BlockDriver,
+                &amp;${module.framework.fx.requires.sf_el_fx::module.framework.sf_el_fx.name}_cfg,
+                g_media_memory_${module.framework.fx.name},
+                sizeof(g_media_memory_${module.framework.fx.name}));
+            if(fx_ret_val != FX_SUCCESS)
+            {
+                error = SSP_ERR_INTERNAL;
+                ${module.framework.fx.name}_err_callback((void *)&amp;${module.framework.fx.name},&amp;fx_ret_val);
+            }
+ 
+
+          </init>
+    </module>
+</synergyModuleDescription>

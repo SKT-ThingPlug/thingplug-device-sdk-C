@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.fx_src" path="ssp_cfg/framework/el/fx_src_user.h" version="0">
+        <property id="config.el.fx_src.error_checking" display="Error Checking" default="config.el.fx_src.error_checking.enabled">
+            <option id="config.el.fx_src.error_checking.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.fx_src.error_checking.disabled" display="Disabled" value="0" />                
+        </property>
+        <property default="" display="Max Long Name Len" id="config.el.fx_src.max_long_name_len" description="Defines the maximum size of long file names supported by FileX. The default value is 33. The minimum value is 13 and the maximum value is 256.">
+            <constraint display="Value must be greater than or equal to 13 and less than or equal to 256, or empty">("${config.el.fx_src.max_long_name_len}".length === 0) || (("${config.el.fx_src.max_long_name_len}" &gt;= 13) &amp;&amp; ("${config.el.fx_src.max_long_name_len}" &lt;= 256)) </constraint>
+        </property>
+        <property default="" display="Max Last Name Len" id="config.el.fx_src.max_last_name_len" description="Defines the maximum size of long file names supported by FileX. The default value is 33. The minimum value is 13 and the maximum value is 256.">
+            <constraint display="Value must be greater than or equal to 13 and less than or equal to 256, or empty">("${config.el.fx_src.max_last_name_len}".length === 0) || (("${config.el.fx_src.max_last_name_len}" &gt;= 13) &amp;&amp; ("${config.el.fx_src.max_last_name_len}" &lt;= 256)) </constraint>
+        </property>
+        <property default="" display="Max Sector Cache" id="config.el.fx_src.max_sector_cache" description="Defines the maximum number of logical sectors that can be cached by FileX. The cache memory supplied to FileX at fx_media_open determines how many sectors can actually be cached.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.fx_src.max_sector_cache}".length === 0) || ("${config.el.fx_src.max_sector_cache}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Fat Map Size" id="config.el.fx_src.fat_map_size" description="Defines the size in bytes of the bit map used to update the secondary FAT sectors. The larger the value the less unnecessary secondary FAT sector writes.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.fx_src.fat_map_size}".length === 0) || ("${config.el.fx_src.fat_map_size}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Max Fat Cache" id="config.el.fx_src.max_fat_cache" description="Defines the number of entries in the FAT cache.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.fx_src.max_fat_cache}".length === 0) || ("${config.el.fx_src.max_fat_cache}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Update Rate (Seconds)" id="config.el.fx_src.update_rate_in_seconds" description="Defines the number of seconds the time parameters are updated in FileX.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.fx_src.update_rate_in_seconds}".length === 0) || ("${config.el.fx_src.update_rate_in_seconds}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.fx_src.no_timer" display="No Timer" default="config.el.fx_src.no_timer.disabled" description="When enabled, FileX is built without update to the time parameters.">
+            <option id="config.el.fx_src.no_timer.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.no_timer.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.fx_src.single_thread" display="Single Thread" default="config.el.fx_src.single_thread.disabled" description="When enabled, FileX is running in a single-threaded environment and does not need thread protection.">
+            <option id="config.el.fx_src.single_thread.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.single_thread.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.fx_src.dont_update_open_files" display="Don't Update Open Files" default="config.el.fx_src.dont_update_open_files.disabled" description="When enabled, FileX does not update already opened files.">
+            <option id="config.el.fx_src.dont_update_open_files.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.dont_update_open_files.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.fx_src.media_search_cache" display="Media Search Cache" default="config.el.fx_src.media_search_cache.enabled" description="When disabled, the file search cache optimization is disabled.">
+            <option id="config.el.fx_src.media_search_cache.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.fx_src.media_search_cache.disabled" display="Disabled" value="0" />                
+        </property>
+        <property id="config.el.fx_src.direct_data_read_cache_fill" display="Direct Data Read Cache Fill" default="config.el.fx_src.direct_data_read_cache_fill.enabled" description="When disabled, the direct read sector update of cache is disabled.">
+            <option id="config.el.fx_src.direct_data_read_cache_fill.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.fx_src.direct_data_read_cache_fill.disabled" display="Disabled" value="0" />                
+        </property>
+        <property id="config.el.fx_src.media_statistics" display="Media Statistics" default="config.el.fx_src.media_statistics.enabled" description="When disabled, gathering of media statistics is disabled.">
+            <option id="config.el.fx_src.media_statistics.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.fx_src.media_statistics.disabled" display="Disabled" value="0" />                
+        </property>
+        <property id="config.el.fx_src.single_open_legacy" display="Single Open Legacy" default="config.el.fx_src.single_open_legacy.disabled" description="When enabled, legacy single open logic for the same file is enabled.">
+            <option id="config.el.fx_src.single_open_legacy.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.single_open_legacy.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.fx_src.rename_path_inherit" display="Rename Path Inherit" default="config.el.fx_src.rename_path_inherit.disabled" description="When enabled, renaming inherits path information.">
+            <option id="config.el.fx_src.rename_path_inherit.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.rename_path_inherit.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.fx_src.no_local_path" display="No Local Path" default="config.el.fx_src.no_local_path.disabled" description="When enabled, local path logic is disabled.">
+            <option id="config.el.fx_src.no_local_path.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.no_local_path.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.fx_src.fault_tolerant_data" display="Fault Tolerant Data" default="config.el.fx_src.fault_tolerant_data.disabled" description="When enabled, data sector write requests are flushed immediately to the driver.">
+            <option id="config.el.fx_src.fault_tolerant_data.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.fault_tolerant_data.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.fx_src.fault_tolerant" display="Fault Tolerant" default="config.el.fx_src.fault_tolerant.disabled" description="When enabled, system sector write requests (including FAT and directory entry requests) are flushed immediately to the driver.">
+            <option id="config.el.fx_src.fault_tolerant.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.fault_tolerant.disabled" display="Disabled (default)" value="0" />                
+        </property>
+        <property id="config.el.fx_src.lba_64bit" display="64-bit LBA" default="config.el.fx_src.lba_64bit.disabled" description="When enabled, 64-bits sector addresses are used in I/O driver.">
+            <option id="config.el.fx_src.lba_64bit.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.lba_64bit.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property id="config.el.fx_src.fault_tolerant_service" display="Fault Tolerant Service" default="config.el.fx_src.fault_tolerant_service.disabled" description="When enabled, FileX fault tolerant service is enabled.">
+            <option id="config.el.fx_src.fault_tolerant_service.enabled" display="Enabled" value="1" />
+            <option id="config.el.fx_src.fault_tolerant_service.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property default="" id="config.el.fx_src.fault_tolerant_boot_index" display="Fault Tolerant Boot Index" description="Define byte offset in boot sector where the cluster number of the Fault Tolerant Log file is. The default value is 116. Note that this field (byte 116 to 119) is marked as reserved by FAT 12/16/32/exFAT specification.">
+            <constraint display="Value must be greater than or equal to 116 and less than or equal to 119">("${config.el.fx_src.fault_tolerant_boot_index}".length === 0) || (("${config.el.fx_src.fault_tolerant_boot_index}" &gt;= 116) &amp;&amp; ("${config.el.fx_src.fault_tolerant_boot_index}" &lt;= 119)) </constraint>
+        </property>
+        <property default="" id="config.el.fx_src.fault_tolerant_minimal_cluster" display="Fault Tolerant Minimal Cluster Size" description="Define the requirement for minimal size of cluster in bytes. The default value is 3072. It must be multiple of sector size. When size of cluster is less than this value, fault tolerant feature does not work properly. The default value works with the worst case for long file name.">
+            <constraint display="Value must be greater than or equal to 3072">("${config.el.fx_src.fault_tolerant_minimal_cluster}".length === 0) || ("${config.el.fx_src.fault_tolerant_minimal_cluster}" &gt;= 3072)</constraint>
+        </property>
+        <content>
+#if (!${config.el.fx_src.error_checking})
+#define FX_DISABLE_ERROR_CHECKING
+#endif
+#if (${config.el.fx_src.max_long_name_len}+0)
+#define FX_MAX_LONG_NAME_LEN (${config.el.fx_src.max_long_name_len})
+#endif
+#if (${config.el.fx_src.max_last_name_len}+0)
+#define FX_MAX_LAST_NAME_LEN (${config.el.fx_src.max_last_name_len})
+#endif
+#if (${config.el.fx_src.max_sector_cache}+0)
+#define FX_MAX_SECTOR_CACHE (${config.el.fx_src.max_sector_cache})
+#endif
+#if (${config.el.fx_src.fat_map_size}+0)
+#define FX_FAT_MAP_SIZE (${config.el.fx_src.fat_map_size})
+#endif
+#if (${config.el.fx_src.max_fat_cache}+0)
+#define FX_MAX_FAT_CACHE (${config.el.fx_src.max_fat_cache})
+#endif
+#if (${config.el.fx_src.update_rate_in_seconds}+0)
+#define FX_UPDATE_RATE_IN_SECONDS (${config.el.fx_src.update_rate_in_seconds})
+#endif
+#if (${config.el.fx_src.no_timer})
+#define FX_NO_TIMER
+#endif
+#if (${config.el.fx_src.single_thread})
+#define FX_SINGLE_THREAD
+#endif
+#if (${config.el.fx_src.dont_update_open_files})
+#define FX_DONT_UPDATE_OPEN_FILES
+#endif
+#if (!${config.el.fx_src.media_search_cache})
+#define FX_MEDIA_DISABLE_SEARCH_CACHE
+#endif
+#if (!${config.el.fx_src.direct_data_read_cache_fill})
+#define FX_DISABLE_DIRECT_DATA_READ_CACHE_FILL
+#endif
+#if (!${config.el.fx_src.media_statistics})
+#define FX_MEDIA_STATISTICS_DISABLE
+#endif
+#if (${config.el.fx_src.single_open_legacy})
+#define FX_SINGLE_OPEN_LEGACY
+#endif
+#if (${config.el.fx_src.rename_path_inherit})
+#define FX_RENAME_PATH_INHERIT
+#endif
+#if (${config.el.fx_src.no_local_path})
+#define FX_NO_LOCAL_PATH
+#endif
+#if (${config.el.fx_src.fault_tolerant_data})
+#define FX_FAULT_TOLERANT_DATA
+#endif
+#if (${config.el.fx_src.fault_tolerant})
+#define FX_FAULT_TOLERANT
+#endif
+#if (${config.el.fx_src.lba_64bit})
+#define FX_DRIVER_USE_64BIT_LBA
+#endif
+#if (${config.el.fx_src.fault_tolerant_service})
+#define FX_ENABLE_FAULT_TOLERANT
+#endif
+#if (${config.el.fx_src.fault_tolerant_boot_index}+0)
+#define FX_FAULT_TOLERANT_BOOT_INDEX (${config.el.fx_src.fault_tolerant_boot_index})
+#endif
+#if (${config.el.fx_src.fault_tolerant_minimal_cluster}+0)
+#define FX_FAULT_TOLERANT_MINIMAL_CLUSTER (${config.el.fx_src.fault_tolerant_minimal_cluster})
+#endif
+        </content>
+    </config>
+    <module config="config.el.fx_src" id="module.el.fx_src" display="X-Ware|FileX|FileX Source" common="1" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.fx_src.linkage_warning}" === "module.el.fx_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <requires id="module.el.fx_src.requires.tx_src" interface="interface.framework.tx_src" display="Add ThreadX Source" />
+        <provides interface="interface.el.fx_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.fx_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.fx_src.linkage_warning">
+            <option display="Enabled" id="module.el.fx_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.fx_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

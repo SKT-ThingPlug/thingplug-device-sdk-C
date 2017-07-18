@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_el_ux_comms" path="ssp_cfg/framework/sf_el_ux_comms_cfg.h" version="0">
+        <property default="config.framework.sf_comms.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_comms.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_comms.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_comms.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="65536" display="Memory Size (Bytes)" id="config.framework.sf_comms.memory_size">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.memory_size}") &amp;&amp; "${config.framework.sf_comms.memory_size}" &gt; 0</constraint>
+        </property>
+        <property default="128" display="Read Input Buffer Size (Bytes)" id="config.framework.sf_comms.read_size">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.read_size}") &amp;&amp; "${config.framework.sf_comms.read_size}" &gt; 0</constraint>
+        </property>
+        <property default="1000" display="Timeout in ticks" id="config.framework.sf_comms.timeout">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.timeout}") &amp;&amp; "${config.framework.sf_comms.timeout}" &gt; 0</constraint>
+        </property>
+        <content>
+                  #define SF_EL_UX_COMMS_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_comms.param_checking_enable}
+                  #define SF_EL_UX_COMMS_CFG_USB_MEMORY_SIZE_BYTES (${config.framework.sf_comms.memory_size})
+                  #define SF_EL_UX_COMMS_CFG_BUFFER_MAX_LENGTH (${config.framework.sf_comms.read_size})
+        </content>
+    </config>
+    
+    <module config="config.framework.sf_el_ux_comms" display="Framework|Connectivity|[DEPRECATED]${module.framework.sf_comms.name} Communications Framework on sf_el_ux_comms" id="module.framework.sf_el_ux_comms" version="1">
+        <constraint display="Module instances must have unique names">
+                  "${interface.framework.sf_comms.${module.framework.sf_comms.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_ux_comms.requires.ux_device_class_cdc_acm" interface="interface.el.ux_device_class_cdc_acm" display="Add USBX Device Class CDC ACM Framework" />        
+        <provides interface="interface.framework.sf_comms" />
+        <provides interface="interface.framework.sf_comms_on_sf_el_ux_comms" />
+        <provides interface="interface.framework.sf_comms.${module.framework.sf_comms.name}" />
+        <property default="g_sf_comms${_instance}" display="Name" id="module.framework.sf_comms.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_comms.name}")</constraint>
+        </property>
+        <property default="sf_comms_init${_instance}" display="Name of the sf comms initialization function" id="module.framework.sf_comms.init_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_comms.init_function}")</constraint>
+        </property>
+        <property default="module.framework.sf_comms.init.enable" display="Auto sf comms Initialization" id="module.framework.sf_comms.init">
+            <option display="Enable"  id="module.framework.sf_comms.init.enable"  value="1"/>
+            <option display="Disable" id="module.framework.sf_comms.init.disable" value="0"/>
+        </property>
+        <header>
+                  extern const sf_comms_instance_t ${module.framework.sf_comms.name};
+                  void ${module.framework.sf_comms.init_function}(void);
+        </header>
+        <includes>#include &quot;sf_el_ux_comms.h&quot;
+                  #include &quot;sf_comms_api.h&quot;
+        </includes>
+        <declarations>
+                  sf_el_ux_comms_instance_ctrl_t ${module.framework.sf_comms.name}_ctrl;
+                  /* Instance structure to use this module. */
+                  const sf_comms_instance_t ${module.framework.sf_comms.name} = 
+                  {
+                      .p_ctrl        = &amp;${module.framework.sf_comms.name}_ctrl,
+                      .p_cfg         = NULL,
+                      .p_api         = &amp;g_sf_el_ux_comms_on_sf_comms
+                  };
+                  
+                  /*******************************************************************************************************************//**
+                   * @brief     This is sf comms initialization function. User Can call this function in the application if required with the below mentioned prototype.
+                   *            - void ${module.framework.sf_comms.init_function}(void)
+                   **********************************************************************************************************************/
+                  void ${module.framework.sf_comms.init_function}(void)
+                  {
+                    ssp_err_t ssp_err_${module.framework.sf_comms.name};
+                    ssp_err_${module.framework.sf_comms.name} = ${module.framework.sf_comms.name}.p_api->open(${module.framework.sf_comms.name}.p_ctrl, ${module.framework.sf_comms.name}.p_cfg);
+                    if (SSP_SUCCESS != ssp_err_${module.framework.sf_comms.name})
+                     {
+                       while (1);
+                     }
+                  }
+        </declarations>
+        <init>
+               /** Call sf comms initialization function. User Can call at later time as well if required. */
+               #if (${module.framework.sf_comms.init})
+                   ${module.framework.sf_comms.init_function}(); 
+               #endif    
+        </init>
+    </module>
+</synergyModuleDescription>

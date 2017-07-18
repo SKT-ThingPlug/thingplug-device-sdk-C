@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.kint" path="ssp_cfg/driver/r_kint_cfg.h" version="0">
+		<property default="config.driver.kint.param_checking_enable.bsp" display="Parameter Checking Enable" id="config.driver.kint.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.kint.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.kint.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.kint.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define KINT_CFG_PARAM_CHECKING_ENABLE ${config.driver.kint.param_checking_enable}
+		</content>
+	</config>
+	<module config="config.driver.kint" display="Driver|Input|${module.driver.keymatrix.name} Key Matrix Driver on r_kint" id="module.driver.keymatrix_on_kint" version="1">
+		<constraint display="Unique name required for each instance">
+    		"${interface.driver.kint.${module.driver.keymatrix.name}}" === "1"
+		</constraint>
+		<constraint display="Requires KEY Interrupt (INT) enabled">
+            "${module.driver.keymatrix.irq_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <provides interface="interface.driver.kint" />
+        <provides interface="interface.driver.kint_on_key_matrix" />
+		<provides interface="interface.driver.kint.${module.driver.keymatrix.name}" />
+        <property default="g_kint${_instance}" display="Name" id="module.driver.keymatrix.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.keymatrix.name}")</constraint>
+        </property>
+		<property default="module.driver.keymatrix.channel_mask.default" display="Keymatrix Channel Mask" id="module.driver.keymatrix.channel_mask">
+			<option display="Select Channels Below" id="module.driver.keymatrix.channel_mask.default" value="(0)"/>
+        </property>
+		<property default="module.driver.keymatrix.channel_mask.channel_0.unused" display="    Channel 0" id="module.driver.keymatrix.channel_0">
+			 <option display="Unused" id="module.driver.keymatrix.channel_mask.channel_0.unused" value="(uint32_t)0"/>
+			 <option display="Used" id="module.driver.keymatrix.channel_0.used" value="(uint32_t)0x01"/>
+		</property>
+		<property default="module.driver.keymatrix.channel_mask.channel_1.unused" display="    Channel 1" id="module.driver.keymatrix.channel_1">
+			 <option display="Unused" id="module.driver.keymatrix.channel_mask.channel_1.unused" value="(uint32_t)0"/>
+			 <option display="Used" id="module.driver.keymatrix.channel_1.used" value="(uint32_t)0x02"/>
+		</property>
+		<property default="module.driver.keymatrix.channel_mask.channel_2.unused" display="    Channel 2" id="module.driver.keymatrix.channel_2">
+			 <option display="Unused" id="module.driver.keymatrix.channel_mask.channel_2.unused" value="(uint32_t)0"/>
+			 <option display="Used" id="module.driver.keymatrix.channel_2.used" value="(uint32_t)0x04"/>
+		</property>
+		<property default="module.driver.keymatrix.channel_mask.channel_3.unused" display="    Channel 3" id="module.driver.keymatrix.channel_3">
+			 <option display="Unused" id="module.driver.keymatrix.channel_mask.channel_3.unused" value="(uint32_t)0"/>
+			 <option display="Used" id="module.driver.keymatrix.channel_3.used" value="(uint32_t)0x08"/>
+		</property>
+		<property default="module.driver.keymatrix.channel_mask.channel_4.unused" display="    Channel 4" id="module.driver.keymatrix.channel_4">
+			 <option display="Unused" id="module.driver.keymatrix.channel_mask.channel_4.unused" value="(uint32_t)0"/>
+			 <option display="Used" id="module.driver.keymatrix.channel_4.used" value="(uint32_t)0x10"/>
+		</property>
+		<property default="module.driver.keymatrix.channel_mask.channel_5.unused" display="    Channel 5" id="module.driver.keymatrix.channel_5">
+			 <option display="Unused" id="module.driver.keymatrix.channel_mask.channel_5.unused" value="(uint32_t)0"/>
+			 <option display="Used" id="module.driver.keymatrix.channel_5.used" value="(uint32_t)0x20"/>
+		</property>
+		<property default="module.driver.keymatrix.channel_mask.channel_6.unused" display="    Channel 6" id="module.driver.keymatrix.channel_6">
+			 <option display="Unused" id="module.driver.keymatrix.channel_mask.channel_6.unused" value="(uint32_t)0"/>
+			 <option display="Used" id="module.driver.keymatrix.channel_6.used" value="(uint32_t)0x40"/>
+		</property>
+		<property default="module.driver.keymatrix.channel_mask.channel_7.unused" display="    Channel 7" id="module.driver.keymatrix.channel_7">
+			 <option display="Unused" id="module.driver.keymatrix.channel_mask.channel_7.unused" value="(uint32_t)0"/>
+			 <option display="Used" id="module.driver.keymatrix.channel_7.used" value="(uint32_t)0x80"/>
+		</property>
+		<property default="module.driver.keymatrix.hw_trigger.trig_rising" display="Trigger Type" id="module.driver.keymatrix.hw_trigger">
+			<option display="Falling Edge" id="module.driver.keymatrix.hw_trigger.trig_falling" value="KEYMATRIX_TRIG_FALLING"/>
+			<option display="Rising Edge" id="module.driver.keymatrix.hw_trigger.trig_rising" value="KEYMATRIX_TRIG_RISING"/>
+		</property>
+		<property default="module.driver.keymatrix.irq_enable.false" display="Interrupt enabled after initialization" id="module.driver.keymatrix.irq_enable">
+			<option display="True" id="module.driver.keymatrix.irq_enable.true" value="true"/>
+			<option display="False" id="module.driver.keymatrix.irq_enable.false" value="false"/>
+		</property>
+		<property default="NULL" display="Callback" id="module.driver.keymatrix.p_callback">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.keymatrix.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Interrupt Priority" id="module.driver.keymatrix.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+		<header>
+            /** Key Matrix on KINT Instance. */
+            extern const keymatrix_instance_t ${module.driver.keymatrix.name};
+			#ifdef ${module.driver.keymatrix.p_callback}
+			#define KEYMATRIX_ON_KINT_CALLBACK_USED_${module.driver.keymatrix.name} (0)
+			#else
+			#define KEYMATRIX_ON_KINT_CALLBACK_USED_${module.driver.keymatrix.name} (1)
+			#endif
+			#if KEYMATRIX_ON_KINT_CALLBACK_USED_${module.driver.keymatrix.name}
+			void ${module.driver.keymatrix.p_callback}(keymatrix_callback_args_t * p_args);
+			#endif
+#ifndef ${module.driver.keymatrix.p_callback}
+void ${module.driver.keymatrix.p_callback}(keymatrix_callback_args_t * p_args);
+#endif
+        </header>
+		<includes>#include &quot;r_kint.h&quot;
+#include &quot;r_keymatrix_api.h&quot;</includes>
+		<declarations>
+#if ${module.driver.keymatrix.irq_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.keymatrix.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_KINT)
+SSP_VECTOR_DEFINE(key_int_isr, KEY, INT);
+#endif
+#endif
+kint_instance_ctrl_t ${module.driver.keymatrix.name}_ctrl;
+const keymatrix_cfg_t ${module.driver.keymatrix.name}_cfg =
+{
+    .channels            = (uint32_t)((${module.driver.keymatrix.channel_0}) | (${module.driver.keymatrix.channel_1}) | (${module.driver.keymatrix.channel_2}) | (${module.driver.keymatrix.channel_3}) | (${module.driver.keymatrix.channel_4}) | (${module.driver.keymatrix.channel_5}) | (${module.driver.keymatrix.channel_6}) | (${module.driver.keymatrix.channel_7})),
+    .trigger          = ${module.driver.keymatrix.hw_trigger},
+    .autostart           = ${module.driver.keymatrix.irq_enable},
+	.p_callback          = ${module.driver.keymatrix.p_callback},
+	.p_context           = &amp;${module.driver.keymatrix.name},
+    .irq_ipl             = ${module.driver.keymatrix.irq_ipl},
+};
+/* Instance structure to use this module. */
+const keymatrix_instance_t ${module.driver.keymatrix.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.keymatrix.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.keymatrix.name}_cfg,
+    .p_api         = &amp;g_keymatrix_on_kint
+};
+</declarations>
+	</module>
+</synergyModuleDescription>

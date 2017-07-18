@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nxd_dns_client" path="ssp_cfg/framework/el/nxd_dns_client_cfg.h" version="0">
+        <property default="config.el.nxd_dns_client.control_tos.normal" display="DNS Control Type of Service" id="config.el.nxd_dns_client.control_tos">
+            <option display="Normal" id="config.el.nxd_dns_client.control_tos.normal" value="NX_IP_NORMAL"/>
+            <option display="Minimum delay" id="config.el.nxd_dns_client.control_tos.min_delay" value="NX_IP_MIN_DELAY"/>
+            <option display="Maximum data" id="config.el.nxd_dns_client.control_tos.max_data" value="NX_IP_MAX_DATA"/>
+            <option display="Maximum reliability" id="config.el.nxd_dns_client.control_tos.max_reliable" value="NX_IP_MAX_RELIABLE"/>
+            <option display="Minimum cost" id="config.el.nxd_dns_client.control_tos.min_cost" value="NX_IP_MIN_COST"/>
+        </property>
+        <property default="128" display="Time to live" id="config.el.nxd_dns_client.time_to_live">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dns_client.time_to_live}")  &amp;&amp; ("${config.el.nxd_dns_client.time_to_live}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nxd_dns_client.dns_server_ip_version.ipv4" display="Client DNS IP version" id="config.el.nxd_dns_client.dns_server_ip_version">
+            <option display="IPv4" id="config.el.nxd_dns_client.dns_server_ip_version.ipv4" value="0"/>
+            <option display="IPv6" id="config.el.nxd_dns_client.dns_server_ip_version.ipv6" value="1"/>
+        </property>
+        <property default="5" display="Maximum number of DNS Servers in the Client server list" id="config.el.nxd_dns_client.max_servers">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dns_client.max_servers}")  &amp;&amp; ("${config.el.nxd_dns_client.max_servers}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="512" display="Maximum DNS queries size (bytes)" id="config.el.nxd_dns_client.message_max">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dns_client.message_max}")  &amp;&amp; ("${config.el.nxd_dns_client.message_max}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="6" display="Packets in DNS packet pool (units)" id="config.el.nxd_dns_client.packet_pool_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dns_client.packet_pool_size}")  &amp;&amp; ("${config.el.nxd_dns_client.packet_pool_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="3" display="Maximum retries for a server" id="config.el.nxd_dns_client.max_retries">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dns_client.max_retries}")  &amp;&amp; ("${config.el.nxd_dns_client.max_retries}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="64" display="Maximum duration to retransmit a DNS query (seconds)" id="config.el.nxd_dns_client.max_retrans_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dns_client.max_retrans_timeout}")  &amp;&amp; ("${config.el.nxd_dns_client.max_retrans_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2" display="Packet allocate timeout (seconds)" id="config.el.nxd_dns_client.packet_allocate_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dns_client.packet_allocate_timeout}")  &amp;&amp; ("${config.el.nxd_dns_client.packet_allocate_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nxd_dns_client.ip_gateway_and_dns_server.disable" display="Client has DNS and Gateway server" id="config.el.nxd_dns_client.ip_gateway_and_dns_server">
+            <option display="Disable" id="config.el.nxd_dns_client.ip_gateway_and_dns_server.disable" value="0"/>
+            <option display="Enable" id="config.el.nxd_dns_client.ip_gateway_and_dns_server.enable" value="1"/>
+        </property>
+        <property default="config.el.nxd_dns_client.client_user_create_packet_pool.enable" display="Use application packet pool" id="config.el.nxd_dns_client.client_user_create_packet_pool">
+            <option display="Disable" id="config.el.nxd_dns_client.client_user_create_packet_pool.disable" value="0"/>
+            <option display="Enable" id="config.el.nxd_dns_client.client_user_create_packet_pool.enable" value="1"/>
+        </property>
+        <property default="config.el.nxd_dns_client.client_clear_queue.disable" display="Clear previous DNS queries from queue" id="config.el.nxd_dns_client.client_clear_queue">
+            <option display="Disable" id="config.el.nxd_dns_client.client_clear_queue.disable" value="0"/>
+            <option display="Enable" id="config.el.nxd_dns_client.client_clear_queue.enable" value="1"/>
+        </property>
+        <property default="config.el.nxd_dns_client.enable_extended_rr_types.disable" display="Extended RR types support" id="config.el.nxd_dns_client.enable_extended_rr_types">
+            <option display="Disable" id="config.el.nxd_dns_client.enable_extended_rr_types.disable" value="0"/>
+            <option display="Enable" id="config.el.nxd_dns_client.enable_extended_rr_types.enable" value="1"/>
+        </property>
+        <property default="config.el.nxd_dns_client.cache_enable.disable" display="Cache support" id="config.el.nxd_dns_client.cache_enable">
+            <option display="Disable" id="config.el.nxd_dns_client.cache_enable.disable" value="0"/>
+            <option display="Enable" id="config.el.nxd_dns_client.cache_enable.enable" value="1"/>
+        </property>
+        <content>
+            #if (${config.el.nxd_dns_client.client_user_create_packet_pool})
+            #define NX_DNS_CLIENT_USER_CREATE_PACKET_POOL
+            #endif
+            #if (${config.el.nxd_dns_client.client_clear_queue})
+            #define NX_DNS_CLIENT_CLEAR_QUEUE
+            #endif
+            #if (${config.el.nxd_dns_client.enable_extended_rr_types})
+            #define NX_DNS_ENABLE_EXTENDED_RR_TYPES
+            #endif
+            #if (${config.el.nxd_dns_client.cache_enable})
+            #define NX_DNS_CACHE_ENABLE
+            #endif
+            #if (${config.el.nxd_dns_client.ip_gateway_and_dns_server})
+            #define NX_DNS_IP_GATEWAY_AND_DNS_SERVER
+            #endif
+            #if (!${config.el.nxd_dns_client.dns_server_ip_version})
+            #define NX_DNS_PACKET_PAYLOAD_UNALIGNED                         (16 + sizeof(NX_IPV6_HEADER) + sizeof(NX_UDP_HEADER) + NX_DNS_MESSAGE_MAX)
+            #else
+            #define NX_DNS_PACKET_PAYLOAD_UNALIGNED                         (16 + sizeof(NX_IPV4_HEADER) + sizeof(NX_UDP_HEADER) + NX_DNS_MESSAGE_MAX)
+            #endif            
+            #define NX_DNS_TYPE_OF_SERVICE                                  ${config.el.nxd_dns_client.control_tos}
+            #define NX_DNS_TIME_TO_LIVE                                     ${config.el.nxd_dns_client.time_to_live}
+            #define NX_DNS_MAX_SERVERS                                      ${config.el.nxd_dns_client.max_servers}
+            #define NX_DNS_MESSAGE_MAX                                      ${config.el.nxd_dns_client.message_max}
+            #define NX_DNS_PACKET_PAYLOAD                                   (((NX_DNS_PACKET_PAYLOAD_UNALIGNED + sizeof(ULONG) - 1)/sizeof(ULONG)) * sizeof(ULONG))
+            #ifndef NX_DNS_CLIENT_USER_CREATE_PACKET_POOL
+            #define NX_DNS_PACKET_POOL_SIZE                                 (${config.el.nxd_dns_client.packet_pool_size} * (NX_DNS_PACKET_PAYLOAD + sizeof(NX_PACKET)))
+            #endif
+            #define NX_DNS_MAX_RETRIES                                      ${config.el.nxd_dns_client.max_retries}
+            #define NX_DNS_MAX_RETRANS_TIMEOUT                              (${config.el.nxd_dns_client.max_retrans_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_DNS_PACKET_ALLOCATE_TIMEOUT                          (${config.el.nxd_dns_client.packet_allocate_timeout} * NX_IP_PERIODIC_RATE)
+        </content>
+    </config>
+    <module config="config.el.nxd_dns_client" display="X-Ware|NetX Duo|Protocols|${module.el.nx_dns_client.name} NetX Duo DNS Client" id="module.el.nxd_dns_client" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_dns_client.${module.el.nx_dns_client.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_dns_client.requires.nxd.ip" interface="interface.el.nxd.ip" display="Add NetX Duo IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.udp" value="module.el.nx.ip.udp.enable" />
+        </requires>
+
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_dns_client" />
+        <provides interface="interface.el.nx_dns_client.${module.el.nx_dns_client.name}" />
+        <!-- NetX Duo only -->
+        <provides interface="interface.el.nxd_dns_client" />
+        <provides interface="interface.el.nxd_dns_client.${module.el.nx_dns_client.name}" />
+        
+        <property default="g_dns${_instance}" display="Name" id="module.el.nx_dns_client.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_dns_client.name}")</constraint>
+        </property>
+        <header>
+            extern NX_DNS  ${module.el.nx_dns_client.name};
+            void ${module.el.nx_dns_client.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nxd_dns.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            NX_DNS  ${module.el.nx_dns_client.name};
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_dns_client.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_dns_client.name}_err_callback  = ${module.el.nx_dns_client.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_dns_client.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_dns_client.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_dns_client.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_dns_client.name}_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.nx_dns_client.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_dns_client.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_dns_client.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }            
+        </declarations>
+        <init>
+            UINT ${module.el.nx_dns_client.name}_err;
+            /* Create DNS Client. */
+            ${module.el.nx_dns_client.name}_err = nx_dns_create(&amp;${module.el.nx_dns_client.name},
+                                                         &amp;${module.el.nx_dns_client.requires.nxd.ip::module.el.nx.ip.name},
+                                                         (UCHAR *)"${module.el.nx_dns_client.name} DNS Client");
+            if (NX_SUCCESS != ${module.el.nx_dns_client.name}_err)
+            {
+                ${module.el.nx_dns_client.name}_err_callback((void *)&amp;${module.el.nx_dns_client.name},&amp;${module.el.nx_dns_client.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

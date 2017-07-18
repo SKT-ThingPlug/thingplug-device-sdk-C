@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.gpt_input_capture" path="ssp_cfg/driver/r_gpt_input_capture_cfg.h" version="0">
+        <property default="config.driver.gpt_input_capture.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.gpt_input_capture.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.gpt_input_capture.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.gpt_input_capture.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.gpt_input_capture.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define GPT_INPUT_CAPTURE_CFG_PARAM_CHECKING_ENABLE ${config.driver.gpt_input_capture.param_checking_enable}
+</content>
+    </config>
+    <module config="config.driver.gpt_input_capture" display="Driver|Timers|${module.driver.input_capture.name} Input Capture Driver on r_gpt_input_capture" id="module.driver.input_capture_on_gpt" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.input_capture.${module.driver.input_capture.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.input_capture" />
+        <provides interface="interface.driver.input_capture_on_gpt_input_capture" />
+        <provides interface="interface.driver.input_capture.${module.driver.input_capture.name}" />
+        <provides interface="interface.driver.input_capture_on_gpt_input_capture.${module.driver.input_capture.channel}" /> 
+        <property default="g_input_capture" display="Name" id="module.driver.input_capture.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.input_capture.name}")</constraint>
+        </property>
+        <property default="0" display="Channel" id="module.driver.input_capture.channel">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.input_capture.channel}")  &amp;&amp; ("${module.driver.input_capture.channel}" &gt;= 0)</constraint>
+        </property>
+        <property default="module.driver.input_capture.mode.pulse_width" display="Mode" id="module.driver.input_capture.mode">
+            <option display="Pulse Width" id="module.driver.input_capture.mode.pulse_width" value="INPUT_CAPTURE_MODE_PULSE_WIDTH"/>
+        </property>
+        <property default="module.driver.input_capture.signal_edge.rising" display="Signal Edge" id="module.driver.input_capture.signal_edge">
+            <option display="Rising" id="module.driver.input_capture.signal_edge.rising" value="INPUT_CAPTURE_SIGNAL_EDGE_RISING"/>
+			<option display="Falling" id="module.driver.input_capture.signal_edge.falling" value="INPUT_CAPTURE_SIGNAL_EDGE_FALLING"/>
+        </property>
+        <property default="module.driver.input_capture.repetition.periodic" display="Repetition" id="module.driver.input_capture.repetition" description="Capture one time after enable or capture continously.">
+            <option display="Periodic" id="module.driver.input_capture.repetition.periodic" value="INPUT_CAPTURE_REPETITION_PERIODIC"/>
+            <option display="One Shot" id="module.driver.input_capture.repetition.one_shot" value="INPUT_CAPTURE_REPETITION_ONE_SHOT"/>
+        </property>
+        <property default="module.driver.input_capture.autostart.true" display="Auto Start" id="module.driver.input_capture.autostart">
+            <option display="True" id="module.driver.input_capture.autostart.true" value="true"/>
+            <option display="False" id="module.driver.input_capture.autostart.false" value="false"/>
+        </property>
+        <property default="NULL" display="Callback" id="module.driver.input_capture.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.input_capture.p_callback}")</constraint>
+        </property>
+        <property default="module.driver.input_capture.signal.gtioca" display="Input Capture Signal Pin" id="module.driver.input_capture.signal">
+            <option display="GTIOCA" id="module.driver.input_capture.signal.gtioca" value="GPT_INPUT_CAPTURE_SIGNAL_PIN_GTIOCA"/>
+            <option display="GTIOCB" id="module.driver.input_capture.signal.gtiocb" value="GPT_INPUT_CAPTURE_SIGNAL_PIN_GTIOCB"/>
+        </property>
+        <property default="module.driver.input_capture.signal_filter.none" display="GTIOCx Signal Filter" id="module.driver.input_capture.signal_filter" description="The noise filter samples the external signal at intervals of the PCLK divided by one of the values. When 3 consecutive samples are at the same level (high or low), then that level is passed on as the observed state of the signal.">
+            <option display="None" id="module.driver.input_capture.signal_filter.none" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_NONE"/>
+            <option display="PCLK/1" id="module.driver.input_capture.signal_filter.sig1" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_1"/>
+            <option display="PCLK/4" id="module.driver.input_capture.signal_filter.sig4" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_4"/>
+            <option display="PCLK/16" id="module.driver.input_capture.signal_filter.sig16" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_16"/>
+            <option display="PCLK/64" id="module.driver.input_capture.signal_filter.sig64" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_64"/>
+        </property>
+        <property default="module.driver.input_capture.clock_divider.div1" display="Clock Divider" id="module.driver.input_capture.clock_divider" description="Input capture PCLK divider. Used to scale the timer counter.">
+            <option display="PCLK/1" id="module.driver.input_capture.clock_divider.div1" value="GPT_INPUT_CAPTURE_CLOCK_DIVIDER_1"/>
+            <option display="PCLK/4" id="module.driver.input_capture.clock_divider.div4" value="GPT_INPUT_CAPTURE_CLOCK_DIVIDER_4"/>
+            <option display="PCLK/16" id="module.driver.input_capture.clock_divider.div16" value="GPT_INPUT_CAPTURE_CLOCK_DIVIDER_16"/>
+            <option display="PCLK/64" id="module.driver.input_capture.clock_divider.div64" value="GPT_INPUT_CAPTURE_CLOCK_DIVIDER_64"/>
+            <option display="PCLK/256" id="module.driver.input_capture.clock_divider.div256" value="GPT_INPUT_CAPTURE_CLOCK_DIVIDER_256"/>
+            <option display="PCLK/1024" id="module.driver.input_capture.clock_divider.div1024" value="GPT_INPUT_CAPTURE_CLOCK_DIVIDER_1024"/>
+        </property>
+        <property default="module.driver.input_capture.enable_level.none" display="Input Capture Enable Level" id="module.driver.input_capture.enable_level" description="The unused GTIOCx pin can be used as an enable signal to enable captures. If the Input Capture Signal Pin is GTIOCA, then the enable pin is GTIOCB.">
+            <option display="None" id="module.driver.input_capture.enable_level.none" value="INPUT_CAPTURE_SIGNAL_LEVEL_NONE"/>
+            <option display="Low" id="module.driver.input_capture.enable_level.low" value="INPUT_CAPTURE_SIGNAL_LEVEL_LOW"/>
+            <option display="High" id="module.driver.input_capture.enable_level.high" value="INPUT_CAPTURE_SIGNAL_LEVEL_HIGH"/>
+        </property>
+        <property default="module.driver.input_capture.enable_filter.none" display="Input Capture Enable Filter" id="module.driver.input_capture.enable_filter" description="Filter for the enable pin described in Enable Level.">
+            <option display="None (No filtering)" id="module.driver.input_capture.enable_filter.none" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_NONE"/>
+            <option display="PCLK / 1 (Fast sampling)" id="module.driver.input_capture.enable_filter.div1" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_1"/>
+            <option display="PCLK / 4" id="module.driver.input_capture.enable_filter.div4" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_4"/>
+            <option display="PCLK / 16" id="module.driver.input_capture.enable_filter.div16" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_16"/>
+            <option display="PCLK / 64 (Slow sampling)" id="module.driver.input_capture.enable_filter.div64" value="GPT_INPUT_CAPTURE_SIGNAL_FILTER_64"/>
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Capture Interrupt Priority" id="module.driver.input_capture.capture_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Overflow Interrupt Priority" id="module.driver.input_capture.overflow_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <header>
+            /** Timer on GPT Instance. */
+            extern const input_capture_instance_t ${module.driver.input_capture.name};
+#ifndef ${module.driver.input_capture.p_callback}
+void ${module.driver.input_capture.p_callback}(input_capture_callback_args_t * p_args);
+#endif
+        </header>
+        <includes>#include &quot;r_gpt_input_capture.h&quot;
+#include &quot;r_input_capture_api.h&quot;</includes>
+        <declarations>
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.input_capture.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_GPT${module.driver.input_capture.channel})
+SSP_VECTOR_DEFINE_CHAN(gpt_input_capture_counter_overflow_isr, GPT, COUNTER_OVERFLOW, ${module.driver.input_capture.channel});
+#endif
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.input_capture.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_GPT${module.driver.input_capture.channel})
+SSP_VECTOR_DEFINE_CHAN(gpt_input_capture_isr, GPT, CAPTURE_COMPARE_A, ${module.driver.input_capture.channel});
+#endif
+static gpt_input_capture_instance_ctrl_t ${module.driver.input_capture.name}_ctrl;
+static const gpt_input_capture_extend_t ${module.driver.input_capture.name}_extend =
+{
+    .signal         = ${module.driver.input_capture.signal},
+    .signal_filter  = ${module.driver.input_capture.signal_filter},
+    .clock_divider  = ${module.driver.input_capture.clock_divider},
+    .enable_level   = ${module.driver.input_capture.enable_level},
+    .enable_filter  = ${module.driver.input_capture.enable_filter},
+};
+static const input_capture_cfg_t ${module.driver.input_capture.name}_cfg =
+{
+    .channel             = ${module.driver.input_capture.channel},
+    .mode                = ${module.driver.input_capture.mode},
+    .edge                = ${module.driver.input_capture.signal_edge},
+    .repetition          = ${module.driver.input_capture.repetition},
+    .autostart           = ${module.driver.input_capture.autostart},
+    .p_callback          = ${module.driver.input_capture.p_callback},
+    .p_context           = &amp;${module.driver.input_capture.name},
+    .p_extend            = &amp;${module.driver.input_capture.name}_extend,
+    .capture_irq_ipl     = ${module.driver.input_capture.capture_ipl},
+    .overflow_irq_ipl    = ${module.driver.input_capture.overflow_ipl},
+};
+/* Instance structure to use this module. */
+const input_capture_instance_t ${module.driver.input_capture.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.input_capture.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.input_capture.name}_cfg,
+    .p_api         = &amp;g_input_capture_on_gpt
+};
+
+</declarations>
+    </module>
+</synergyModuleDescription>

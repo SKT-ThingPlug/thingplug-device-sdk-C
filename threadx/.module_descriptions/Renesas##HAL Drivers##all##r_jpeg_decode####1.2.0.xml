@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>  
+    <config id="config.driver.jpeg_decode" path="ssp_cfg/driver/r_jpeg_decode_cfg.h" version="0">
+        <property default="config.driver.jpeg_decode.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.jpeg_decode.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.jpeg_decode.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.jpeg_decode.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.jpeg_decode.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>
+            #define JPEG_DECODE_CFG_PARAM_CHECKING_ENABLE ${config.driver.jpeg_decode.param_checking_enable}
+        </content>
+    </config>
+    <module config="config.driver.jpeg_decode" display="Driver|Graphics|${module.driver.jpeg_decode.name} JPEG Decode Driver on r_jpeg" id="module.driver.jpeg_decode" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.driver.jpeg_decode.${module.driver.jpeg_decode.name}}" === "1"
+        </constraint>
+        <constraint display="Requires JPEG compression/decompression process interrupt (JEDI) enabled">
+            "${module.driver.jpeg_decode.jedi_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires JPEG data transfer interrupt request interrupt (JDTI) enabled">
+            "${module.driver.jpeg_decode.jdti_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <provides interface="interface.driver.jpeg_decode" />
+        <provides interface="interface.driver.jpeg_decode_on_jpeg_decode" />
+        <provides interface="interface.driver.jpeg_decode.${module.driver.jpeg_decode.name}" />
+        <property id="module.driver.jpeg_decode.name" display="Name" default="g_jpeg_decode${_instance}">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.jpeg_decode.name}")</constraint>
+        </property>
+        <property id="module.driver.jpeg_decode.input_data_format" display="Byte Order for Input Data Format" default="module.driver.jpeg_decode.input_data_format.normal">
+            <option id="module.driver.jpeg_decode.input_data_format.normal"    display="Normal byte order (1)(2)(3)(4)(5)(6)(7)(8)" value="JPEG_DECODE_DATA_FORMAT_NORMAL" />
+            <option id="module.driver.jpeg_decode.input_data_format.b_swap"    display="Byte Swap (2)(1)(4)(3)(6)(5)(8)(7)" value="JPEG_DECODE_DATA_FORMAT_BYTE_SWAP" />
+            <option id="module.driver.jpeg_decode.input_data_format.w_swap"    display="Word Swap (3)(4)(1)(2)(7)(8)(5)(6)" value="JPEG_DECODE_DATA_FORMAT_WORD_SWAP" />
+            <option id="module.driver.jpeg_decode.input_data_format.wb_swap"   display="Word-Byte Swap (4)(3)(2)(1)(8)(7)(6)(5)" value="JPEG_DECODE_DATA_FORMAT_WORD_BYTE_SWAP" />
+            <option id="module.driver.jpeg_decode.input_data_format.lw_swap"   display="Longword Swap (5)(6)(7)(8)(1)(2)(3)(4)" value="JPEG_DECODE_DATA_FORMAT_LONGWORD_SWAP" />
+            <option id="module.driver.jpeg_decode.input_data_format.lwb_swap"  display="Longword-Byte Swap (6)(5)(8)(7)(2)(1)(4)(3)" value="JPEG_DECODE_DATA_FORMAT_LONGWORD_BYTE_SWAP" />
+            <option id="module.driver.jpeg_decode.input_data_format.lww_swap"  display="Longword-Word Swap (7)(8)(5)(6)(3)(4)(1)(2)" value="JPEG_DECODE_DATA_FORMAT_LONGWORD_WORD_SWAP" />
+            <option id="module.driver.jpeg_decode.input_data_format.lwwb_swap" display="Longword-Word-Byte Swap (8)(7)(6)(5)(4)(3)(2)(1)" value="JPEG_DECODE_DATA_FORMAT_LONGWORD_WORD_BYTE_SWAP" />
+        </property>
+        <property id="module.driver.jpeg_decode.output_data_format" display="Byte Order for Output Data Format" default="module.driver.jpeg_decode.output_data_format.normal">
+            <option id="module.driver.jpeg_decode.output_data_format.normal" display="Normal byte order (1)(2)(3)(4)(5)(6)(7)(8)" value="JPEG_DECODE_DATA_FORMAT_NORMAL" />
+            <option id="module.driver.jpeg_decode.output_data_format.b_swap" display="Byte Swap (2)(1)(4)(3)(6)(5)(8)(7)" value="JPEG_DECODE_DATA_FORMAT_BYTE_SWAP" />
+            <option id="module.driver.jpeg_decode.output_data_format.w_swap" display="Word Swap (3)(4)(1)(2)(7)(8)(5)(6)" value="JPEG_DECODE_DATA_FORMAT_WORD_SWAP" />
+            <option id="module.driver.jpeg_decode.output_data_format.wb_swap" display="Word-Byte Swap (4)(3)(2)(1)(8)(7)(6)(5)" value="JPEG_DECODE_DATA_FORMAT_WORD_BYTE_SWAP" />
+            <option id="module.driver.jpeg_decode.output_data_format.lw_swap" display="Longword Swap (5)(6)(7)(8)(1)(2)(3)(4)" value="JPEG_DECODE_DATA_FORMAT_LONGWORD_SWAP" />
+            <option id="module.driver.jpeg_decode.output_data_format.lwb_swap" display="Longword-Byte Swap (6)(5)(8)(7)(2)(1)(4)(3)" value="JPEG_DECODE_DATA_FORMAT_LONGWORD_BYTE_SWAP" />
+            <option id="module.driver.jpeg_decode.output_data_format.lww_swap" display="Longword-Word Swap (7)(8)(5)(6)(3)(4)(1)(2)" value="JPEG_DECODE_DATA_FORMAT_LONGWORD_WORD_SWAP" />
+            <option id="module.driver.jpeg_decode.output_data_format.lwwb_swap" display="Longword-Word-Byte Swap (8)(7)(6)(5)(4)(3)(2)(1)" value="JPEG_DECODE_DATA_FORMAT_LONGWORD_WORD_BYTE_SWAP" />
+        </property>
+        <property id="module.driver.jpeg_decode.pixel_format" display="Output Data Color Format" default="module.driver.jpeg_decode.pixel_format.rgb565">
+            <option id="module.driver.jpeg_decode.pixel_format.argb8888" display="Pixel Data ARGBB888 format" value="JPEG_DECODE_PIXEL_FORMAT_ARGB8888" />
+            <option id="module.driver.jpeg_decode.pixel_format.rgb565"   display="Pixel Data RGB565 format"   value="JPEG_DECODE_PIXEL_FORMAT_RGB565" />
+        </property>
+        <property id="module.driver.jpeg_decode.alpha_value"  display="Alpha value to be applied to decoded pixel data(only valid for ARGB8888 format)" default="255">
+            <constraint display="Value must be an integer greater than or equal to 0 and less than or equal to 255"> testInteger("${module.driver.jpeg_decode.alpha_value}") &amp;&amp; ("${module.driver.jpeg_decode.alpha_value}" &gt;= 0) &amp;&amp; ("${module.driver.jpeg_decode.alpha_value}" &lt;= 255)
+            </constraint>
+        </property>
+        <property default="NULL" display="Name of user callback function" id="module.driver.jpeg_decode.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.jpeg_decode.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Decompression Interrupt Priority" id="module.driver.jpeg_decode.jedi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Data Transfer Interrupt Priority" id="module.driver.jpeg_decode.jdti_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <header>
+extern const jpeg_decode_instance_t ${module.driver.jpeg_decode.name};
+extern const jpeg_decode_cfg_t  ${module.driver.jpeg_decode.name}_cfg;
+#ifndef ${module.driver.jpeg_decode.p_callback}
+void ${module.driver.jpeg_decode.p_callback}(jpeg_decode_callback_args_t * p_args);
+#endif
+        </header>
+        <includes>
+#include &quot;r_jpeg_decode.h&quot;
+        </includes>
+        <declarations>
+#if ${module.driver.jpeg_decode.jdti_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.jpeg_decode.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_JPEG)
+SSP_VECTOR_DEFINE(jpeg_decode_jdti_isr, JPEG, JDTI);
+#endif
+#endif
+#if ${module.driver.jpeg_decode.jedi_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.jpeg_decode.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_JPEG)
+SSP_VECTOR_DEFINE(jpeg_decode_jedi_isr, JPEG, JEDI);
+#endif
+#endif
+static jpeg_decode_instance_ctrl_t ${module.driver.jpeg_decode.name}_ctrl;
+const jpeg_decode_cfg_t  ${module.driver.jpeg_decode.name}_cfg = {
+    .input_data_format  = ${module.driver.jpeg_decode.input_data_format},
+    .output_data_format = ${module.driver.jpeg_decode.output_data_format},
+    .pixel_format       = ${module.driver.jpeg_decode.pixel_format},
+    .alpha_value        = ${module.driver.jpeg_decode.alpha_value},
+    .p_callback         = ${module.driver.jpeg_decode.p_callback},
+    .jedi_ipl           = ${module.driver.jpeg_decode.jedi_ipl},
+    .jdti_ipl           = ${module.driver.jpeg_decode.jdti_ipl},
+};
+const jpeg_decode_instance_t ${module.driver.jpeg_decode.name} = {
+    .p_api  = (jpeg_decode_api_t const *)&amp;g_jpeg_decode_on_jpeg_decode,
+    .p_ctrl = &amp;${module.driver.jpeg_decode.name}_ctrl,
+    .p_cfg  = &amp;${module.driver.jpeg_decode.name}_cfg
+};
+        </declarations>
+    </module>
+</synergyModuleDescription>

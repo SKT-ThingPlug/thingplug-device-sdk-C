@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_host_class_hid_src" path="ssp_cfg/framework/el/ux_host_class_hid_src_user.h" version="0">
+        <property default="20" display="HID Keyboard Thread Priority" id="config.el.ux_host_class_hid_src.thread_priority_keyboard" description="Define the priority of the HID keyboard thread.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_host_class_hid_src.thread_priority_keyboard}".length === 0) || ("${config.el.ux_host_class_hid_src.thread_priority_keyboard}" &gt; 0)</constraint>
+        </property>
+        <property default="4096" display="Memory size for HID Report Decompression" id="config.el.ux_host_class_hid_src.decompression_size" description="Define the memory size to build a decompressed report.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_host_class_hid_src.decompression_size}".length === 0) || ("${config.el.ux_host_class_hid_src.decompression_size}" &gt; 0)</constraint>
+        </property>
+        <property default="1024" display="Number of Entries for HID Local Usage Item Table" id="config.el.ux_host_class_hid_src.local_item_table" description="Define the size of HID local usage item table. One item entry consumes 4bytes.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_host_class_hid_src.local_item_table}".length === 0) || ("${config.el.ux_host_class_hid_src.local_item_table}" &gt; 0)</constraint>
+        </property>
+        <content>
+#if (${config.el.ux_host_class_hid_src.thread_priority_keyboard})
+#define UX_THREAD_PRIORITY_KEYBOARD  (${config.el.ux_host_class_hid_src.thread_priority_keyboard})
+#endif
+#if (${config.el.ux_host_class_hid_src.decompression_size})
+#define UX_HOST_CLASS_HID_DECOMPRESSION_BUFFER  (${config.el.ux_host_class_hid_src.decompression_size})
+#endif
+#if (${config.el.ux_host_class_hid_src.local_item_table})
+#define UX_HOST_CLASS_HID_USAGES  (${config.el.ux_host_class_hid_src.local_item_table})
+#endif
+        </content>
+    </config>
+    <module config="config.el.ux_host_class_hid_src" display="X-Ware|USBX|Host|Classes|HID|USBX Host Class HID Source" common="1" id="module.el.ux_host_class_hid_src" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.ux_host_class_hid_src.linkage_warning}" === "module.el.ux_host_class_hid_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_host_class_hid_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.ux_host_class_hid_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.ux_host_class_hid_src.linkage_warning">
+            <option display="Enabled" id="module.el.ux_host_class_hid_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.ux_host_class_hid_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

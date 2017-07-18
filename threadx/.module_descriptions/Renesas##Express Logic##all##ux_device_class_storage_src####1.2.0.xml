@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_device_class_storage_src" path="ssp_cfg/framework/el/ux_device_class_storage_src_user.h" version="0">
+        <property default="2" display="Maximum number of SCSI logical units" id="config.el.ux_device_class_storage_src.lun" description="This value represents the maximum number of SCSI logical units represented in the device storage class driver.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_device_class_storage_src.lun}".length === 0) || ("${config.el.ux_device_class_storage_src.lun}" &gt; 0)</constraint>
+        </property>
+        <content>
+#if (${config.el.ux_device_class_storage_src.lun})
+#define UX_MAX_SLAVE_LUN  (${config.el.ux_device_class_storage_src.lun})
+#endif
+        </content>
+    </config>
+    <module config="config.el.ux_device_class_storage_src" display="X-Ware|USBX|Device|Classes|Mass Storage|USBX Device Class Mass Storage Source" common="1" id="module.el.ux_device_class_storage_src" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.ux_device_class_storage_src.linkage_warning}" === "module.el.ux_device_class_storage_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_device_class_storage_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.ux_device_class_storage_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.ux_device_class_storage_src.linkage_warning">
+            <option display="Enabled" id="module.el.ux_device_class_storage_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.ux_device_class_storage_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.threadx.thread" path="ssp_cfg/framework/el/tx_user.h" version="0">
+        <content>
+#if (${interface.framework.tx_src})
+#include "tx_src_user.h"
+#endif
+        </content>
+    </config>
+    <rtos id="rtos.threadx" display="Express Logic ThreadX">
+        <thread id="rtos.threadx.thread" config="config.threadx.thread" display="${rtos.threadx.thread.name}" version="0">
+			<provides interface="interface.framework.tx" />
+            <!-- source file names derived from _symbol property - do not change ID -->
+            <property id="_symbol" display="Symbol" default="new_thread${_instance}" description="Symbol used for generated function and file naming">
+                <constraint display="Value must be a valid C language symbol">testSymbol("${_symbol}")</constraint>
+            </property>
+            <property id="rtos.threadx.thread.name" display="Name" default="New Thread" description="Name of the thread"/>
+            <property id="rtos.threadx.thread.stack" display="Stack size (bytes)" default="1024" description="Number bytes in the stack memory area. The thread’s stack area must be large enough to handle its worst-case function call nesting and local variable usage. Size must be an integer multiple of 8.">
+                <constraint display="Value must be an integer multiple of 8 and greater than 0">testInteger("${rtos.threadx.thread.stack}") &amp;&amp; ("${rtos.threadx.thread.stack}" % 8 == 0) &amp;&amp; ("${rtos.threadx.thread.stack}" &gt; 0)</constraint>
+            </property>
+            <property id="rtos.threadx.thread.priority" display="Priority" default="1" description="Numerical priority of thread. Legal values range from 0 through (TX_MAX_PRIORITES-1), where a value of 0 represents the highest priority."/>
+            <property id="rtos.threadx.thread.autostart" display="Auto start" default="rtos.threadx.thread.autostart.enabled" description="Specifies whether the thread starts immediately or is placed in a suspended state. If Disabled is selected, the application must later call tx_thread_resume in order for the thread to run.">
+                <option id="rtos.threadx.thread.autostart.enabled" display="Enabled" value="TX_AUTO_START" />
+                <option id="rtos.threadx.thread.autostart.disabled" display="Disabled" value="TX_DONT_START" />
+            </property>
+            <property id="rtos.threadx.thread.timeslice" display="Time slicing interval (ticks)" default="1" description="Number of timer-ticks this thread is allowed to run before other ready threads of the same priority are given a chance to run. Legal time-slice values range from 1 to 0xFFFFFFFF (inclusive). A value of TX_NO_TIME_SLICE (a value of 0) disables time-slicing of this thread."/>
+            <header>
+                extern void ${_symbol}_create(void);
+            </header>
+            <includes>
+                #include "bsp_api.h"
+                #include "tx_api.h"
+                #include "hal_data.h"
+                #ifdef __cplusplus 
+                extern "C" void ${_symbol}_entry(void); 
+                #else 
+                extern void ${_symbol}_entry(void); 
+                #endif
+            </includes>
+            <macros>
+            </macros>
+            <declarations>
+                TX_THREAD ${_symbol};
+                void ${_symbol}_create(void);                
+                static void ${_symbol}_func(ULONG thread_input);
+                /** Alignment requires using pragma for IAR. GCC is done through attribute. */
+                #if defined(__ICCARM__)
+                #pragma data_alignment = BSP_STACK_ALIGNMENT
+                #endif
+                static uint8_t ${_symbol}_stack[${rtos.threadx.thread.stack}] BSP_PLACE_IN_SECTION(".stack.${_symbol}") BSP_ALIGN_VARIABLE(BSP_STACK_ALIGNMENT);
+            </declarations>
+            <functions>                
+                extern bool         g_ssp_common_initialized;
+                extern uint32_t     g_ssp_common_thread_count;
+                extern TX_SEMAPHORE g_ssp_common_initialized_semaphore;
+                void g_hal_init(void);
+                
+                void ${_symbol}_create (void)
+                {
+                    /* Increment count so we will know the number of ISDE created threads. */
+                    g_ssp_common_thread_count++;
+                
+                    /* Initialize each kernel object. */                
+                    ${_object_init}
+
+                    tx_thread_create(
+                        &amp;${_symbol},
+                        (CHAR *)"${rtos.threadx.thread.name}",
+                        ${_symbol}_func,
+                        (ULONG) NULL,
+                        &amp;${_symbol}_stack,
+                        ${rtos.threadx.thread.stack},
+                        ${rtos.threadx.thread.priority},
+                        ${rtos.threadx.thread.priority},
+                        ${rtos.threadx.thread.timeslice},
+                        ${rtos.threadx.thread.autostart}
+                    );
+                }
+                
+                static void ${_symbol}_func (ULONG thread_input) {
+                    /* Not currently using thread_input. */
+                    SSP_PARAMETER_NOT_USED(thread_input);
+
+                    /* First thread will take care of common initialization. */
+                    UINT err;
+                    err = tx_semaphore_get(&amp;g_ssp_common_initialized_semaphore, TX_WAIT_FOREVER);
+                
+                    while (TX_SUCCESS != err)
+                    {
+                        /* Check err, problem occurred. */
+                        BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+                    }                                    
+                
+                    /* Only perform common initialization if this is the first thread to execute. */
+                    if (false == g_ssp_common_initialized)
+                    {          
+                        /* Later threads will not run this code. */
+                        g_ssp_common_initialized = true;
+
+                        /* Perform common module initialization. */
+                        g_hal_init();
+                
+                        /* Now that common initialization is done, let other threads through. */
+                        /* First decrement by 1 since 1 thread has already come through. */
+                        g_ssp_common_thread_count--;
+                        while (g_ssp_common_thread_count > 0)
+                        {
+                            err = tx_semaphore_put(&amp;g_ssp_common_initialized_semaphore);
+                    
+                            while (TX_SUCCESS != err)
+                            {
+                                /* Check err, problem occurred. */
+                                BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+                            }
+                    
+                            g_ssp_common_thread_count--;
+                        }    
+                    }                                                         
+
+                    /* Initialize each module instance. */
+                    ${_module_init}
+                    
+                    /* Enter user code for this thread. */
+                    ${_symbol}_entry();
+                }
+            </functions>
+            <entry>                
+                #include "${_symbol}.h"
+
+                /* ${rtos.threadx.thread.name} entry function */
+                void ${_symbol}_entry(void) 
+                     {
+                    /* TODO: add your own code here */
+                    while(1)
+                    {
+                        tx_thread_sleep(1);
+                    }
+                }
+            </entry>
+            <init>
+                ${_symbol}_create();
+            </init>
+            <start>
+                #include "bsp_api.h"
+                #include "tx_api.h"
+        
+                ${_include}
+
+                uint32_t     g_ssp_common_thread_count;
+                bool         g_ssp_common_initialized;
+                TX_SEMAPHORE g_ssp_common_initialized_semaphore;
+
+                #if defined(__ICCARM__)
+                #define WEAK_REF_ATTRIBUTE
+                #pragma weak tx_application_define_user               = tx_application_define_internal
+                #elif defined(__GNUC__)
+                #define WEAK_REF_ATTRIBUTE      __attribute__ ((weak, alias("tx_application_define_internal")))
+                #endif
+                
+                #ifdef TX_USER_TRACE_BUFFER_DECLARE
+				TX_USER_TRACE_BUFFER_DECLARE;
+                #endif
+
+                void tx_application_define_internal(void * first_unused_memory);
+
+                void tx_application_define_internal(void * first_unused_memory)
+                {
+                    /* Does nothing. Default implementation of tx_application_define_user(). */
+                    SSP_PARAMETER_NOT_USED(first_unused_memory);
+                }
+                
+                void tx_application_define_internal(void * first_unused_memory);
+                void tx_application_define_user(void * first_unused_memory) WEAK_REF_ATTRIBUTE;
+                
+                void tx_application_define(void * first_unused_memory)
+                {
+                    g_ssp_common_thread_count = 0;
+                    g_ssp_common_initialized = false;
+                
+                    /* Create semaphore to make sure common init is done before threads start running. */                    
+                    tx_semaphore_create(&amp;g_ssp_common_initialized_semaphore, "SSP Common Init Sem", 1);                      
+                
+                    ${_init}
+					
+					#ifdef TX_USER_ENABLE_TRACE
+					TX_USER_ENABLE_TRACE;
+					#endif				
+
+                    tx_application_define_user(first_unused_memory);
+                }
+                
+                int main(void)
+                {
+                    __disable_irq();
+                    tx_kernel_enter();
+                    
+                    return 0;
+                }
+            </start>
+        </thread>
+        <object id="rtos.threadx.object.flags" display="${rtos.threadx.object.flags.symbol} Event Flags" version="0">
+            <provides interface="object.flags" />
+            <property id="rtos.threadx.object.flags.name" display="Name" default="New Event Flags" />
+            <property id="rtos.threadx.object.flags.symbol" display="Symbol" default="g_new_event_flags${_instance}" />
+            <header>
+                extern TX_EVENT_FLAGS_GROUP ${rtos.threadx.object.flags.symbol};
+            </header>
+            <declarations>
+                TX_EVENT_FLAGS_GROUP ${rtos.threadx.object.flags.symbol};
+            </declarations>
+            <init>
+                tx_event_flags_create(&amp;${rtos.threadx.object.flags.symbol}, (CHAR *) "${rtos.threadx.object.flags.name}");
+            </init>
+        </object>
+        <object id="rtos.threadx.object.mutex" display="${rtos.threadx.object.mutex.symbol} Mutex" version="0">
+            <provides interface="object.mutex" />
+            <property id="rtos.threadx.object.mutex.name" display="Name" default="New Mutex" />
+            <property id="rtos.threadx.object.mutex.symbol" display="Symbol" default="g_new_mutex${_instance}" />
+            <property id="rtos.threadx.object.mutex.inherit" display="Priority inheritance" default="rtos.threadx.object.mutex.inherit.disabled">
+                <option id="rtos.threadx.object.mutex.inherit.enabled" display="Enabled" value="TX_INHERIT" />
+                <option id="rtos.threadx.object.mutex.inherit.disabled" display="Disabled" value="TX_NO_INHERIT" />
+            </property>
+            <header>
+                extern TX_MUTEX ${rtos.threadx.object.mutex.symbol};
+            </header>
+            <declarations>
+                TX_MUTEX ${rtos.threadx.object.mutex.symbol};
+            </declarations>
+            <init>
+                tx_mutex_create(&amp;${rtos.threadx.object.mutex.symbol}, (CHAR *) "${rtos.threadx.object.mutex.name}", ${rtos.threadx.object.mutex.inherit});
+            </init>
+        </object>
+        <object id="rtos.threadx.object.semaphore" display="${rtos.threadx.object.semaphore.symbol} Semaphore" version="0">
+            <provides interface="object.semaphore" />
+            <property id="rtos.threadx.object.semaphore.name" display="Name" default="New Semaphore" />
+            <property id="rtos.threadx.object.semaphore.symbol" display="Symbol" default="g_new_semaphore${_instance}" />
+            <property id="rtos.threadx.object.semaphore.count" display="Initial count" default="0" />
+            <header>
+                extern TX_SEMAPHORE ${rtos.threadx.object.semaphore.symbol};
+            </header>
+            <declarations>
+                TX_SEMAPHORE ${rtos.threadx.object.semaphore.symbol};
+            </declarations>
+            <init>
+                tx_semaphore_create(&amp;${rtos.threadx.object.semaphore.symbol}, (CHAR *) "${rtos.threadx.object.semaphore.name}", ${rtos.threadx.object.semaphore.count});
+            </init>
+        </object>
+
+        <object id="rtos.threadx.object.queue" display="${rtos.threadx.object.queue.symbol} Queue" version="0">
+            <provides interface="object.queue" />
+            <property id="rtos.threadx.object.queue.name" display="Name" default="New Queue" />
+            <property id="rtos.threadx.object.queue.symbol" display="Symbol" default="g_new_queue${_instance}" />
+            <property id="rtos.threadx.object.queue.msg_size" display="Message Size (Words)" default="1" >
+                <constraint display="Message Size must be integer between 1 and 16">testInteger("${rtos.threadx.object.queue.msg_size}")  &amp;&amp; ("${rtos.threadx.object.queue.msg_size}" &gt; 0) &amp;&amp; ("${rtos.threadx.object.queue.msg_size}" &lt; 17)</constraint>
+            </property>
+            <property id="rtos.threadx.object.queue.queue_size" display="Queue Size (Bytes)" default="20" >
+                <constraint display="Queue Size must be integer greater than 3">testInteger("${rtos.threadx.object.queue.queue_size}")  &amp;&amp; ("${rtos.threadx.object.queue.queue_size}" &gt; 3)</constraint>
+            </property>
+            <header>
+                extern TX_QUEUE ${rtos.threadx.object.queue.symbol};
+            </header>
+            <declarations>
+                TX_QUEUE ${rtos.threadx.object.queue.symbol};
+                static uint8_t queue_memory_${rtos.threadx.object.queue.symbol}[${rtos.threadx.object.queue.queue_size}];
+            </declarations>
+            <init>
+                tx_queue_create(&amp;${rtos.threadx.object.queue.symbol}, (CHAR *) "${rtos.threadx.object.queue.name}", ${rtos.threadx.object.queue.msg_size}, &amp;queue_memory_${rtos.threadx.object.queue.symbol}, sizeof(queue_memory_${rtos.threadx.object.queue.symbol}));
+            </init>
+        </object>
+
+    </rtos>
+</synergyModuleDescription>

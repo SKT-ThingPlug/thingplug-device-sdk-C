@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+<!-- I2C Bus XML START here-->
+	<module config="config.framework.sf_i2c_bus" display="Framework|Connectivity|${module.framework.sf_i2c_bus.name} I2C Framework Shared Bus on sf_i2c" id="module.framework.sf_i2c_bus_on_sf_i2c" common="100" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_i2c_bus.${module.framework.sf_i2c_bus.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+	    <provides interface="interface.framework.sf_i2c_bus" />
+        <provides interface="interface.framework.sf_i2c_bus_on_sf_i2c_bus" />
+        <provides interface="interface.framework.sf_i2c_bus.${module.framework.sf_i2c_bus.name}" />
+		<property default="g_sf_i2c_bus${_instance}" display="Name" id="module.framework.sf_i2c_bus.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_i2c_bus.name}")</constraint>
+        </property>
+        <property id="module.framework.sf_i2c_bus.i2c_interface" display="I2C Implementation" default="module.framework.sf_i2c_bus.i2c_interface.riic">
+            <option display="SCI I2C" id="module.framework.sf_i2c_bus.i2c_interface.sci" value="sci"/>
+            <option display="RIIC" id="module.framework.sf_i2c_bus.i2c_interface.riic" value="riic"/>
+        </property>
+	    <property default="0" display="Channel" id="module.framework.sf_i2c_bus.channel">
+            <constraint display="Value must be an integer between 0 and 9">testInteger("${module.framework.sf_i2c_bus.channel}")  &amp;&amp; ("${module.framework.sf_i2c_bus.channel}" &gt;= 0) &amp;&amp; ("${module.framework.sf_i2c_bus.channel}" &lt;= 9)</constraint>			
+        </property>
+        <header>
+            extern sf_i2c_bus_t ${module.framework.sf_i2c_bus.name};
+			extern i2c_api_master_t const g_i2c_master_on_${module.framework.sf_i2c_bus.i2c_interface};
+        </header>
+		<includes>
+		#include &quot;r_i2c_api.h&quot;
+		#include &quot;sf_i2c.h&quot;
+		#include &quot;sf_i2c_api.h&quot;
+		</includes>
+		<declarations>
+		static TX_MUTEX             sf_bus_mutex_${module.framework.sf_i2c_bus.name};
+		static TX_EVENT_FLAGS_GROUP sf_bus_eventflag_${module.framework.sf_i2c_bus.name};
+		static sf_i2c_instance_ctrl_t      * sf_curr_ctrl_${module.framework.sf_i2c_bus.name}; 
+		static sf_i2c_instance_ctrl_t      * sf_curr_bus_ctrl_${module.framework.sf_i2c_bus.name}; 		
+		sf_i2c_bus_t ${module.framework.sf_i2c_bus.name} =
+		{
+			.p_bus_name       = (uint8_t *)&quot;${module.framework.sf_i2c_bus.name}&quot;,
+			.channel          = ${module.framework.sf_i2c_bus.channel},
+			.p_lock_mutex     = &amp;sf_bus_mutex_${module.framework.sf_i2c_bus.name},
+			.p_sync_eventflag = &amp;sf_bus_eventflag_${module.framework.sf_i2c_bus.name},
+			.pp_curr_ctrl     = (sf_i2c_ctrl_t **)&amp;sf_curr_ctrl_${module.framework.sf_i2c_bus.name},
+			.p_lower_lvl_api  = (i2c_api_master_t *)&amp;g_i2c_master_on_${module.framework.sf_i2c_bus.i2c_interface},
+			.device_count     = 0,
+			.pp_curr_bus_ctrl = (sf_i2c_ctrl_t **)&amp;sf_curr_bus_ctrl_${module.framework.sf_i2c_bus.name},			
+		};
+</declarations>
+	</module>
+<!-- I2C Bus XML END here-->
+
+<!-- I2C Framework XML START here-->
+	<config id="config.framework.sf_i2c" path="ssp_cfg/framework/sf_i2c_cfg.h" version="0">
+		<property default="config.framework.sf_i2c.param_checking_enable.enabled" display="Parameter Checking" id="config.framework.sf_i2c.param_checking_enable">
+			<option display="Default (BSP)" id="config.framework.sf_i2c.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.framework.sf_i2c.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.framework.sf_i2c.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define SF_I2C_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_i2c.param_checking_enable}
+    </content>
+	</config>
+	<module config="config.framework.sf_i2c" display="Framework|Connectivity|${module.framework.sf_i2c.name} I2C Framework Device on sf_i2c" id="module.framework.sf_i2c_on_sf_i2c" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_i2c.${module.framework.sf_i2c.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_i2c_on_sf_i2c.requires.i2c" interface="interface.driver.i2c" display="Add I2C Driver" />
+		<requires id="module.framework.sf_i2c_on_sf_i2c.requires.sf_i2c_bus" interface="interface.framework.sf_i2c_bus" display="Add I2C Framework Shared Bus" />        
+        <provides interface="interface.framework.sf_i2c" />
+        <provides interface="interface.framework.sf_i2c_on_sf_i2c" />
+        <provides interface="interface.framework.sf_i2c.${module.framework.sf_i2c.name}" />
+        <property default="g_sf_i2c_device${_instance}" display="Name" id="module.framework.sf_i2c.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_i2c.name}")</constraint>
+        </property>
+        <header>
+            /* SF I2C on SF I2C Instance. */
+            extern const sf_i2c_instance_t ${module.framework.sf_i2c.name};
+        </header>
+		<includes>#include &quot;sf_i2c.h&quot;
+					#include &quot;sf_i2c_api.h&quot;
+		</includes>
+		<declarations>
+sf_i2c_instance_ctrl_t ${module.framework.sf_i2c.name}_ctrl =
+{
+	.p_lower_lvl_ctrl = &amp;${module.framework.sf_i2c_on_sf_i2c.requires.i2c::module.driver.i2c.name}_ctrl,
+};
+			const sf_i2c_cfg_t ${module.framework.sf_i2c.name}_cfg =
+			{
+				.p_bus                    = (sf_i2c_bus_t *)&amp;${module.framework.sf_i2c_on_sf_i2c.requires.sf_i2c_bus::module.framework.sf_i2c_bus.name},
+				.p_lower_lvl_cfg          = &amp;${module.framework.sf_i2c_on_sf_i2c.requires.i2c::module.driver.i2c.name}_cfg,
+			};
+/* Instance structure to use this module. */
+const sf_i2c_instance_t ${module.framework.sf_i2c.name} = 
+{
+    .p_ctrl        = &amp;${module.framework.sf_i2c.name}_ctrl,
+    .p_cfg         = &amp;${module.framework.sf_i2c.name}_cfg,
+    .p_api         = &amp;g_sf_i2c_on_sf_i2c
+};  
+		</declarations>
+<!-- I2C Framework XML END here-->
+	</module>
+</synergyModuleDescription>

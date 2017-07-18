@@ -1,0 +1,721 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.lpmv2_s7g2" path="ssp_cfg/driver/r_lpmv2_cfg.h" version="0">
+        <property default="config.driver.lpmv2_s7g2.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.lpmv2_s7g2.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.lpmv2_s7g2.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.lpmv2_s7g2.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.lpmv2_s7g2.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define LPMV2_CFG_PARAM_CHECKING_ENABLE ${config.driver.lpmv2_s7g2.param_checking_enable}
+        </content>
+    </config>
+    <module config="config.driver.lpmv2_s7g2" display="Driver|Power|${module.driver.lpmv2_common.name} S7G2 Low Power Mode Common" id="module.driver.lpmv2_common_on_lpmv2_s7g2" common="1" version="1">
+        <requires id="interface.driver.lpmv2.requires.mcu" interface="interface.mcu.s7g2" display="Requires S7G2 MCU"/>
+        <provides interface="interface.driver.lpmv2_common" />
+        <provides interface="interface.driver.lpmv2_common_on_lpmv2" />
+        <provides interface="interface.driver.lpmv2_common.${module.driver.lpmv2_common.name}" />
+        <property default="g_lpmv2_common" display="Name" id="module.driver.lpmv2_common.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.lpmv2_common.name}")</constraint>
+        </property>
+    </module>
+    <module config="config.driver.lpmv2_s7g2" display="Driver|Power|${module.driver.lpmv2.name} S7G2 Low Power Mode Sleep on r_lpmv2" id="module.driver.lpmv2_s7g2_sleep" common="100" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.lpmv2.${module.driver.lpmv2.name}}" === "1"
+        </constraint>
+        <requires id="interface.driver.lpmv2.requires.mcu" interface="interface.mcu.s7g2" display="Requires S7G2 MCU"/>
+        <provides interface="interface.driver.lpmv2" />
+        <provides interface="interface.driver.lpmv2_on_lpmv2_s7g2_sleep" />
+        <provides interface="interface.driver.lpmv2_on_lpmv2_s7g2_sleep.${module.driver.lpmv2.name}" />
+        <provides interface="interface.driver.lpmv2.${module.driver.lpmv2.name}" />
+        <property default="g_lpmv2_sleep${_instance}" display="Name" id="module.driver.lpmv2.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.lpmv2.name}")</constraint>
+        </property>
+        <header>
+/** lpmv2 Instance */
+extern const lpmv2_instance_t ${module.driver.lpmv2.name};
+
+        </header>
+        <includes>
+
+#include &quot;r_lpmv2_s7g2.h&quot;
+#include &quot;r_lpmv2_api.h&quot;
+
+        </includes>
+        <declarations>
+/************************************************************/
+/** Begin LPM V2 Configurations *****************************/
+/************************************************************/
+#if defined(BSP_MCU_GROUP_S7G2)
+const lpmv2_cfg_t ${module.driver.lpmv2.name}_cfg =
+{
+    .low_power_mode     = LPMV2_LOW_POWER_MODE_SLEEP,
+    .p_extend           = NULL,
+};
+const lpmv2_instance_t ${module.driver.lpmv2.name} =
+{
+    .p_api = &amp;g_lpmv2_on_lpmv2,
+    .p_cfg = &amp;${module.driver.lpmv2.name}_cfg
+};
+#endif
+/************************************************************/
+/** End LPM V2 Configurations *******************************/
+/************************************************************/
+        </declarations>
+    </module>
+    <module config="config.driver.lpmv2_s7g2" display="Driver|Power|${module.driver.lpmv2.name} S7G2 Low Power Mode Standby on r_lpmv2" id="module.driver.lpmv2_s7g2_standby" common="100" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.lpmv2.${module.driver.lpmv2.name}}" === "1"
+        </constraint>
+        <requires id="interface.driver.lpmv2.requires.mcu" interface="interface.mcu.s7g2" display="Requires S7G2 MCU"/>
+        <provides interface="interface.driver.lpmv2" />
+        <provides interface="interface.driver.lpmv2_on_lpmv2_s7g2_standby" />
+        <provides interface="interface.driver.lpmv2_on_lpmv2_s7g2_standby.${module.driver.lpmv2.name}" />
+        <provides interface="interface.driver.lpmv2.${module.driver.lpmv2.name}" />
+        <property default="g_lpmv2_standby${_instance}" display="Name" id="module.driver.lpmv2.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.lpmv2.name}")</constraint>
+        </property>
+        <!-- Start of low power mode -->
+        <property default="module.driver.lpmv2.low_power_mode.LPMV2_LOW_POWER_MODE_STANDBY" display="Choose the low power mode" id="module.driver.lpmv2.low_power_mode">
+            <option display="Standby" id="module.driver.lpmv2.low_power_mode.LPMV2_LOW_POWER_MODE_STANDBY" value="LPMV2_LOW_POWER_MODE_STANDBY"/>
+            <option display="Standby with Snooze Enabled" id="module.driver.lpmv2.low_power_mode.LPMV2_LOW_POWER_MODE_STANDBY_SNOOZE" value="LPMV2_LOW_POWER_MODE_STANDBY_SNOOZE"/>
+        </property>
+        <!-- Output port state in standby and deep standby -->
+        <property default="module.driver.lpmv2.output_port_enable_standby.no_change" display="Output port state in standby and deep standby, applies to address output, data output, and other bus control output pins" id="module.driver.lpmv2.output_port_enable_standby">
+            <option display="High impedance state" id="module.driver.lpmv2.output_port_enable_standby.high_impedance" value="LPMV2_OUTPUT_PORT_ENABLE_HIGH_IMPEDANCE"/>
+            <option display="No change" id="module.driver.lpmv2.output_port_enable_standby.no_change" value="LPMV2_OUTPUT_PORT_ENABLE_RETAIN"/>
+        </property>
+        <!-- Start of standby wake sources -->
+        <property default="module.driver.lpmv2.standby_wake_section.heading" display="Select Standby Exit Sources" id="module.driver.lpmv2.standby_wake_section">
+            <option display="Select fields below:" id="module.driver.lpmv2.standby_wake_section.heading" value="(0)"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ0.disable" display="    IRQ0" id="module.driver.lpmv2.standby_wake_IRQ0">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ0.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ0.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ0"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ1.disable" display="    IRQ1" id="module.driver.lpmv2.standby_wake_IRQ1">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ1.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ1.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ1"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ2.disable" display="    IRQ2" id="module.driver.lpmv2.standby_wake_IRQ2">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ2.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ2.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ2"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ3.disable" display="    IRQ3" id="module.driver.lpmv2.standby_wake_IRQ3">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ3.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ3.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ3"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ4.disable" display="    IRQ4" id="module.driver.lpmv2.standby_wake_IRQ4">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ4.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ4.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ4"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ5.disable" display="    IRQ5" id="module.driver.lpmv2.standby_wake_IRQ5">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ5.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ5.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ5"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ6.disable" display="    IRQ6" id="module.driver.lpmv2.standby_wake_IRQ6">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ6.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ6.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ6"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ7.disable" display="    IRQ7" id="module.driver.lpmv2.standby_wake_IRQ7">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ7.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ7.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ7"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ8.disable" display="    IRQ8" id="module.driver.lpmv2.standby_wake_IRQ8">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ8.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ8.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ8"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ9.disable" display="    IRQ9" id="module.driver.lpmv2.standby_wake_IRQ9">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ9.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ9.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ9"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ10.disable" display="    IRQ10" id="module.driver.lpmv2.standby_wake_IRQ10">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ10.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ10.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ10"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ11.disable" display="    IRQ11" id="module.driver.lpmv2.standby_wake_IRQ11">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ11.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ11.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ11"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ12.disable" display="    IRQ12" id="module.driver.lpmv2.standby_wake_IRQ12">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ12.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ12.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ12"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ13.disable" display="    IRQ13" id="module.driver.lpmv2.standby_wake_IRQ13">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ13.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ13.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ13"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ14.disable" display="    IRQ14" id="module.driver.lpmv2.standby_wake_IRQ14">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ14.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ14.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ14"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IRQ15.disable" display="    IRQ15" id="module.driver.lpmv2.standby_wake_IRQ15">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IRQ15.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IRQ15.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IRQ15"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_iwdt.disable" display="    IWDT" id="module.driver.lpmv2.standby_wake_iwdt">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_iwdt.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_iwdt.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IWDT"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_key.disable" display="    Key Interrupt" id="module.driver.lpmv2.standby_wake_key">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_key.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_key.enable" value="LPMV2_STANDBY_WAKE_SOURCE_KEY"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_lvd1.disable" display="    LVD1 Interrupt" id="module.driver.lpmv2.standby_wake_lvd1">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_lvd1.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_lvd1.enable" value="LPMV2_STANDBY_WAKE_SOURCE_LVD1"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_lvd2.disable" display="    LVD2 Interrupt" id="module.driver.lpmv2.standby_wake_lvd2">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_lvd2.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_lvd2.enable" value="LPMV2_STANDBY_WAKE_SOURCE_LVD2"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_ACMPHS0.disable" display="    Analog Comparator High-speed 0 Interrupt" id="module.driver.lpmv2.standby_wake_ACMPHS0">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_ACMPHS0.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_ACMPHS0.enable" value="LPMV2_STANDBY_WAKE_SOURCE_ACMPHS0"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_RTCALM.disable" display="    RTC Alarm" id="module.driver.lpmv2.standby_wake_RTCALM">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_RTCALM.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_RTCALM.enable" value="LPMV2_STANDBY_WAKE_SOURCE_RTCALM"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_RTCPRD.disable" display="    RTC Period" id="module.driver.lpmv2.standby_wake_RTCPRD">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_RTCPRD.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_RTCPRD.enable" value="LPMV2_STANDBY_WAKE_SOURCE_RTCPRD"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_USBHS.disable" display="    USB High-speed" id="module.driver.lpmv2.standby_wake_USBHS">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_USBHS.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_USBHS.enable" value="LPMV2_STANDBY_WAKE_SOURCE_USBHS"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_USBFS.disable" display="    USB Full-speed" id="module.driver.lpmv2.standby_wake_USBFS">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_USBFS.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_USBFS.enable" value="LPMV2_STANDBY_WAKE_SOURCE_USBFS"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_AGT1UD.disable" display="    AGT1 underflow" id="module.driver.lpmv2.standby_wake_AGT1UD">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_AGT1UD.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_AGT1UD.enable" value="LPMV2_STANDBY_WAKE_SOURCE_AGT1UD"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_AGT1CA.disable" display="    AGT1 Compare Match A" id="module.driver.lpmv2.standby_wake_AGT1CA">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_AGT1CA.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_AGT1CA.enable" value="LPMV2_STANDBY_WAKE_SOURCE_AGT1CA"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_AGT1CB.disable" display="    AGT1 Compare Match B" id="module.driver.lpmv2.standby_wake_AGT1CB">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_AGT1CB.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_AGT1CB.enable" value="LPMV2_STANDBY_WAKE_SOURCE_AGT1CB"/>
+        </property>
+        <property default="module.driver.lpmv2.standby_wake_IIC0.disable" display="    I2C 0" id="module.driver.lpmv2.standby_wake_IIC0">
+            <option display="Disabled" id="module.driver.lpmv2.standby_wake_IIC0.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.standby_wake_IIC0.enable" value="LPMV2_STANDBY_WAKE_SOURCE_IIC0"/>
+        </property>
+        <!-- Start of snooze entry sources -->
+        <property default="module.driver.lpmv2.snooze_entry_section.heading" display="Snooze Mode Settings" id="module.driver.lpmv2.snooze_entry_section">
+            <option display="" id="module.driver.lpmv2.snooze_entry_section.heading" value="(0)"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_RXD0_FALLING" display="    Snooze Entry Source" id="module.driver.lpmv2.snooze_request">
+            <option display="RXD0 falling edge" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_RXD0_FALLING" value="LPMV2_SNOOZE_REQUEST_RXD0_FALLING"/>
+            <option display="IRQ0" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ0" value="LPMV2_SNOOZE_REQUEST_IRQ0"/>
+            <option display="IRQ1" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ1" value="LPMV2_SNOOZE_REQUEST_IRQ1"/>
+            <option display="IRQ2" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ2" value="LPMV2_SNOOZE_REQUEST_IRQ2"/>
+            <option display="IRQ3" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ3" value="LPMV2_SNOOZE_REQUEST_IRQ3"/>
+            <option display="IRQ4" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ4" value="LPMV2_SNOOZE_REQUEST_IRQ4"/>
+            <option display="IRQ5" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ5" value="LPMV2_SNOOZE_REQUEST_IRQ5"/>
+            <option display="IRQ6" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ6" value="LPMV2_SNOOZE_REQUEST_IRQ6"/>
+            <option display="IRQ7" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ7" value="LPMV2_SNOOZE_REQUEST_IRQ7"/>
+            <option display="IRQ8" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ8" value="LPMV2_SNOOZE_REQUEST_IRQ8"/>
+            <option display="IRQ9" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ9" value="LPMV2_SNOOZE_REQUEST_IRQ9"/>
+            <option display="IRQ10" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ10" value="LPMV2_SNOOZE_REQUEST_IRQ10"/>
+            <option display="IRQ11" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ11" value="LPMV2_SNOOZE_REQUEST_IRQ11"/>
+            <option display="IRQ12" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ12" value="LPMV2_SNOOZE_REQUEST_IRQ12"/>
+            <option display="IRQ13" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ13" value="LPMV2_SNOOZE_REQUEST_IRQ13"/>
+            <option display="IRQ14" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ14" value="LPMV2_SNOOZE_REQUEST_IRQ14"/>
+            <option display="IRQ15" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_IRQ15" value="LPMV2_SNOOZE_REQUEST_IRQ15"/>
+            <option display="KINT (Key Interrupt)" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_KEY" value="LPMV2_SNOOZE_REQUEST_KEY"/>
+            <option display="ACMPHS0 (High-speed Analog Comparator 0)" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_ACMPHS0" value="LPMV2_SNOOZE_REQUEST_ACMPHS0"/>
+            <option display="RTC Alarm" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_RTC_ALARM" value="LPMV2_SNOOZE_REQUEST_RTC_ALARM"/>
+            <option display="RTC Period" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_RTC_PERIOD" value="LPMV2_SNOOZE_REQUEST_RTC_PERIOD"/>
+            <option display="AGT1 Underflow" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_AGT1_UNDERFLOW" value="LPMV2_SNOOZE_REQUEST_AGT1_UNDERFLOW"/>
+            <option display="AGT1 Compare Match A" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_AGT1_COMPARE_A" value="LPMV2_SNOOZE_REQUEST_AGT1_COMPARE_A"/>
+            <option display="AGT1 Compare Match B" id="module.driver.lpmv2.snooze_request.LPMV2_SNOOZE_REQUEST_AGT1_COMPARE_B" value="LPMV2_SNOOZE_REQUEST_AGT1_COMPARE_B"/>
+        </property>
+        <!-- Start of snooze end sources -->
+        <property default="module.driver.lpmv2.snooze_exit_section.heading" display="    Snooze Exit Sources" id="module.driver.lpmv2.snooze_exit_section">
+            <option display="Select fields below:" id="module.driver.lpmv2.snooze_exit_section.heading" value="(0)"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_end_agt1_underflow.disable" display="        AGT1 Underflow" id="module.driver.lpmv2.snooze_end_agt1_underflow">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_end_agt1_underflow.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_end_agt1_underflow.enable" value="LPMV2_SNOOZE_END_AGT1_UNDERFLOW"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_end_dtc_complete.disable" display="        DTC Transfer Completion" id="module.driver.lpmv2.snooze_end_dtc_complete">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_end_dtc_complete.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_end_dtc_complete.enable" value="LPMV2_SNOOZE_END_DTC_TRANS_COMPLETE"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_end_dtc_complete_negated.disable" display="        DTC Transfer Completion Negated signal" id="module.driver.lpmv2.snooze_end_dtc_complete_negated">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_end_dtc_complete_negated.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_end_dtc_complete_negated.enable" value="LPMV2_SNOOZE_END_DTC_TRANS_COMPLETE_NEGATED"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_end_adc0_compare_match.disable" display="        ADC0 Compare Match" id="module.driver.lpmv2.snooze_end_adc0_compare_match">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_end_adc0_compare_match.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_end_adc0_compare_match.enable" value="LPMV2_SNOOZE_END_ADC0_COMPARE_MATCH"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_end_adc0_compare_mismatch.disable" display="        ADC0 Compare Mismatch" id="module.driver.lpmv2.snooze_end_adc0_compare_mismatch">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_end_adc0_compare_mismatch.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_end_adc0_compare_mismatch.enable" value="LPMV2_SNOOZE_END_ADC0_COMPARE_MISMATCH"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_end_adc1_compare_match.disable" display="        ADC1 Compare Match" id="module.driver.lpmv2.snooze_end_adc1_compare_match">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_end_adc1_compare_match.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_end_adc1_compare_match.enable" value="LPMV2_SNOOZE_END_ADC1_COMPARE_MATCH"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_end_adc1_compare_mismatch.disable" display="        ADC1 Compare Mismatch" id="module.driver.lpmv2.snooze_end_adc1_compare_mismatch">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_end_adc1_compare_mismatch.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_end_adc1_compare_mismatch.enable" value="LPMV2_SNOOZE_END_ADC1_COMPARE_MISMATCH"/>
+        </property>
+        <property default="module.driver.lpmv2.snooze_end_sci0_compare_mismatch.disable" display="        SCI0 Address Match" id="module.driver.lpmv2.snooze_end_sci0_compare_mismatch">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_end_sci0_compare_mismatch.disable" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_end_sci0_compare_mismatch.enable" value="LPMV2_SNOOZE_END_SCI0_ADDRESS_MATCH"/>
+        </property>
+        <!-- Start of DTC enable in snooze mode -->
+        <property default="module.driver.lpmv2.snooze_dtc.LPMV2_SNOOZE_DTC_DISABLE" display="    DTC state in Snooze Mode" id="module.driver.lpmv2.snooze_dtc">
+            <option display="Disabled" id="module.driver.lpmv2.snooze_dtc.LPMV2_SNOOZE_DTC_DISABLE" value="LPMV2_SNOOZE_DTC_DISABLE"/>
+            <option display="Enabled" id="module.driver.lpmv2.snooze_dtc.LPMV2_SNOOZE_DTC_ENABLE" value="LPMV2_SNOOZE_DTC_ENABLE"/>
+        </property>
+        <header>
+/** lpmv2 Instance */
+extern const lpmv2_instance_t ${module.driver.lpmv2.name};
+
+        </header>
+        <includes>
+
+#include &quot;r_lpmv2_s7g2.h&quot;
+#include &quot;r_lpmv2_api.h&quot;
+
+        </includes>
+        <declarations>
+/************************************************************/
+/** Begin LPM V2 Configurations *****************************/
+/************************************************************/
+#if defined(BSP_MCU_GROUP_S7G2)
+const lpmv2_mcu_cfg_t ${module.driver.lpmv2.name}_mcu_cfg =
+{
+    .standby_wake_sources       = (lpmv2_standby_wake_source_bits_t)${module.driver.lpmv2.standby_wake_IRQ0} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ1} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ2} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ3} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ4} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ5} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ6} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ7} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ8} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ9} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ10} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ11} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ12} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ13} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ14} |
+                                   ${module.driver.lpmv2.standby_wake_IRQ15} |
+                                   ${module.driver.lpmv2.standby_wake_iwdt} |
+                                   ${module.driver.lpmv2.standby_wake_key} |
+                                   ${module.driver.lpmv2.standby_wake_lvd1} |
+                                   ${module.driver.lpmv2.standby_wake_lvd2} |
+                                   ${module.driver.lpmv2.standby_wake_ACMPHS0} |
+                                   ${module.driver.lpmv2.standby_wake_RTCALM} |
+                                   ${module.driver.lpmv2.standby_wake_RTCPRD} |
+                                   ${module.driver.lpmv2.standby_wake_USBHS} |
+                                   ${module.driver.lpmv2.standby_wake_USBFS} |
+                                   ${module.driver.lpmv2.standby_wake_AGT1UD} |
+                                   ${module.driver.lpmv2.standby_wake_AGT1CA} |
+                                   ${module.driver.lpmv2.standby_wake_AGT1CB} |
+                                   ${module.driver.lpmv2.standby_wake_IIC0},
+    .snooze_request_source      =  ${module.driver.lpmv2.snooze_request},
+    .snooze_end_sources         = (lpmv2_snooze_end_bits_t)${module.driver.lpmv2.snooze_end_agt1_underflow} |
+                                   ${module.driver.lpmv2.snooze_end_dtc_complete} |
+                                   ${module.driver.lpmv2.snooze_end_dtc_complete_negated} |
+                                   ${module.driver.lpmv2.snooze_end_adc0_compare_match} |
+                                   ${module.driver.lpmv2.snooze_end_adc0_compare_mismatch} |
+                                   ${module.driver.lpmv2.snooze_end_adc1_compare_match} |
+                                   ${module.driver.lpmv2.snooze_end_adc1_compare_mismatch} |
+                                   ${module.driver.lpmv2.snooze_end_sci0_compare_mismatch},
+    .dtc_state_in_snooze        =  ${module.driver.lpmv2.snooze_dtc},
+    .output_port_enable         =  ${module.driver.lpmv2.output_port_enable_standby},
+    .io_port_state              =  LPMV2_IO_PORT_NO_CHANGE,
+    .power_supply_state         =  LPMV2_POWER_SUPPLY_DEEPCUT0,
+    .deep_standby_cancel_source = (lpmv2_deep_standby_cancel_source_bits_t)LPMV2_DEEP_STANDBY_CANCEL_SOURCE_RESET_ONLY,
+    .deep_standby_cancel_edge   = (lpmv2_deep_standby_cancel_edge_bits_t)LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE,
+};
+const lpmv2_cfg_t ${module.driver.lpmv2.name}_cfg =
+{
+    .low_power_mode     = ${module.driver.lpmv2.low_power_mode},
+    .p_extend           = &amp;${module.driver.lpmv2.name}_mcu_cfg,
+};
+const lpmv2_instance_t ${module.driver.lpmv2.name} =
+{
+    .p_api = &amp;g_lpmv2_on_lpmv2,
+    .p_cfg = &amp;${module.driver.lpmv2.name}_cfg
+};
+#endif
+/************************************************************/
+/** End LPM V2 Configurations *******************************/
+/************************************************************/
+        </declarations>
+    </module>
+    <module config="config.driver.lpmv2_s7g2" display="Driver|Power|${module.driver.lpmv2.name} S7G2 Low Power Mode Deep Standby on r_lpmv2" id="module.driver.lpmv2_s7g2_deep_standby" common="100" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.lpmv2.${module.driver.lpmv2.name}}" === "1"
+        </constraint>
+        <constraint display="Choose an edge for IRQ0 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ0}" == "module.driver.lpmv2.deep_standby_cancel_IRQ0.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ0_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ0_edge.IRQ0_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ1 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ1}" == "module.driver.lpmv2.deep_standby_cancel_IRQ1.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ1_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ1_edge.IRQ1_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ2 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ2}" == "module.driver.lpmv2.deep_standby_cancel_IRQ2.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ2_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ2_edge.IRQ2_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ3 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ3}" == "module.driver.lpmv2.deep_standby_cancel_IRQ3.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ3_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ3_edge.IRQ3_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ4 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ4}" == "module.driver.lpmv2.deep_standby_cancel_IRQ4.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ4_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ4_edge.IRQ4_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ5 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ5}" == "module.driver.lpmv2.deep_standby_cancel_IRQ5.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ5_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ5_edge.IRQ5_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ6 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ6}" == "module.driver.lpmv2.deep_standby_cancel_IRQ6.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ6_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ6_edge.IRQ6_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ7 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ7}" == "module.driver.lpmv2.deep_standby_cancel_IRQ7.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ7_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ7_edge.IRQ7_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ8 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ8}" == "module.driver.lpmv2.deep_standby_cancel_IRQ8.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ8_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ8_edge.IRQ8_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ9 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ9}" == "module.driver.lpmv2.deep_standby_cancel_IRQ9.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ9_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ9_edge.IRQ9_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ10 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ10}" == "module.driver.lpmv2.deep_standby_cancel_IRQ10.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ10_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ10_edge.IRQ10_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ11 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ11}" == "module.driver.lpmv2.deep_standby_cancel_IRQ11.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ11_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ11_edge.IRQ11_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ12 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ12}" == "module.driver.lpmv2.deep_standby_cancel_IRQ12.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ12_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ12_edge.IRQ12_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ13 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ13}" == "module.driver.lpmv2.deep_standby_cancel_IRQ13.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ13_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ13_edge.IRQ13_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ14 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ14}" == "module.driver.lpmv2.deep_standby_cancel_IRQ14.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ14_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ14_edge.IRQ14_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for IRQ15 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_IRQ15}" == "module.driver.lpmv2.deep_standby_cancel_IRQ15.disabled" || "${module.driver.lpmv2.deep_standby_cancel_IRQ15_edge}" != "module.driver.lpmv2.deep_standby_cancel_IRQ15_edge.IRQ15_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for LVD1 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_LVD1}" == "module.driver.lpmv2.deep_standby_cancel_LVD1.disabled" || "${module.driver.lpmv2.deep_standby_cancel_LVD1_edge}" != "module.driver.lpmv2.deep_standby_cancel_LVD1_edge.LVD1_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for LVD2 Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_LVD2}" == "module.driver.lpmv2.deep_standby_cancel_LVD2.disabled" || "${module.driver.lpmv2.deep_standby_cancel_LVD2_edge}" != "module.driver.lpmv2.deep_standby_cancel_LVD2_edge.LVD2_DISABLED"
+        </constraint>
+        <constraint display="Choose an edge for NMI Deep Standby Cancel Source.">
+            "${module.driver.lpmv2.deep_standby_cancel_NMI}" == "module.driver.lpmv2.deep_standby_cancel_NMI.disabled" || "${module.driver.lpmv2.deep_standby_cancel_NMI_edge}" != "module.driver.lpmv2.deep_standby_cancel_NMI_edge.NMI_DISABLED"
+        </constraint>
+        <requires id="interface.driver.lpmv2.requires.mcu" interface="interface.mcu.s7g2" display="Requires S7G2 MCU"/>
+        <provides interface="interface.driver.lpmv2" />
+        <provides interface="interface.driver.lpmv2_on_lpmv2_s7g2_deep_standby" />
+        <provides interface="interface.driver.lpmv2_on_lpmv2_s7g2_deep_standby.${module.driver.lpmv2.name}" />
+        <provides interface="interface.driver.lpmv2.${module.driver.lpmv2.name}" />
+        <property default="g_lpmv2_deep_standby${_instance}" display="Name" id="module.driver.lpmv2.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.lpmv2.name}")</constraint>
+        </property>
+        <!-- Output port state in standby and deep standby -->
+        <property default="module.driver.lpmv2.output_port_enable_standby.no_change" display="Output port state in standby and deep standby, applies to address output, data output, and other bus control output pins" id="module.driver.lpmv2.output_port_enable_standby">
+            <option display="High impedance state" id="module.driver.lpmv2.output_port_enable_standby.high_impedance" value="LPMV2_OUTPUT_PORT_ENABLE_HIGH_IMPEDANCE"/>
+            <option display="No change" id="module.driver.lpmv2.output_port_enable_standby.no_change" value="LPMV2_OUTPUT_PORT_ENABLE_RETAIN"/>
+        </property>
+        <!-- IO states on exit from Deep Standby -->
+        <property default="module.driver.lpmv2.io_port_deep_standby_exit.no_change" display="        Maintain or reset the IO port states on exit from deep standby mode" id="module.driver.lpmv2.io_port_deep_standby_exit">
+            <option display="Maintain the IO port states" id="module.driver.lpmv2.io_port_deep_standby_exit.no_change" value="LPMV2_IO_PORT_NO_CHANGE"/>
+            <option display="Reset the IO port states" id="module.driver.lpmv2.io_port_deep_standby_exit.reset" value="LPMV2_IO_PORT_RESET"/>
+        </property>
+        <!-- Internal power supply state in deep standby (Deepcut) -->
+        <property default="module.driver.lpmv2.power_supply_deep_standby.deepcut0" display="        Internal power supply control in deep standby mode" id="module.driver.lpmv2.power_supply_deep_standby">
+            <option display="Maintain the internal power supply" id="module.driver.lpmv2.power_supply_deep_standby.deepcut0" value="LPMV2_POWER_SUPPLY_DEEPCUT0"/>
+            <option display="Cut the power supply to standby RAM, low-speed on-chip oscillator, AGTn, and USBFS/HS resume detecting unit" id="module.driver.lpmv2.power_supply_deep_standby.deepcut1" value="LPMV2_POWER_SUPPLY_DEEPCUT1"/>
+            <option display="Cut the power supply to LVDn, standby RAM, low-speed on-chip oscillator, AGTn, and USBFS/HS resume detecting unit" id="module.driver.lpmv2.power_supply_deep_standby.deepcut3" value="LPMV2_POWER_SUPPLY_DEEPCUT3"/>
+        </property>
+        <!-- Deep Standby Cancel Sources -->
+        <property default="module.driver.lpmv2.deep_standby_cancel_sources_edges.heading" display="        Deep Standby Cancel Sources/Edges" id="module.driver.lpmv2.deep_standby_cancel_sources_edges">
+            <option display="Select fields below:" id="module.driver.lpmv2.deep_standby_cancel_sources_edges.heading" value="(0)"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ0.disabled" display="            IRQ0" id="module.driver.lpmv2.deep_standby_cancel_IRQ0">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ0.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ0.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ0"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ0_edge.IRQ0_DISABLED" display="                IRQ0 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ0_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ0_edge.IRQ0_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ0_edge.IRQ0_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ0_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ0_edge.IRQ0_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ0_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ1.disabled" display="            IRQ1" id="module.driver.lpmv2.deep_standby_cancel_IRQ1">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ1.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ1.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ1"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ1_edge.IRQ1_DISABLED" display="                IRQ1 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ1_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ1_edge.IRQ1_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ1_edge.IRQ1_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ1_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ1_edge.IRQ1_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ1_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ2.disabled" display="            IRQ2" id="module.driver.lpmv2.deep_standby_cancel_IRQ2">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ2.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ2.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ2"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ2_edge.IRQ2_DISABLED" display="                IRQ2 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ2_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ2_edge.IRQ2_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ2_edge.IRQ2_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ2_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ2_edge.IRQ2_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ2_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ3.disabled" display="            IRQ3" id="module.driver.lpmv2.deep_standby_cancel_IRQ3">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ3.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ3.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ3"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ3_edge.IRQ3_DISABLED" display="                IRQ3 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ3_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ3_edge.IRQ3_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ3_edge.IRQ3_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ3_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ3_edge.IRQ3_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ3_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ4.disabled" display="            IRQ4" id="module.driver.lpmv2.deep_standby_cancel_IRQ4">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ4.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ4.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ4"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ4_edge.IRQ4_DISABLED" display="                IRQ4 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ4_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ4_edge.IRQ4_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ4_edge.IRQ4_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ4_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ4_edge.IRQ4_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ4_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ5.disabled" display="            IRQ5" id="module.driver.lpmv2.deep_standby_cancel_IRQ5">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ5.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ5.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ5"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ5_edge.IRQ5_DISABLED" display="                IRQ5 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ5_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ5_edge.IRQ5_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ5_edge.IRQ5_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ5_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ5_edge.IRQ5_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ5_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ6.disabled" display="            IRQ6" id="module.driver.lpmv2.deep_standby_cancel_IRQ6">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ6.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ6.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ6"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ6_edge.IRQ6_DISABLED" display="                IRQ6 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ6_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ6_edge.IRQ6_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ6_edge.IRQ6_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ6_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ6_edge.IRQ6_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ6_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ7.disabled" display="            IRQ7" id="module.driver.lpmv2.deep_standby_cancel_IRQ7">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ7.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ7.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ7"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ7_edge.IRQ7_DISABLED" display="                IRQ7 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ7_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ7_edge.IRQ7_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ7_edge.IRQ7_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ7_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ7_edge.IRQ7_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ7_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ8.disabled" display="            IRQ8" id="module.driver.lpmv2.deep_standby_cancel_IRQ8">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ8.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ8.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ8"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ8_edge.IRQ8_DISABLED" display="                IRQ8 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ8_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ8_edge.IRQ8_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ8_edge.IRQ8_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ8_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ8_edge.IRQ8_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ8_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ9.disabled" display="            IRQ9" id="module.driver.lpmv2.deep_standby_cancel_IRQ9">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ9.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ9.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ9"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ9_edge.IRQ9_DISABLED" display="                IRQ9 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ9_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ9_edge.IRQ9_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ9_edge.IRQ9_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ9_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ9_edge.IRQ9_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ9_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ10.disabled" display="            IRQ10" id="module.driver.lpmv2.deep_standby_cancel_IRQ10">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ10.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ10.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ10"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ10_edge.IRQ10_DISABLED" display="                IRQ10 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ10_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ10_edge.IRQ10_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ10_edge.IRQ10_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ10_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ10_edge.IRQ10_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ10_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ11.disabled" display="            IRQ11" id="module.driver.lpmv2.deep_standby_cancel_IRQ11">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ11.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ11.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ11"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ11_edge.IRQ11_DISABLED" display="                IRQ11 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ11_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ11_edge.IRQ11_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ11_edge.IRQ11_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ11_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ11_edge.IRQ11_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ11_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ12.disabled" display="            IRQ12" id="module.driver.lpmv2.deep_standby_cancel_IRQ12">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ12.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ12.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ12"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ12_edge.IRQ12_DISABLED" display="                IRQ12 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ12_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ12_edge.IRQ12_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ12_edge.IRQ12_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ12_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ12_edge.IRQ12_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ12_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ13.disabled" display="            IRQ13" id="module.driver.lpmv2.deep_standby_cancel_IRQ13">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ13.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ13.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ13"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ13_edge.IRQ13_DISABLED" display="                IRQ13 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ13_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ13_edge.IRQ13_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ13_edge.IRQ13_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ13_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ13_edge.IRQ13_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ13_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ14.disabled" display="            IRQ14" id="module.driver.lpmv2.deep_standby_cancel_IRQ14">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ14.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ14.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ14"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ14_edge.IRQ14_DISABLED" display="                IRQ14 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ14_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ14_edge.IRQ14_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ14_edge.IRQ14_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ14_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ14_edge.IRQ14_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ14_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ15.disabled" display="            IRQ15" id="module.driver.lpmv2.deep_standby_cancel_IRQ15">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ15.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ15.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ15"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_IRQ15_edge.IRQ15_DISABLED" display="                IRQ15 edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ15_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_IRQ15_edge.IRQ15_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ15_edge.IRQ15_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ15_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_IRQ15_edge.IRQ15_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_IRQ15_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_LVD1.disabled" display="            LVD1" id="module.driver.lpmv2.deep_standby_cancel_LVD1">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_LVD1.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_LVD1.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_LVD1"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_LVD1_edge.LVD1_DISABLED" display="                LVD1 edge" id="module.driver.lpmv2.deep_standby_cancel_LVD1_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_LVD1_edge.LVD1_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_LVD1_edge.LVD1_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_LVD1_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_LVD1_edge.LVD1_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_LVD1_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_LVD2.disabled" display="            LVD2" id="module.driver.lpmv2.deep_standby_cancel_LVD2">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_LVD2.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_LVD2.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_LVD2"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_LVD2_edge.LVD2_DISABLED" display="                LVD2 edge" id="module.driver.lpmv2.deep_standby_cancel_LVD2_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_LVD2_edge.LVD2_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_LVD2_edge.LVD2_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_LVD2_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_LVD2_edge.LVD2_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_LVD2_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_RTC_INTERVAL.disabled" display="            RTC Interval" id="module.driver.lpmv2.deep_standby_cancel_RTC_INTERVAL">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_RTC_INTERVAL.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_RTC_INTERVAL.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_RTC_INTERVAL"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_RTC_ALARM.disabled" display="            RTC Alarm" id="module.driver.lpmv2.deep_standby_cancel_RTC_ALARM">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_RTC_ALARM.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_RTC_ALARM.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_RTC_ALARM"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_NMI.disabled" display="            NMI" id="module.driver.lpmv2.deep_standby_cancel_NMI">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_NMI.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_NMI.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_NMI"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_NMI_edge.NMI_DISABLED" display="                NMI edge" id="module.driver.lpmv2.deep_standby_cancel_NMI_edge">
+            <option display="    Disabled" id="module.driver.lpmv2.deep_standby_cancel_NMI_edge.NMI_DISABLED" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_EDGE_NONE"/>
+            <option display="    Rising edge" id="module.driver.lpmv2.deep_standby_cancel_NMI_edge.NMI_RISING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_NMI_RISING"/>
+            <option display="    Falling edge" id="module.driver.lpmv2.deep_standby_cancel_NMI_edge.NMI_FALLING" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_NMI_FALLING"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_USBFS.disabled" display="            USBFS" id="module.driver.lpmv2.deep_standby_cancel_USBFS">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_USBFS.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_USBFS.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_USBFS"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_USBHS.disabled" display="            USBHS" id="module.driver.lpmv2.deep_standby_cancel_USBHS">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_USBHS.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_USBHS.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_USBHS"/>
+        </property>
+        <property default="module.driver.lpmv2.deep_standby_cancel_AGT1.disabled" display="            AGT1" id="module.driver.lpmv2.deep_standby_cancel_AGT1">
+            <option display="Disabled" id="module.driver.lpmv2.deep_standby_cancel_AGT1.disabled" value="0"/>
+            <option display="Enabled" id="module.driver.lpmv2.deep_standby_cancel_AGT1.enabled" value="LPMV2_DEEP_STANDBY_CANCEL_SOURCE_AGT1"/>
+        </property>
+        <header>
+/** lpmv2 Instance */
+extern const lpmv2_instance_t ${module.driver.lpmv2.name};
+
+        </header>
+        <includes>
+
+#include &quot;r_lpmv2_s7g2.h&quot;
+#include &quot;r_lpmv2_api.h&quot;
+
+        </includes>
+        <declarations>
+/************************************************************/
+/** Begin LPM V2 Configurations *****************************/
+/************************************************************/
+#if defined(BSP_MCU_GROUP_S7G2)
+const lpmv2_mcu_cfg_t ${module.driver.lpmv2.name}_mcu_cfg =
+{
+    .standby_wake_sources       = (lpmv2_standby_wake_source_bits_t)0,
+    .snooze_end_sources         = (lpmv2_snooze_end_bits_t)LPMV2_SNOOZE_END_STANDBY_WAKE_SOURCES,
+    .dtc_state_in_snooze        =  LPMV2_SNOOZE_DTC_DISABLE,
+    .output_port_enable         =  ${module.driver.lpmv2.output_port_enable_standby},
+    .io_port_state              =  ${module.driver.lpmv2.io_port_deep_standby_exit},
+    .power_supply_state         =  ${module.driver.lpmv2.power_supply_deep_standby},
+    .deep_standby_cancel_source = (lpmv2_deep_standby_cancel_source_bits_t)${module.driver.lpmv2.deep_standby_cancel_IRQ0} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ1} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ2} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ3} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ4} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ5} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ6} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ7} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ8} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ9} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ10} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ11} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ12} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ13} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ14} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ15} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_LVD1} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_LVD2} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_RTC_INTERVAL} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_NMI} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_USBFS} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_USBHS} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_AGT1},
+    .deep_standby_cancel_edge   = (lpmv2_deep_standby_cancel_edge_bits_t)${module.driver.lpmv2.deep_standby_cancel_IRQ0_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ1_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ2_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ3_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ4_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ5_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ6_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ7_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ8_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ9_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ10_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ11_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ12_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ13_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ14_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_IRQ15_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_LVD1_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_LVD2_edge} |
+                                   ${module.driver.lpmv2.deep_standby_cancel_NMI_edge},
+};
+const lpmv2_cfg_t ${module.driver.lpmv2.name}_cfg =
+{
+    .low_power_mode     = LPMV2_LOW_POWER_MODE_DEEP,
+    .p_extend           = &amp;${module.driver.lpmv2.name}_mcu_cfg,
+};
+const lpmv2_instance_t ${module.driver.lpmv2.name} =
+{
+    .p_api = &amp;g_lpmv2_on_lpmv2,
+    .p_cfg = &amp;${module.driver.lpmv2.name}_cfg
+};
+#endif
+/************************************************************/
+/** End LPM V2 Configurations *******************************/
+/************************************************************/
+        </declarations>
+    </module>
+
+</synergyModuleDescription>

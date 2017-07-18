@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" ?>
+<!-- Created with Liquid XML 2015 Designer Edition 13.2.2.6003 (http://www.liquid-technologies.com) -->
+<synergyModuleDescription>
+    <config id="config.framework.sf_el_gx" path="ssp_cfg/framework/sf_el_gx_cfg.h" version="0">
+        <property default="config.framework.sf_el_gx.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_el_gx.param_checking_enable">
+            <option display="Default (BSP)" id="config.framework.sf_el_gx.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_el_gx.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_el_gx.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>
+            #define SF_EL_GX_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_el_gx.param_checking_enable}
+        </content>
+    </config>
+    <module config="config.framework.sf_el_gx" display="Framework|Graphics|${module.framework.sf_el_gx.name} GUIX Port on sf_el_gx" id="module.framework.sf_el_gx" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_gx.${module.framework.sf_el_gx.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_gx.requires.display" interface="interface.driver.display" display="Add Display Driver" />
+        <requires id="module.framework.sf_el_gx.requires.sf_jpeg_decode" interface="interface.framework.sf_jpeg_decode" display="Add JPEG Decode Framework" />
+        <requires id="module.framework.sf_el_gx.requires.tes.dave2d" interface="interface.framework.tes.dave2d" display="Add TES D/AVE 2D" />
+        <provides interface="interface.framework.sf_el_gx" />
+        <provides interface="interface.framework.sf_el_gx_on_sf_el_gx" />
+        <provides interface="interface.framework.sf_el_gx.${module.framework.sf_el_gx.name}" />
+        <property id="module.framework.sf_el_gx.name" display="Name" default="g_sf_el_gx${_instance}">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_gx.name}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.p_display_runtime_cfg" display="Name of Display Driver Run-time Configuration (Must be a valid symbol)" default="g_display0_runtime_cfg_bg">
+            <constraint display="Specifiy the Name of Run-time Display Configuration (NULL is not allowed).">testSymbol("${module.framework.sf_el_gx.p_display_runtime_cfg}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.p_framebuffer_a" display="Name of Frame Buffer A (Must be a valid symbol)" default="g_display0_fb_background[0]">
+        </property>
+        <property id="module.framework.sf_el_gx.p_framebuffer_b" display="Name of Frame Buffer B (NULL allowed if consisting a single frame buffer system)" default="g_display0_fb_background[1]">
+        </property>
+        <property id="module.framework.sf_el_gx.p_callback" display="Name of User Callback function" default="NULL">
+            <constraint display="Specifiy the Name of user callback function">testSymbol("${module.framework.sf_el_gx.p_callback}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.rotation_angle" display="Screen Rotation Angle(Clockwise)" default="module.framework.sf_el_gx.rotation_angle.angle0">
+            <option display="0" id="module.framework.sf_el_gx.rotation_angle.angle0" value="0"/>
+            <option display="90" id="module.framework.sf_el_gx.rotation_angle.angle_90" value="90"/>
+            <option display="180" id="module.framework.sf_el_gx.rotation_angle.angle_180" value="180"/>
+            <option display="270" id="module.framework.sf_el_gx.rotation_angle.angle_270" value="270"/>
+        </property>
+        <property default="module.framework.sf_el_gx.p_canvas.used.false" display="GUIX Canvas Buffer (required if rotation angle is not zero)" id="module.framework.sf_el_gx.p_canvas.used">
+            <option display="Used" id="module.framework.sf_el_gx.p_canvas.used.true" value="true"/>
+            <option display="Not used" id="module.framework.sf_el_gx.p_canvas.used.false" value="false"/>
+        </property>
+        <property id="module.framework.sf_el_gx.jpegbuffer_size" display="Size of JPEG Work Buffer (valid if JPEG hardware acceleration enabled)" default="768000">
+            <constraint display="Specifiy the Name of JPEG Work Buffer(0 is allowed if JPEG is not used)">testInteger("${module.framework.sf_el_gx.jpegbuffer_size}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.canvas_section" display="Memory section for GUIX Canvas Buffer" default="sdram">
+            <constraint display="This property must be a valid section name">
+                testSymbol("${module.framework.sf_el_gx.canvas_section}")
+            </constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.jpegWB_section" display="Memory section for JPEG Work Buffer" default="sdram">
+            <constraint display="This property must be a valid section name">
+                testSymbol("${module.framework.sf_el_gx.jpegWB_section}")
+            </constraint>
+        </property>
+        <header>
+            #ifndef ${module.framework.sf_el_gx.p_callback}
+            extern void ${module.framework.sf_el_gx.p_callback}(sf_el_gx_callback_args_t * p_arg);
+            #endif
+            extern sf_el_gx_instance_t ${module.framework.sf_el_gx.name};
+        </header>
+        <includes>
+            #include &quot;sf_el_gx.h&quot;
+        </includes>
+        <declarations>
+
+            /** GUIX Canvas Buffer */
+            #if ${module.framework.sf_el_gx.p_canvas.used}
+            #ifdef __GNUC__
+            uint8_t ${module.framework.sf_el_gx.name}_canvas[sizeof(${module.framework.sf_el_gx.p_framebuffer_a})] __attribute__ ((aligned(4), section(&quot;.${module.framework.sf_el_gx.canvas_section}&quot;)));
+            #else /* __ICCARM__ */
+            #pragma data_alignment = 4
+            #pragma location = &quot;.${module.framework.sf_el_gx.canvas_section}&quot;
+            uint8_t ${module.framework.sf_el_gx.name}_canvas[sizeof(${module.framework.sf_el_gx.p_framebuffer_a})];
+            #endif
+            #endif
+
+            /** JPEG Work Buffer */
+            #if GX_USE_SYNERGY_JPEG
+            #if (${module.framework.sf_el_gx.jpegbuffer_size})
+            #ifdef __GNUC__
+            uint8_t ${module.framework.sf_el_gx.name}_jpegbuffer[${module.framework.sf_el_gx.jpegbuffer_size}] __attribute__ ((aligned(64), section(&quot;.${module.framework.sf_el_gx.jpegWB_section}&quot;)));
+            #else /* __ICCARM__ */
+            #pragma data_alignment = 64
+            #pragma location = &quot;.${module.framework.sf_el_gx.jpegWB_section}&quot;
+            uint8_t ${module.framework.sf_el_gx.name}_jpegbuffer[${module.framework.sf_el_gx.jpegbuffer_size}];
+            #endif
+            #endif
+            #endif
+
+            /** GUIX Port module control block instance */
+            static sf_el_gx_instance_ctrl_t ${module.framework.sf_el_gx.name}_ctrl;
+
+            /** GUIX Port module configuration */
+            static const sf_el_gx_cfg_t  ${module.framework.sf_el_gx.name}_cfg =
+            {
+                .p_display_instance    = (display_instance_t *)&amp;${module.framework.sf_el_gx.requires.display::module.driver.display.name},
+                .p_display_runtime_cfg = &amp;${module.framework.sf_el_gx.p_display_runtime_cfg},
+            #if ${module.framework.sf_el_gx.p_canvas.used}
+                .p_canvas        = ${module.framework.sf_el_gx.name}_canvas,
+            #else
+                .p_canvas        = NULL,
+            #endif
+                .p_framebuffer_a = ${module.framework.sf_el_gx.p_framebuffer_a},
+                .p_framebuffer_b = ${module.framework.sf_el_gx.p_framebuffer_b},
+                .p_callback      = ${module.framework.sf_el_gx.p_callback},
+            #if GX_USE_SYNERGY_JPEG
+                .p_jpegbuffer    = ${module.framework.sf_el_gx.name}_jpegbuffer,
+                .jpegbuffer_size = ${module.framework.sf_el_gx.jpegbuffer_size},
+            #else
+                .p_jpegbuffer    = NULL,
+                .jpegbuffer_size = 0,
+            #endif
+                .rotation_angle  = ${module.framework.sf_el_gx.rotation_angle}
+            };
+
+            /** GUIX Port module instance */
+            sf_el_gx_instance_t ${module.framework.sf_el_gx.name} =
+            {
+                .p_api = &amp;sf_el_gx_on_guix,
+                .p_ctrl = &amp;${module.framework.sf_el_gx.name}_ctrl,
+                .p_cfg = &amp;${module.framework.sf_el_gx.name}_cfg
+            };
+        </declarations>
+    </module>
+</synergyModuleDescription>

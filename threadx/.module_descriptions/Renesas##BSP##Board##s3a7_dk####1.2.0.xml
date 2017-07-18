@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<synergyModuleDescription>
+    <config id="config.board.s3a7dk" path="ssp_cfg/bsp/bsp_board_cfg.h" version="0">
+        <content>
+            #include "../../../synergy/board/s3a7_dk/bsp.h"
+        </content>
+    </config>
+    <board id="board.s3a7dk" display="S3A7 DK" device="R7FS3A77C3A01CFB" config="config.board.s3a7dk" version="0" />
+</synergyModuleDescription>

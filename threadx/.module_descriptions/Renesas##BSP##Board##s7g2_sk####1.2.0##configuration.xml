@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+
+
+<synergyConfiguration version="3">
+
+    <synergyPinConfiguration>
+      <pincfg active="true" name="S7G2-SK.pincfg" symbol="g_bsp_pin_cfg"/>
+    </synergyPinConfiguration>
+
+</synergyConfiguration>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <module config="config.el.ux_host_class_hub" display="X-Ware|USBX|Host|Classes|HUB|USBX Host Class HUB" common="1" id="module.el.ux_host_class_hub" version="1">
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_host_class_hub_src" display="Add USBX Host Class HUB Source [Optional]" id="module.el.ux_host_class_hub.requires.ux_host_class_hub_src" find="false" />
+        <requires id="module.el.ux_host_class_hub.requires.ux_host" interface="interface.el.ux_host" display="Add USB Host Configuration" />
+        <provides interface="interface.el.ux_host_class_hub" />
+        <header>
+            #include "ux_api.h"
+            #include "ux_host_class_hub.h"
+        </header>
+        <macros>
+            #define USB_HOST_HUB_CLASS_REGISTER
+        </macros>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<synergyModuleDescription>
+    <config id="config.board.s7g2dk" path="ssp_cfg/bsp/bsp_board_cfg.h" version="0">
+        <content>
+            #include "../../../synergy/board/s7g2_dk/bsp.h"
+        </content>
+    </config>
+    <board id="board.s7g2dk" display="S7G2 DK" device="R7FS7G27H2A01CBD" config="config.board.s7g2dk" version="0" />
+</synergyModuleDescription>

@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nx_smtp_client" path="ssp_cfg/framework/el/nx_smtp_client_cfg.h" version="0">
+        <property default="1460" display="TCP window size (bytes)" id="config.el.nx_smtp_client.client_tcp_window_size" description="This should be set to below the MTU size of the underlying Ethernet hardware and allow room for IP and TCP headers">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.client_tcp_window_size}")  &amp;&amp; ("${config.el.nx_smtp_client.client_tcp_window_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2" display="Packet allocation timeout (seconds)" id="config.el.nx_smtp_client.client_packet_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.client_packet_timeout}")  &amp;&amp; ("${config.el.nx_smtp_client.client_packet_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="TCP socket connect timeout (seconds)" id="config.el.nx_smtp_client.client_connection_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.client_connection_timeout}")  &amp;&amp; ("${config.el.nx_smtp_client.client_connection_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="5" display="TCP socket disconnect timeout (seconds)" id="config.el.nx_smtp_client.client_disconnect_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.client_disconnect_timeout}")  &amp;&amp; ("${config.el.nx_smtp_client.client_disconnect_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Server greeting reply timeout (seconds)" id="config.el.nx_smtp_client.greeting_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.greeting_timeout}")  &amp;&amp; ("${config.el.nx_smtp_client.greeting_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Command timeout (seconds)" id="config.el.nx_smtp_client.envelope_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.envelope_timeout}")  &amp;&amp; ("${config.el.nx_smtp_client.envelope_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="30" display="Mail data request timeout (seconds)" id="config.el.nx_smtp_client.message_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.message_timeout}")  &amp;&amp; ("${config.el.nx_smtp_client.message_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="5" display="TCP socket send completion timeout (seconds)" id="config.el.nx_smtp_client.client_send_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.client_send_timeout}")  &amp;&amp; ("${config.el.nx_smtp_client.client_send_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="200" display="Server challenge maximum string length (bytes)" id="config.el.nx_smtp_client.server_challenge_max_string">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.server_challenge_max_string}")  &amp;&amp; ("${config.el.nx_smtp_client.server_challenge_max_string}" &gt;= 0)
+            </constraint>
+        </property>
+            <property default="20" display="Maximum password length (bytes)" id="config.el.nx_smtp_client.max_password">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.max_password}")  &amp;&amp; ("${config.el.nx_smtp_client.max_password}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="40" display="Maximum username length (bytes)" id="config.el.nx_smtp_client.client_max_username">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_smtp_client.client_max_username}")  &amp;&amp; ("${config.el.nx_smtp_client.client_max_username}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_SMTP_CLIENT_TCP_WINDOW_SIZE              (${config.el.nx_smtp_client.client_tcp_window_size})
+            #define NX_SMTP_CLIENT_PACKET_TIMEOUT               (${config.el.nx_smtp_client.client_packet_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_SMTP_CLIENT_CONNECTION_TIMEOUT           (${config.el.nx_smtp_client.client_connection_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_SMTP_CLIENT_DISCONNECT_TIMEOUT           (${config.el.nx_smtp_client.client_disconnect_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_SMTP_GREETING_TIMEOUT                    (${config.el.nx_smtp_client.greeting_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_SMTP_ENVELOPE_TIMEOUT                    (${config.el.nx_smtp_client.envelope_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_SMTP_MESSAGE_TIMEOUT                     (${config.el.nx_smtp_client.message_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_SMTP_CLIENT_SEND_TIMEOUT                 (${config.el.nx_smtp_client.client_send_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_SMTP_SERVER_CHALLENGE_MAX_STRING         (${config.el.nx_smtp_client.server_challenge_max_string})
+            #define NX_SMTP_CLIENT_MAX_PASSWORD                 (${config.el.nx_smtp_client.max_password})
+            #define NX_SMTP_CLIENT_MAX_USERNAME                 (${config.el.nx_smtp_client.client_max_username})
+        </content>
+    </config>
+    <module  config="config.el.nx_smtp_client" display="X-Ware|NetX|Protocols|${module.el.nx_smtp_client.name} NetX SMTP Client" id="module.el.nx_smtp_client" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_smtp_client.${module.el.nx_smtp_client.name}}" === "1"
+            </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_smtp_client.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.tcp" value="module.el.nx.ip.tcp.enable" />
+        </requires>
+        <requires id="module.el.nx_smtp_client.requires.nx.packet_pool" interface="interface.el.nx_original.packet_pool" display="Add NetX Packet Pool" />
+
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_smtp_client" />
+        <provides interface="interface.el.nx_smtp_client.${module.el.nx_smtp_client.name}" />
+        <!-- NetX only -->
+        <provides interface="interface.el.nx_original_smtp_client" />
+        <provides interface="interface.el.nx_original_smtp_client.${module.el.nx_smtp_client.name}" />
+        
+        <property default="g_smtp_client${_instance}" display="Name" id="module.el.nx_smtp_client.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_smtp_client.name}")
+            </constraint>
+        </property>
+        <property default="192,168,0,2" display="Server IPv4 Address (use commas for separation)" id="module.el.nx_smtp_client.server_address">
+            <constraint display="Must be valid IP address separated by commas">"${module.el.nx_smtp_client.server_address}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="25" display="Server Port" id="module.el.nx_smtp_client.server_port">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${module.el.nx_smtp_client.server_port}")  &amp;&amp; ("${module.el.nx_smtp_client.server_port}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="username" display="Client Name" id="module.el.nx_smtp_client.client_name" />
+        <property default="password" display="Client Password" id="module.el.nx_smtp_client.client_password" />
+        <property default="username@domain.com" display="Client Address" id="module.el.nx_smtp_client.client_address" />
+        <property default="domain.com" display="Client Domain" id="module.el.nx_smtp_client.client_domain" />
+        <property default="module.el.nx_smtp_client.authentication_type.login" display="Authentication Type" id="module.el.nx_smtp_client.authentication_type">
+            <option id="module.el.nx_smtp_client.authentication_type.none" display="None" value="NX_SMTP_CLIENT_AUTH_NONE" />
+            <option id="module.el.nx_smtp_client.authentication_type.login" display="Login" value="NX_SMTP_CLIENT_AUTH_LOGIN" />
+            <option id="module.el.nx_smtp_client.authentication_type.plain" display="Plain" value="NX_SMTP_CLIENT_AUTH_PLAIN" />
+        </property>
+        <header>
+            extern NX_SMTP_CLIENT  ${module.el.nx_smtp_client.name};
+            void ${module.el.nx_smtp_client.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_smtp_client.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_smtp_client.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_smtp_client.name}_err_callback  = ${module.el.nx_smtp_client.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_smtp_client.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_smtp_client.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_smtp_client.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_smtp_client.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_SMTP_CLIENT  ${module.el.nx_smtp_client.name};
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.el.nx_smtp_client.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_smtp_client.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_smtp_client.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_smtp_client.name}_err;
+            /* Create SMTP Client. */
+            ${module.el.nx_smtp_client.name}_err = nx_smtp_client_create(&amp;${module.el.nx_smtp_client.name},
+                                                                         &amp;${module.el.nx_smtp_client.requires.nx.ip::module.el.nx.ip.name},
+                                                                         &amp;${module.el.nx_smtp_client.requires.nx.packet_pool::module.el.nx.packet_pool.name},
+                                                                         "${module.el.nx_smtp_client.client_name}",
+                                                                         "${module.el.nx_smtp_client.client_password}",
+                                                                         "${module.el.nx_smtp_client.client_address}",
+                                                                         "${module.el.nx_smtp_client.client_domain}",
+                                                                         ${module.el.nx_smtp_client.authentication_type},
+                                                                         IP_ADDRESS (${module.el.nx_smtp_client.server_address}),
+                                                                         ${module.el.nx_smtp_client.server_port});
+            if (NX_SUCCESS != ${module.el.nx_smtp_client.name}_err)
+            {
+                 ${module.el.nx_smtp_client.name}_err_callback((void *)&amp;${module.el.nx_smtp_client.name},&amp;${module.el.nx_smtp_client.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

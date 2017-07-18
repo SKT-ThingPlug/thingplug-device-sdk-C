@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nx_src" path="ssp_cfg/framework/el/nx_src_user.h" version="0">
+        <property id="config.el.nx_src.error_checking" display="Error Checking" default="config.el.nx_src.error_checking.enabled" description="When disabled, this option bypasses the basic NetX error checking. This define is typically used after the application is fully debugged.">
+            <option id="config.el.nx_src.error_checking.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.error_checking.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.ip_static_routing" display="IP Static Routing" default="config.el.nx_src.ip_static_routing.disabled" description="When enabled, this option enables IP static routing feature. By default IP static routing feature is not compiled in.">
+            <option id="config.el.nx_src.ip_static_routing.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.ip_static_routing.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property default="" display="Physical Header" id="config.el.nx_src.physical_header" description="This define specifies the size of the physical packet header. The default value is 16 (based on a typical 16-byte Ethernet header).">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.physical_header}".length === 0) || ("${config.el.nx_src.physical_header}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Physical Trailer" id="config.el.nx_src.physical_trailer" description="This define specifies the size of the physical packet trailer and is typically used to reserve storage for things like Ethernet CRCs, etc.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.physical_trailer}".length === 0) || ("${config.el.nx_src.physical_trailer}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.nx_src.arp_defend_by_reply" display="ARP Defend By Reply" default="config.el.nx_src.arp_defend_by_reply.disabled" description="When enabled, ARP reply is sent when address conflict occurs.">
+            <option id="config.el.nx_src.arp_defend_by_reply.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.arp_defend_by_reply.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property id="config.el.nx_src.arp_mac_change_notification" display="ARP Mac Change Notification" default="config.el.nx_src.arp_mac_change_notification.disabled" description="To use the ARP collision hander to check for invalid ARP messages matching existing entries in the table (man in the middle attack), enable this feature.">
+            <option id="config.el.nx_src.arp_mac_change_notification.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.arp_mac_change_notification.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property default="" display="ARP Expiration Rate" id="config.el.nx_src.arp_expiration_rate" description="This define specifies the number of seconds ARP entries remain valid. The default value of 0 disables aging of ARP entries.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.arp_expiration_rate}".length === 0) || ("${config.el.nx_src.arp_expiration_rate}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="ARP Update Rate" id="config.el.nx_src.arp_update_rate" description="This define specifies the number of seconds between ARP retries. The default value is 10, which represents 10 seconds.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.arp_update_rate}".length === 0) || ("${config.el.nx_src.arp_update_rate}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP ACK Timer Rate" id="config.el.nx_src.tcp_ack_timer_rate" description="This define specifies how the number of system ticks (TX_TIMER_TICKS_PER_SECOND) is divided to calculate the timer rate for the TCP delayed ACK processing. The default value is 5, which represents 200ms.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_ack_timer_rate}".length === 0) || ("${config.el.nx_src.tcp_ack_timer_rate}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Fast Timer Rate" id="config.el.nx_src.tcp_fast_timer_rate" description="This define specifies how the number of system ticks (TX_TIMER_TICKS_PER_SECOND) is divided to calculate the fast TCP timer rate. The fast TCP timer is used to drive various TCP timers, including the delayed ACK timer. The default value is 10, which represents 100ms.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_fast_timer_rate}".length === 0) || ("${config.el.nx_src.tcp_fast_timer_rate}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Transmit Timer Rate" id="config.el.nx_src.tcp_transmit_timer_rate" description="This define specifies how the number of system ticks (TX_TIMER_TICKS_PER_SECOND) is divided to calculate the timer rate for the TCP transmit retry processing. The default value is 1, which represents 1 second.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_transmit_timer_rate}".length === 0) || ("${config.el.nx_src.tcp_transmit_timer_rate}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Keepalive Initial" id="config.el.nx_src.tcp_keepalive_initial" description="This define specifies how many seconds of inactivity before the keepalive timer activates. The default value is 7200, which represents 2 hours.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_keepalive_initial}".length === 0) || ("${config.el.nx_src.tcp_keepalive_initial}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Keepalive Retry" id="config.el.nx_src.tcp_keepalive_retry" description="This define specifies how many seconds between retries of the keepalive timer assuming the other side of the connection is not responding. The default value is 75, which represents 75 seconds between retries.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_keepalive_retry}".length === 0) || ("${config.el.nx_src.tcp_keepalive_retry}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="ARP Maximum Retries" id="config.el.nx_src.arp_maximum_retries" description="This define specifies the maximum number of ARP retries made without an ARP response. The default value is 18.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.arp_maximum_retries}".length === 0) || ("${config.el.nx_src.arp_maximum_retries}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="ARP Maximum Queue Depth" id="config.el.nx_src.arp_max_queue_depth" description="This defines specifies the maximum number of packets that can be queued while waiting for an ARP response. The default value is 4.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.arp_max_queue_depth}".length === 0) || ("${config.el.nx_src.arp_max_queue_depth}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.nx_src.arp_auto_arp_entry" display="ARP Auto ARP Entry" default="config.el.nx_src.arp_auto_arp_entry.enabled" description="When disabled, this option disables entering ARP request information in the ARP cache.">
+            <option id="config.el.nx_src.arp_auto_arp_entry.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.arp_auto_arp_entry.disabled" display="Disabled" value="0" />
+        </property>
+        <property default="" display="Maximum Multicast Groups" id="config.el.nx_src.max_multicast_groups" description="This define specifies the maximum number of multicast groups that can be joined. The default value is 7.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.max_multicast_groups}".length === 0) || ("${config.el.nx_src.max_multicast_groups}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="Maximum Listen Requests" id="config.el.nx_src.max_listen_requests" description="This define specifies the maximum number of TCP server listen requests. The default value is 10.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.max_listen_requests}".length === 0) || ("${config.el.nx_src.max_listen_requests}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.nx_src.tcp_keepalive" display="TCP Keepalive" default="config.el.nx_src.tcp_keepalive.disabled" description="When enabled, this option enables the optional TCP keepalive timer.">
+            <option id="config.el.nx_src.tcp_keepalive.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.tcp_keepalive.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property id="config.el.nx_src.tcp_window_scaling" display="TCP Window Scaling" default="config.el.nx_src.tcp_window_scaling.disabled" description="When enabled, this option enables the TCP window scaling feature. (RFC 1323). Default disabled.">
+            <option id="config.el.nx_src.tcp_window_scaling.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.tcp_window_scaling.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property id="config.el.nx_src.tcp_immediate_ack" display="TCP Immediate ACK" default="config.el.nx_src.tcp_immediate_ack.disabled" description="When enabled, this option enables the optional TCP immediate ACK response processing.">
+            <option id="config.el.nx_src.tcp_immediate_ack.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.tcp_immediate_ack.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property default="" display="TCP ACK Every N Packets" id="config.el.nx_src.tcp_ack_every_n_packets" description="The default value is 2: ack every 2 packets.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_ack_every_n_packets}".length === 0) || ("${config.el.nx_src.tcp_ack_every_n_packets}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Maximum Retries" id="config.el.nx_src.tcp_maximum_retries" description="This define specifies how many transmit retires are allowed before the connection is deemed broken. The default value is 10.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_maximum_retries}".length === 0) || ("${config.el.nx_src.tcp_maximum_retries}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Maximum TX Queue" id="config.el.nx_src.tcp_maximum_tx_queue" description="This define specifies the maximum depth of the TCP transmit queue before TCP send requests are suspended or rejected. The default value is 20, which means that a maximum of 20 packets can be in the transmit queue at any given time.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_maximum_tx_queue}".length === 0) || ("${config.el.nx_src.tcp_maximum_tx_queue}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Retry Shift" id="config.el.nx_src.tcp_retry_shift" description="This define specifies how the retransmit timeout period changes between successive retries. If this value is 0, the initial retransmit timeout is the same as subsequent retransmit timeouts. If this value is 1, each successive retransmit is twice as long. The default value is 0.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_retry_shift}".length === 0) || ("${config.el.nx_src.tcp_retry_shift}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Keepalive Retries" id="config.el.nx_src.tcp_keepalive_retries" description="This define specifies how many keepalive retries are allowed before the connection is deemed broken. The default value is 10.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_keepalive_retries}".length === 0) || ("${config.el.nx_src.tcp_keepalive_retries}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.nx_src.driver_deferred_processing" display="Driver Deferred Processing" default="config.el.nx_src.driver_deferred_processing.disabled" description="When enabled, this option enables deferred driver packet handling. This allows the driver to place a raw packet on the IP instance and have the driver's real processing routine called from the NetX internal IP helper thread.">
+            <option id="config.el.nx_src.driver_deferred_processing.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.driver_deferred_processing.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property id="config.el.nx_src.loopback_interface" display="Loopback Interface" default="config.el.nx_src.loopback_interface.enabled" description="When disabled, this option disables NetX support on the 127.0.0.1 loopback interface. 127.0.0.1 loopback interface is enabled by default. Uncomment out the follow code to disable the loopback interface.">
+            <option id="config.el.nx_src.loopback_interface.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.loopback_interface.disabled" display="Disabled" value="0" />
+        </property>
+        <property default="" display="Maximum Physical Interfaces" id="config.el.nx_src.max_physical_interfaces" description="This option defines the number of physical network interfaces to support. Default is one">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.max_physical_interfaces}".length === 0) || ("${config.el.nx_src.max_physical_interfaces}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.nx_src.fragmentation" display="Fragmentation option" default="config.el.nx_src.fragmentation.enabled" description="When disabled, this option disables all IP fragmentation logic.">
+            <option id="config.el.nx_src.fragmentation.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.fragmentation.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.ip_rx_checksum" display="IP RX Checksum" default="config.el.nx_src.ip_rx_checksum.enabled" description="When disabled, this option disables checksum logic on received IP packets. This is useful if the link-layer has reliable checksum or CRC logic.">
+            <option id="config.el.nx_src.ip_rx_checksum.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.ip_rx_checksum.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.ip_tx_checksum" display="IP TX Checksum" default="config.el.nx_src.ip_tx_checksum.enabled" description="When disabled, this option disables checksum logic on transmitted IP packets.">
+            <option id="config.el.nx_src.ip_tx_checksum.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.ip_tx_checksum.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.tcp_rx_checksum" display="TCP RX Checksum" default="config.el.nx_src.tcp_rx_checksum.enabled" description="When disabled, this option disables checksum logic on received TCP packets.">
+            <option id="config.el.nx_src.tcp_rx_checksum.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.tcp_rx_checksum.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.tcp_tx_checksum" display="TCP TX Checksum" default="config.el.nx_src.tcp_tx_checksum.enabled" description="When disabled, this option disables checksum logic on transmitted TCP packets.">
+            <option id="config.el.nx_src.tcp_tx_checksum.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.tcp_tx_checksum.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.udp_rx_checksum" display="Udp RX Checksum" default="config.el.nx_src.udp_rx_checksum.enabled" description="When disabled, this option disables checksum logic on received UDP packets.">
+            <option id="config.el.nx_src.udp_rx_checksum.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.udp_rx_checksum.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.udp_tx_checksum" display="Udp TX Checksum" default="config.el.nx_src.udp_tx_checksum.enabled" description="When disabled, this option disables checksum logic on transmitted UDP packets.">
+            <option id="config.el.nx_src.udp_tx_checksum.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.udp_tx_checksum.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.reset_disconnect" display="Reset Disconnect" default="config.el.nx_src.reset_disconnect.enabled" description="When disabled, this option disables the reset processing during disconnect when the timeout value is specified as NX_NO_WAIT.">
+            <option id="config.el.nx_src.reset_disconnect.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.reset_disconnect.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.rx_size_checking" display="RX Size Checking" default="config.el.nx_src.rx_size_checking.enabled" description="When disabled, this option disables the addition size checking on received packets.">
+            <option id="config.el.nx_src.rx_size_checking.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.rx_size_checking.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.arp_info" display="ARP Info" default="config.el.nx_src.arp_info.enabled" description="When disabled, ARP information gathering is disabled.">
+            <option id="config.el.nx_src.arp_info.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.arp_info.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.ip_info" display="IP Info" default="config.el.nx_src.ip_info.enabled" description="When disabled, IP information gathering is disabled.">
+            <option id="config.el.nx_src.ip_info.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.ip_info.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.icmp_info" display="ICMP Info" default="config.el.nx_src.icmp_info.enabled" description="When disabled, ICMP information gathering is disabled.">
+            <option id="config.el.nx_src.icmp_info.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.icmp_info.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.igmpv" display="IGMPV" default="config.el.nx_src.igmpv.enabled" description="When disabled, NetX employs version 2 of the IGMP protocol. The default is to disable IGMPv2 and use IGMPv1.">
+            <option id="config.el.nx_src.igmpv.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.igmpv.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.igmp_info" display="IGMP Info" default="config.el.nx_src.igmp_info.enabled" description="When disabled, IGMP information gathering is disabled.">
+            <option id="config.el.nx_src.igmp_info.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.igmp_info.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.packet_info" display="Packet Info" default="config.el.nx_src.packet_info.enabled" description="When disabled, packet information gathering is disabled.">
+            <option id="config.el.nx_src.packet_info.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.packet_info.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.rarp_info" display="RARP Info" default="config.el.nx_src.rarp_info.enabled" description="When disabled, RARP information gathering is disabled.">
+            <option id="config.el.nx_src.rarp_info.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.rarp_info.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.tcp_info" display="TCP Info" default="config.el.nx_src.tcp_info.enabled" description="When disabled, TCP information gathering is disabled.">
+            <option id="config.el.nx_src.tcp_info.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.tcp_info.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.udp_info" display="UDP Info" default="config.el.nx_src.udp_info.enabled" description="When disabled, UDP information gathering is disabled.">
+            <option id="config.el.nx_src.udp_info.enabled" display="Enabled (default)" value="1" />
+            <option id="config.el.nx_src.udp_info.disabled" display="Disabled" value="0" />
+        </property>
+        <property id="config.el.nx_src.extended_notify_support" display="Extended Notify Support" default="config.el.nx_src.extended_notify_support.disabled" description="When enabled, extended notify support is enabled. This feature adds additional callback/notify services to NetX API for notifying the host of socket events, such as TCP connection and disconnect completion. The default is that the extended notify feature is enabled.">
+            <option id="config.el.nx_src.extended_notify_support.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.extended_notify_support.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property default="" display="Packet Header Pad Size" id="config.el.nx_src.packet_header_pad_size" description="When set, NX_PACKET structure is padded for alignment purpose. The default is no padding.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.packet_header_pad_size}".length === 0) || ("${config.el.nx_src.packet_header_pad_size}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP MSS Minimum" id="config.el.nx_src.tcp_mss_minimum" description="If set, the incoming SYN packet (connection request) is checked for a minimum acceptable MSS for the host to accept the connection. The default minimum should be based on the host application packet pool payload, socket transmit queue depth and relevant application specific parameters.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_mss_minimum}".length === 0) || ("${config.el.nx_src.tcp_mss_minimum}" &gt; 0)</constraint>
+        </property>
+        <property id="config.el.nx_src.source_address_check" display="Source Address Check" default="config.el.nx_src.source_address_check.disabled" description="When enabled, the source address of incoming packet is checked. The default is disabled.">
+            <option id="config.el.nx_src.source_address_check.enabled" display="Enabled" value="1" />
+            <option id="config.el.nx_src.source_address_check.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property default="" display="ARP Defend Interval" id="config.el.nx_src.arp_defend_interval" description="Define the ARP defend interval. The default value is 10 seconds.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.arp_defend_interval}".length === 0) || ("${config.el.nx_src.arp_defend_interval}" &gt; 0)</constraint>
+        </property>
+        <property default="" display="TCP Maximum Out Of Order Packets" id="config.el.nx_src.tcp_max_out_of_order_packets" description="Define the ARP defend interval. The default value is 10 seconds.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.nx_src.tcp_max_out_of_order_packets}".length === 0) || ("${config.el.nx_src.tcp_max_out_of_order_packets}" &gt; 0)</constraint>
+        </property>
+        <content>
+#if (!${config.el.nx_src.error_checking})
+#define NX_DISABLE_ERROR_CHECKING
+#endif
+#if (${config.el.nx_src.ip_static_routing})
+#define NX_ENABLE_IP_STATIC_ROUTING
+#endif
+#if (${config.el.nx_src.physical_header}+0)
+#define NX_PHYSICAL_HEADER (${config.el.nx_src.physical_header})
+#endif
+#if (${config.el.nx_src.physical_trailer}+0)
+#define NX_PHYSICAL_TRAILER (${config.el.nx_src.physical_trailer})
+#endif
+#if (${config.el.nx_src.arp_defend_by_reply})
+#define NX_ARP_DEFEND_BY_REPLY
+#endif
+#if (${config.el.nx_src.arp_mac_change_notification})
+#define NX_ARP_MAC_CHANGE_NOTIFICATION_ENABLE
+#endif
+#if (${config.el.nx_src.arp_expiration_rate}+0)
+#define NX_ARP_EXPIRATION_RATE (${config.el.nx_src.arp_expiration_rate})
+#endif
+#if (${config.el.nx_src.arp_update_rate}+0)
+#define NX_ARP_UPDATE_RATE (${config.el.nx_src.arp_update_rate})
+#endif
+#if (${config.el.nx_src.tcp_ack_timer_rate}+0)
+#define NX_TCP_ACK_TIMER_RATE (${config.el.nx_src.tcp_ack_timer_rate})
+#endif
+#if (${config.el.nx_src.tcp_fast_timer_rate}+0)
+#define NX_TCP_FAST_TIMER_RATE (${config.el.nx_src.tcp_fast_timer_rate})
+#endif
+#if (${config.el.nx_src.tcp_transmit_timer_rate}+0)
+#define NX_TCP_TRANSMIT_TIMER_RATE (${config.el.nx_src.tcp_transmit_timer_rate})
+#endif
+#if (${config.el.nx_src.tcp_keepalive_initial}+0)
+#define NX_TCP_KEEPALIVE_INITIAL (${config.el.nx_src.tcp_keepalive_initial})
+#endif
+#if (${config.el.nx_src.tcp_keepalive_retry}+0)
+#define NX_TCP_KEEPALIVE_RETRY (${config.el.nx_src.tcp_keepalive_retry})
+#endif
+#if (${config.el.nx_src.arp_maximum_retries}+0)
+#define NX_ARP_MAXIMUM_RETRIES (${config.el.nx_src.arp_maximum_retries})
+#endif
+#if (${config.el.nx_src.arp_max_queue_depth}+0)
+#define NX_ARP_MAX_QUEUE_DEPTH (${config.el.nx_src.arp_max_queue_depth})
+#endif
+#if (!${config.el.nx_src.arp_auto_arp_entry})
+#define NX_ARP_DISABLE_AUTO_ARP_ENTRY
+#endif
+#if (${config.el.nx_src.max_multicast_groups}+0)
+#define NX_MAX_MULTICAST_GROUPS (${config.el.nx_src.max_multicast_groups})
+#endif
+#if (${config.el.nx_src.max_listen_requests}+0)
+#define NX_MAX_LISTEN_REQUESTS (${config.el.nx_src.max_listen_requests})
+#endif
+#if (${config.el.nx_src.tcp_keepalive})
+#define NX_TCP_ENABLE_KEEPALIVE
+#endif
+#if (${config.el.nx_src.tcp_window_scaling})
+#define NX_TCP_ENABLE_WINDOW_SCALING
+#endif
+#if (${config.el.nx_src.tcp_immediate_ack})
+#define NX_TCP_IMMEDIATE_ACK
+#endif
+#if (${config.el.nx_src.tcp_ack_every_n_packets}+0)
+#define NX_TCP_ACK_EVERY_N_PACKETS (${config.el.nx_src.tcp_ack_every_n_packets})
+#endif
+#if (${config.el.nx_src.tcp_maximum_retries}+0)
+#define NX_TCP_MAXIMUM_RETRIES (${config.el.nx_src.tcp_maximum_retries})
+#endif
+#if (${config.el.nx_src.tcp_maximum_tx_queue}+0)
+#define NX_TCP_MAXIMUM_TX_QUEUE (${config.el.nx_src.tcp_maximum_tx_queue})
+#endif
+#if (${config.el.nx_src.tcp_retry_shift}+0)
+#define NX_TCP_RETRY_SHIFT (${config.el.nx_src.tcp_retry_shift})
+#endif
+#if (${config.el.nx_src.tcp_keepalive_retries}+0)
+#define NX_TCP_KEEPALIVE_RETRIES (${config.el.nx_src.tcp_keepalive_retries})
+#endif
+#if (${config.el.nx_src.driver_deferred_processing})
+#define NX_DRIVER_DEFERRED_PROCESSING
+#endif
+#if (!${config.el.nx_src.loopback_interface})
+#define NX_DISABLE_LOOPBACK_INTERFACE
+#endif
+#if (${config.el.nx_src.max_physical_interfaces}+0)
+#define NX_MAX_PHYSICAL_INTERFACES (${config.el.nx_src.max_physical_interfaces})
+#endif
+#if (!${config.el.nx_src.fragmentation})
+#define NX_DISABLE_FRAGMENTATION
+#endif
+#if (!${config.el.nx_src.ip_rx_checksum})
+#define NX_DISABLE_IP_RX_CHECKSUM
+#endif
+#if (!${config.el.nx_src.ip_tx_checksum})
+#define NX_DISABLE_IP_TX_CHECKSUM
+#endif
+#if (!${config.el.nx_src.tcp_rx_checksum})
+#define NX_DISABLE_TCP_RX_CHECKSUM
+#endif
+#if (!${config.el.nx_src.tcp_tx_checksum})
+#define NX_DISABLE_TCP_TX_CHECKSUM
+#endif
+#if (!${config.el.nx_src.udp_rx_checksum})
+#define NX_DISABLE_UDP_RX_CHECKSUM
+#endif
+#if (!${config.el.nx_src.udp_tx_checksum})
+#define NX_DISABLE_UDP_TX_CHECKSUM
+#endif
+#if (!${config.el.nx_src.reset_disconnect})
+#define NX_DISABLE_RESET_DISCONNECT
+#endif
+#if (!${config.el.nx_src.rx_size_checking})
+#define NX_DISABLE_RX_SIZE_CHECKING
+#endif
+#if (!${config.el.nx_src.arp_info})
+#define NX_DISABLE_ARP_INFO
+#endif
+#if (!${config.el.nx_src.ip_info})
+#define NX_DISABLE_IP_INFO
+#endif
+#if (!${config.el.nx_src.icmp_info})
+#define NX_DISABLE_ICMP_INFO
+#endif
+#if (!${config.el.nx_src.igmpv})
+#define NX_DISABLE_IGMPV
+#endif
+#if (!${config.el.nx_src.igmp_info})
+#define NX_DISABLE_IGMP_INFO
+#endif
+#if (!${config.el.nx_src.packet_info})
+#define NX_DISABLE_PACKET_INFO
+#endif
+#if (!${config.el.nx_src.rarp_info})
+#define NX_DISABLE_RARP_INFO
+#endif
+#if (!${config.el.nx_src.tcp_info})
+#define NX_DISABLE_TCP_INFO
+#endif
+#if (!${config.el.nx_src.udp_info})
+#define NX_DISABLE_UDP_INFO
+#endif
+#if (${config.el.nx_src.extended_notify_support})
+#define NX_ENABLE_EXTENDED_NOTIFY_SUPPORT
+#endif
+#if (${config.el.nx_src.packet_header_pad_size}+0)
+#define NX_PACKET_HEADER_PAD
+#define NX_PACKET_HEADER_PAD_SIZE (${config.el.nx_src.packet_header_pad_size})
+#endif
+#if (${config.el.nx_src.tcp_mss_minimum}+0)
+#define NX_TCP_MSS_CHECKING_ENABLED
+#define NX_TCP_MSS_MINIMUM (${config.el.nx_src.tcp_mss_minimum})
+#endif
+#if (${config.el.nx_src.source_address_check})
+#define NX_ENABLE_SOURCE_ADDRESS_CHECK
+#endif
+#if (${config.el.nx_src.arp_defend_interval}+0)
+#define NX_ARP_DEFEND_INTERVAL (${config.el.nx_src.arp_defend_interval})
+#endif
+#if (${config.el.nx_src.tcp_max_out_of_order_packets}+0)
+#define NX_TCP_MAX_OUT_OF_ORDER_PACKETS (${config.el.nx_src.tcp_max_out_of_order_packets})
+#endif
+#define NX_DISABLE_INCLUDE_SOURCE_CODE /* Disable C include C */
+        </content>
+    </config>
+    <module config="config.el.nx_src" id="module.el.nx_src" display="X-Ware|NetX|NetX Source" common="1" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.nx_src.linkage_warning}" === "module.el.nx_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_src.requires.tx_src" interface="interface.framework.tx_src" display="Add ThreadX Source" />
+        <provides interface="interface.el.nx_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.nx_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.nx_src.linkage_warning">
+            <option display="Enabled" id="module.el.nx_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.nx_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

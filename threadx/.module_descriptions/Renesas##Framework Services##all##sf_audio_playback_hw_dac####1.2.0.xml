@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_audio_playback_hw_dac" path="ssp_cfg/framework/sf_audio_playback_hw_dac_cfg.h" version="0">
+        <property default="config.framework.sf_audio_playback_hw_dac.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_audio_playback_hw_dac.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback_hw_dac.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_audio_playback_hw_dac.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_audio_playback_hw_dac.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="config.framework.sf_audio_playback_hw_dac.dmac_support_enable.disabled" display="DMAC Support" id="config.framework.sf_audio_playback_hw_dac.dmac_support_enable">
+            <option display="Enabled" id="config.framework.sf_audio_playback_hw_dac.dmac_support_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_audio_playback_hw_dac.dmac_support_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define SF_AUDIO_PLAYBACK_HW_DAC_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_audio_playback_hw_dac.param_checking_enable}
+#define SF_AUDIO_PLAYBACK_HW_DAC_CFG_DMAC_SUPPORT_ENABLE ${config.framework.sf_audio_playback_hw_dac.dmac_support_enable}
+</content>
+    </config>
+    <module config="config.framework.sf_audio_playback_hw_dac" display="Framework|Audio|${module.framework.sf_audio_playback_hw.name} Audio Playback Hardware Framework Shared on sf_audio_playback_hw_dac" id="module.framework.sf_audio_playback_hw" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_audio_playback_hw.${module.framework.sf_audio_playback_hw.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_audio_playback_hw_dac.requires.transfer" interface="interface.driver.transfer" display="Add Transfer Driver" >
+			<override property="module.driver.transfer.mode" value="module.driver.transfer.mode.mode_normal"/>
+			<override property="module.driver.transfer.size" value="module.driver.transfer.size.size_2_byte"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_fixed"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+			<!-- <override property="module.driver.transfer.p_dest" value="&amp;R_DAC->DADRn[module.driver.dac.channel]"/> -->
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="0"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="0"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+		</requires>
+        <requires id="module.framework.sf_audio_playback_hw_dac.requires.timer" interface="interface.driver.timer" display="Add Timer Driver" >
+			<override property="module.driver.timer.mode" value="module.driver.timer.mode.mode_periodic"/>
+			<override property="module.driver.timer.unit" value="module.driver.timer.unit.unit_frequency_hz"/>
+			<override property="module.driver.timer.p_callback" value="NULL"/>
+			<override property="module.driver.timer.autostart" value="module.driver.timer.autostart.false"/>
+		</requires>
+        <requires id="module.framework.sf_audio_playback_hw_dac.requires.dac" interface="interface.driver.dac" display="Add DAC Driver" >
+			<override property="module.driver.dac.data_format" value="module.driver.dac.data_format.data_format_flush_right"/>
+		</requires>
+        <provides interface="interface.framework.sf_audio_playback_hw" />
+        <provides interface="interface.framework.sf_audio_playback_hw_on_sf_audio_playback_hw_dac" />
+        <provides interface="interface.framework.sf_audio_playback_hw.${module.framework.sf_audio_playback_hw.name}" />
+        <property default="g_sf_audio_playback_hw${_instance}" display="Name" id="module.framework.sf_audio_playback_hw.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback_hw.name}")</constraint>
+        </property>
+        <header>
+            extern const sf_audio_playback_hw_instance_t ${module.framework.sf_audio_playback_hw.name};
+		</header>
+        <includes>#include &quot;sf_audio_playback_hw_dac.h&quot;</includes>
+        <declarations>
+static sf_audio_playback_hw_dac_instance_ctrl_t ${module.framework.sf_audio_playback_hw.name}_ctrl;
+static const sf_audio_playback_hw_dac_cfg_t ${module.framework.sf_audio_playback_hw.name}_cfg_extend =
+{
+    .p_lower_lvl_timer = &amp;${module.framework.sf_audio_playback_hw_dac.requires.timer::module.driver.timer.name},
+    .p_lower_lvl_dac = &amp;${module.framework.sf_audio_playback_hw_dac.requires.dac::module.driver.dac.name},
+    .p_lower_lvl_transfer = &amp;${module.framework.sf_audio_playback_hw_dac.requires.transfer::module.driver.transfer.name},
+};
+static const sf_audio_playback_hw_cfg_t ${module.framework.sf_audio_playback_hw.name}_cfg =
+{
+    .p_extend = &amp;${module.framework.sf_audio_playback_hw.name}_cfg_extend
+};
+const sf_audio_playback_hw_instance_t ${module.framework.sf_audio_playback_hw.name} = 
+{
+    .p_api = &amp;g_sf_audio_playback_hw_on_sf_audio_playback_hw_dac,
+	.p_ctrl = &amp;${module.framework.sf_audio_playback_hw.name}_ctrl,
+	.p_cfg = &amp;${module.framework.sf_audio_playback_hw.name}_cfg,
+};
+</declarations>
+    </module>
+</synergyModuleDescription>

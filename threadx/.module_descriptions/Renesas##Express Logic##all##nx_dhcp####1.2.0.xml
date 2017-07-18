@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nx_dhcp_client" path="ssp_cfg/framework/el/nx_dhcp_client_cfg.h" version="0">
+        <property default="3" display="Internal thread priority" id="config.el.nx_dhcp_client.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.priority}")  &amp;&amp; ("${config.el.nx_dhcp_client.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2048" display="Internal thread stack size (bytes)" id="config.el.nx_dhcp_client.thread_stack_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.thread_stack_size}")  &amp;&amp; (("${config.el.nx_dhcp_client.thread_stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <property default="1" display="Timeout between DHCP messages processed (seconds)" id="config.el.nx_dhcp_client.time_interval">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.time_interval}")  &amp;&amp; ("${config.el.nx_dhcp_client.time_interval}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1" display="Packet allocate timeout (seconds)" id="config.el.nx_dhcp_client.packet_allocate_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.packet_allocate_timeout}")  &amp;&amp; ("${config.el.nx_dhcp_client.packet_allocate_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nx_dhcp_client.bootp.disable" display="Use BOOTP" id="config.el.nx_dhcp_client.bootp">
+            <option display="Disable" id="config.el.nx_dhcp_client.bootp.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_dhcp_client.bootp.enable" value="1"/>
+        </property>
+        <property default="config.el.nx_dhcp_client.send_arp_probe.disable" display="Send ARP probe" id="config.el.nx_dhcp_client.send_arp_probe">
+            <option display="Disable" id="config.el.nx_dhcp_client.send_arp_probe.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_dhcp_client.send_arp_probe.enable" value="1"/>
+        </property>
+        <property default="10" display="Packet ARP probe timeout (seconds)" id="config.el.nx_dhcp_client.arp_probe_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.arp_probe_timeout}")  &amp;&amp; ("${config.el.nx_dhcp_client.arp_probe_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="64" display="Maximum retransmission timeout (seconds)" id="config.el.nx_dhcp_client.max_retrans_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.max_retrans_timeout}")  &amp;&amp; ("${config.el.nx_dhcp_client.max_retrans_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="60" display="Minimum renew timeout (seconds)" id="config.el.nx_dhcp_client.min_renew_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.min_renew_timeout}")  &amp;&amp; ("${config.el.nx_dhcp_client.min_renew_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="4" display="Minimum retransmission timeout (seconds)" id="config.el.nx_dhcp_client.min_retrans_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.min_retrans_timeout}")  &amp;&amp; ("${config.el.nx_dhcp_client.min_retrans_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="592" display="Client packet payload size (bytes)" id="config.el.nx_dhcp_client.packet_payload">
+            <constraint display="Value must be a non-negative integer (Packet payload size = Buffer size(548) + NX_IP_HEADER size + NX_UDP_HEADER size + NX_PHYSICAL_HEADER size)">
+                testInteger("${config.el.nx_dhcp_client.packet_payload}")  &amp;&amp; ("${config.el.nx_dhcp_client.packet_payload}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="5" display="Number of packets in internal packet pool" id="config.el.nx_dhcp_client.packet_pool_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_dhcp_client.packet_pool_size}")  &amp;&amp; ("${config.el.nx_dhcp_client.packet_pool_size}" &gt;= 0)  &amp;&amp; ("${config.el.nx_dhcp_client.packet_pool_size}" &lt;= 10)
+            </constraint>
+        </property>
+        <property default="0xFFFFFFFF" display="Server message check interval (unit = processing interval). Disabled = 0xFFFFFFFF" id="config.el.nx_dhcp_client.timeout_decrements">
+            <constraint display="Value must be a non-negative integer (Default - disabled)">
+                testInteger("${config.el.nx_dhcp_client.timeout_decrements}")  &amp;&amp; ("${config.el.nx_dhcp_client.timeout_decrements}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nx_dhcp_client.client_restore_state.disable" display="Persistent client state" id="config.el.nx_dhcp_client.client_restore_state">
+            <option display="Disable" id="config.el.nx_dhcp_client.client_restore_state.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_dhcp_client.client_restore_state.enable" value="1"/>
+        </property>
+        <property default="config.el.nx_dhcp_client.clear_queue.disable" display="Clear queue packets support" id="config.el.nx_dhcp_client.clear_queue">
+            <option display="Disable" id="config.el.nx_dhcp_client.clear_queue.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_dhcp_client.clear_queue.enable" value="1"/>
+        </property>
+        <property default="config.el.nx_dhcp_client.user_create_packet_pool.disable" display="Use application packet pool" id="config.el.nx_dhcp_client.user_create_packet_pool">
+            <option display="Disable" id="config.el.nx_dhcp_client.user_create_packet_pool.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_dhcp_client.user_create_packet_pool.enable" value="1"/>
+        </property>        
+        <property default="config.el.nx_dhcp_client.send_max_dhcp_message_option.disable" display="Maximum message size support" id="config.el.nx_dhcp_client.send_max_dhcp_message_option">
+            <option display="Disable" id="config.el.nx_dhcp_client.send_max_dhcp_message_option.disable" value="0"/>
+            <option display="Enable" id="config.el.nx_dhcp_client.send_max_dhcp_message_option.enable" value="1"/>
+        </property>
+        <property default="312" display="DHCP options buffer size (bytes)" id="config.el.nx_dhcp_client.buffer_size">
+            <constraint display="Value must be a non-negative integer"> 
+                testInteger("${config.el.nx_dhcp_client.buffer_size}")  &amp;&amp; ("${config.el.nx_dhcp_client.buffer_size}" &gt;= 0)
+            </constraint>
+        </property>        
+        <content>
+            #if (${config.el.nx_dhcp_client.bootp})
+            #define NX_DHCP_ENABLE_BOOTP
+            #endif
+            #if (${config.el.nx_dhcp_client.send_arp_probe})
+            #define NX_DHCP_CLIENT_SEND_ARP_PROBE
+            #endif
+            #if ${config.el.nx_dhcp_client.client_restore_state}
+            #define NX_DHCP_CLIENT_RESTORE_STATE
+            #endif
+            #if (${config.el.nx_dhcp_client.clear_queue})
+            #define NX_DHCP_CLIENT_CLEAR_QUEUE
+            #endif
+            #if (${config.el.nx_dhcp_client.user_create_packet_pool})
+            #define NX_DHCP_CLIENT_USER_CREATE_PACKET_POOL
+            #endif
+            #if (${config.el.nx_dhcp_client.send_max_dhcp_message_option})
+            #define NX_DHCP_CLIENT_SEND_MAX_DHCP_MESSAGE_OPTION
+            #endif
+            #ifdef  NX_DHCP_CLIENT_SEND_ARP_PROBE
+            #define NX_DHCP_ARP_PROBE_TIMEOUT                      (${config.el.nx_dhcp_client.arp_probe_timeout} * NX_IP_PERIODIC_RATE)
+            #endif
+            #define NX_DHCP_THREAD_PRIORITY                        ${config.el.nx_dhcp_client.priority}
+            #define NX_DHCP_THREAD_STACK_SIZE                      ${config.el.nx_dhcp_client.thread_stack_size}
+            #define NX_DHCP_TIME_INTERVAL                          (${config.el.nx_dhcp_client.time_interval} * NX_IP_PERIODIC_RATE)
+            #define NX_PACKET_ALLOCATE_TIMEOUT                     (${config.el.nx_dhcp_client.packet_allocate_timeout} * NX_DHCP_TIME_INTERVAL)
+            #define NX_DHCP_MAX_RETRANS_TIMEOUT                    (${config.el.nx_dhcp_client.max_retrans_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_DHCP_MIN_RENEW_TIMEOUT                      (${config.el.nx_dhcp_client.min_renew_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_DHCP_MIN_RETRANS_TIMEOUT                    (${config.el.nx_dhcp_client.min_retrans_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_DHCP_PACKET_PAYLOAD                         ${config.el.nx_dhcp_client.packet_payload}
+            #define NX_DHCP_PACKET_POOL_SIZE                       (${config.el.nx_dhcp_client.packet_pool_size} * NX_DHCP_PACKET_PAYLOAD)
+            #define NX_DHCP_TIMEOUT_DECREMENTS                     (${config.el.nx_dhcp_client.timeout_decrements} * NX_DHCP_TIME_INTERVAL)
+            #define NX_DHCP_OPTIONS_BUFFER_SIZE                    ${config.el.nx_dhcp_client.buffer_size}
+        </content>
+    </config>
+    <module config="config.el.nx_dhcp_client" display="X-Ware|NetX|Protocols|${module.el.nx_dhcp_client.name} NetX DHCP Client" id="module.el.nx_dhcp_client" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_dhcp_client.${module.el.nx_dhcp_client.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_dhcp_client.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.address" value="0,0,0,0" />
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.udp" value="module.el.nx.ip.udp.enable" />
+        </requires>
+        <requires id="module.el.nx_dhcp_client.requires.nx_dhcp_common" interface="interface.el.nx_dhcp_common" display="Add DHCP Common" />
+
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_dhcp_client" />
+        <provides interface="interface.el.nx_dhcp_client.${module.el.nx_dhcp_client.name}" />
+        <!-- NetX only -->
+        <provides interface="interface.el.nx_original_dhcp_client" />
+        <provides interface="interface.el.nx_original_dhcp_client.${module.el.nx_dhcp_client.name}" />
+        
+        <property default="g_dhcp_client${_instance}" display="Name" id="module.el.nx_dhcp_client.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_dhcp_client.name}")</constraint>
+        </property>
+        <header>
+            extern NX_DHCP  ${module.el.nx_dhcp_client.name};
+            void ${module.el.nx_dhcp_client.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_dhcp.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_dhcp_client.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_dhcp_client.name}_err_callback  = ${module.el.nx_dhcp_client.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_dhcp_client.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_dhcp_client.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_dhcp_client.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_dhcp_client.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_DHCP  ${module.el.nx_dhcp_client.name};
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.nx_dhcp_client.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+               **********************************************************************************************************************/
+            void ${module.el.nx_dhcp_client.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_dhcp_client.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_dhcp_client.name}_err;
+            /* Create DHCP client. */
+            ${module.el.nx_dhcp_client.name}_err = nx_dhcp_create(&amp;${module.el.nx_dhcp_client.name}, &amp;${module.el.nx_dhcp_client.requires.nx.ip::module.el.nx.ip.name}, "${module.el.nx_dhcp_client.name} DHCP");
+            if (NX_SUCCESS != ${module.el.nx_dhcp_client.name}_err)
+            {
+                ${module.el.nx_dhcp_client.name}_err_callback((void *)&amp;${module.el.nx_dhcp_client.name},&amp;${module.el.nx_dhcp_client.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

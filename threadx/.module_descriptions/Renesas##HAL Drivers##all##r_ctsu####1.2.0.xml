@@ -1,0 +1,515 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.ctsu" path="ssp_cfg/driver/r_ctsu_cfg.h" version="0">
+		<property default="config.driver.ctsu.param_checking_enable.bsp" display="Parameter Checking Enable" id="config.driver.ctsu.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.ctsu.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.ctsu.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.ctsu.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<property default="config.driver.ctsu.using_auto_tune.enabled" display="Offset Adjustment" id="config.driver.ctsu.using_auto_tune">
+			<option display="Enabled" id="config.driver.ctsu.using_auto_tune.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.ctsu.using_auto_tune.disabled" value="(0)"/>
+		</property>
+		<property default="config.driver.ctsu.using_drift_comp.enabled" display="Drift Compensation" id="config.driver.ctsu.using_drift_comp">
+			<option display="Enabled" id="config.driver.ctsu.using_drift_comp.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.ctsu.using_drift_comp.disabled" value="(0)"/>
+		</property>
+        <property default="config.driver.ctsu.drift_comp_method.option0" display="Drift Compensation Method (Valid only if Drift Compensation is enabled above)" id="config.driver.ctsu.drift_comp_method">
+			<!-- <option display="Basic" id="config.driver.ctsu.drift_comp_method.option0" value="DRIFT_COMP_BASIC"/> -->
+			<option display="Alternate method 1" id="config.driver.ctsu.drift_comp_method.option1" value="DRIFT_COMP_ALT_1"/>
+			<!-- <option display="Alternate method 2" id="config.driver.ctsu.drift_comp_method.option2" value="DRIFT_COMP_ALT_2"/> -->
+			<!-- <option display="Alternate method 3" id="config.driver.ctsu.drift_comp_method.option3" value="DRIFT_COMP_ALT_3"/> -->
+		</property>
+		<property default="500" display="Steady state drift compensation rate, drift compensation will be applied per n scans" id="config.driver.ctsu.dc_timing_steady_state_rate">
+            <constraint display="Value must be greater than or equal to 2">
+                testInteger("${config.driver.ctsu.dc_timing_steady_state_rate}") &amp;&amp; ("${config.driver.ctsu.dc_timing_steady_state_rate}" &gt; 1)
+            </constraint>
+		</property>
+		<property default="5" display="Startup drift compensation rate (Should be less than the steady state drift compensation rate)" id="config.driver.ctsu.dc_timing_startup_rate">
+            <constraint display="Startup drift compensation rate must be greater than 0">
+                testInteger("${config.driver.ctsu.dc_timing_startup_rate}") &amp;&amp; ("${config.driver.ctsu.dc_timing_startup_rate}" &gt; 0)
+            </constraint>
+            <!-- <constraint display="Startup drift compensation rate must be greater than 0">
+                testInteger("${config.driver.ctsu.dc_timing_startup_rate}") &amp;&amp; ("${config.driver.ctsu.dc_timing_startup_rate}" &gt; 0) &amp;&amp; ("${config.driver.ctsu.dc_timing_steady_state_rate}" &gt; "${config.driver.ctsu.dc_timing_startup_rate}")
+            </constraint> -->
+		</property>
+		<property default="500" display="Channel release compensation rate (Should be less than the steady state drift compensation rate)" id="config.driver.ctsu.dc_timing_channel_release_rate">
+            <constraint display="Channel release compensation rate must be greater than 0">
+                testInteger("${config.driver.ctsu.dc_timing_channel_release_rate}") &amp;&amp; ("${config.driver.ctsu.dc_timing_channel_release_rate}" &gt; 0)
+            </constraint>
+            <!--  <constraint display="Channel release compensation rate must be greater than 0">
+                testInteger("${config.driver.ctsu.dc_timing_channel_release_rate}") &amp;&amp; ("${config.driver.ctsu.dc_timing_channel_release_rate}" &gt; 0) &amp;&amp; ("${config.driver.ctsu.dc_timing_steady_state_rate}" &gt; "${config.driver.ctsu.dc_timing_channel_release_rate}")
+            </constraint> -->
+        </property>
+        <property default="1" display="Default filter depth (used in sensor count filter provided by driver)" id="config.driver.ctsu.default_filter_depth">
+            <constraint display="Value should be between 0 and 8 inclusive, (0 means no filtering)">
+                testInteger("${config.driver.ctsu.default_filter_depth}") &amp;&amp; ("${config.driver.ctsu.default_filter_depth}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="800" display="Runtime rate of tuning of sensor values (if drift compensation is used this value is overridden to be twice the rate of the steady state drift compensation)" id="config.driver.ctsu.at_timing">
+            <constraint display="Value must be between 10 and 1000 inclusive">
+                testInteger("${config.driver.ctsu.at_timing}") &amp;&amp; ("${config.driver.ctsu.at_timing}" &gt; 10) &amp;&amp; ("${config.driver.ctsu.at_timing}" &lt; 1000)
+            </constraint>
+        </property>
+		<property default="config.driver.ctsu.using_multi_touch.enabled" display="Perform auto-tune and drift compensation only when all channels are untouched" id="config.driver.ctsu.using_multi_touch">
+			<option display="True" id="config.driver.ctsu.using_multi_touch.enabled" value="(1)"/>
+			<option display="False" id="config.driver.ctsu.using_multi_touch.disabled" value="(0)"/>
+		</property>
+		<property default="1" display="Max. active channels" id="config.driver.ctsu.max_active_channels">
+			<constraint display="Value must be greater than or equal to 1">
+				"${config.driver.ctsu.max_active_channels}" &gt; 0
+			</constraint>
+			<constraint display="Value must be less than than or equal to 324">
+				"${config.driver.ctsu.max_active_channels}" &lt; 325
+			</constraint>
+		</property>
+		<content> /**
+			 * Specify whether to include code for API parameter checking. Valid settings include:
+			 *    - 1 : Includes parameter checking
+			 *    - 0 : Compiles out parameter checking
+			 */
+			#define CTSU_CFG_PARAM_CHECKING_ENABLE			(${config.driver.ctsu.param_checking_enable})
+
+			/**
+			 * Define the maximum active channels that the user expects to be active in any
+			 *  configuration. */
+			#define CTSU_CFG_MAX_ACTIVE_CHANNEL_COMBOS		(${config.driver.ctsu.max_active_channels})
+
+			/**
+			 * Define the window size of the l-point running average filter.
+			 * Filter output = ((pow(2, CTSU_CFG_FILTER_DEPTH)-1)*previous output + input)/ pow(2, CTSU_CFG_FILTER_DEPTH);
+             * This is used in the default filter function used in ctsu_functions_t
+             * If the filter depth larger the initial auto tuning (if enabled) may take longer
+			 * */
+			#define CTSU_CFG_FILTER_DEPTH					(${config.driver.ctsu.default_filter_depth})
+
+			/**
+			 * Enable/Disable Auto-tuning.
+			 * Auto-tuning ensures that the sensor count is approx. equal to the reference
+			 * count output by the CTSU when the channel is not touched. This is helpful
+			 * for maximizing sensitivity, greatly reducing the conventional constraints on
+			 * PCB layout, limits to overlay thicknesses, materials and negating the need
+			 * for calibration during manufacture process. */
+			#define CFG_AUTO_TUNE							(${config.driver.ctsu.using_auto_tune})
+
+			/**
+			 * Perform auto-tune and drift compensation only when all channels are untouched
+			 * This is a feature where auto-tuning and/or drift-compensation are executed
+			 * only when no channels are being touched.
+			 * */
+			#define CTSU_DRIFTCOMP_WHEN_ALL_INACTIVE						(${config.driver.ctsu.using_multi_touch})
+
+			/**
+			 * Define if drift compensation is to be used or not. Drift compensation will
+			 * adjust sensor baseline. This is useful when the sensor value is drifting
+			 * due to temperature, humidity, dust/dirt accumulation, etc. */
+			#define CFG_DRIFT_COMPENSATION					(${config.driver.ctsu.using_drift_comp})
+
+			#if (CFG_DRIFT_COMPENSATION &gt; 0)
+			/**
+			 * Define the number of scans to take into account when calculating the initial
+			 * sensor baseline value. */
+			#define CALIB_SCAN_COUNT						(4)
+			/** Drift compensation occurs every N times. N is defined below. */
+			#define DC_TIMING_STEADY_STATE                              (${config.driver.ctsu.dc_timing_steady_state_rate})
+			#define DC_TIMING_INITIAL_RATE                              (${config.driver.ctsu.dc_timing_startup_rate})
+			#define DC_TIMING_BUTTON_RELEASE_RATE                       (${config.driver.ctsu.dc_timing_channel_release_rate})
+
+			/* Methods available for drift compensation*/
+			#define DRIFT_COMP_BASIC	(0)
+			#define DRIFT_COMP_ALT_1	(1)
+			#define DRIFT_COMP_ALT_2	(2)
+			#define DRIFT_COMP_ALT_3	(3)
+			#define DRIFT_COMP_METHOD	(${config.driver.ctsu.drift_comp_method})
+
+			#endif//(CFG_DRIFT_COMPENSATION &gt; 0)
+
+            #if (CFG_AUTO_TUNE > 0)
+                /** Auto-tuning is run every N scans. N is defined using AT_TIMING
+                 *  Auto-tuning should occur more frequently than drift compensation
+                 *  If drift compensation is used the auto-tuning rate is set to double the steady state drift compensation rate
+                 */
+                #if defined(DC_TIMING_STEADY_STATE)
+                #define AT_TIMING                               (DC_TIMING_STEADY_STATE >> 1)
+                #else
+                #define AT_TIMING                               (${config.driver.ctsu.at_timing})
+                #endif
+                /** Define the amount of deviation with respect to the threshold at which run-time offset tuning should kick in. */
+                #define AT_THRESHOLD_PERCENT                    (2)
+                /**
+                 * Initial auto-tuning can take a good amount of time. User may abort if it
+                 * extends beyond the below defined number of scans. */
+                #if defined(CTSU_CFG_MAX_ACTIVE_CHANNEL_COMBOS)
+                    #define AT_MAX_DURATION                         (CTSU_CFG_MAX_ACTIVE_CHANNEL_COMBOS * 50 * CTSU_CFG_FILTER_DEPTH)
+                #else
+                    #error "User should device how long initial auto-tuning is allowed to operate. "
+                #endif
+			#endif//(CFG_AUTO_TUNE > 0)
+
+			#if !defined(CTSU_CFG_MAX_ACTIVE_CHANNEL_COMBOS)
+			#error "User should allow dynamic memory usage or define the maximum active channels intended for use."
+			#endif
+
+			/**
+			 * Define if DTC block transfers should be used for moving data instead of CPU ISR
+			 *
+			 * 	0 - Not used
+			 * 	1 - Use DTC block transfers in long address mode (Recommended)
+			 * */
+			#define USING_DTC_FOR_CTSU	 (1)
+
+			#if (CFG_AUTO_TUNE &lt;= 0)
+			#warning "Initial and Run-time auto-calibration/tuning has been disabled. This is not recommended."
+			#endif
+
+			#if (CFG_DRIFT_COMPENSATION &lt;=0)
+			#warning "Initial baseline setup and Run-time drift compensation has been disabled. This is not recommended."
+			#endif
+		</content>
+	</config>
+	<module config="config.driver.ctsu" display="Driver|Input|${module.driver.ctsu.name} CTSU Driver on r_ctsu" id="module.driver.touch_on_ctsu" version="1">
+        <!-- <constraint display="Channel release compensation rate must be less than or equal to the steady state drift compensation rate">
+            ("${config.driver.ctsu.dc_timing_steady_state_rate}" &gt;= "${config.driver.ctsu.dc_timing_channel_release_rate}")
+        </constraint> -->
+        <!-- <constraint display="Startup drift compensation rate must be less than or equal to the steady state drift compensation rate">
+            ("${config.driver.ctsu.dc_timing_steady_state_rate}" &gt;= "${config.driver.ctsu.dc_timing_startup_rate}")
+        </constraint> -->
+		<constraint display="Unique name required for each instance">
+			"${interface.driver.ctsu.${module.driver.ctsu.name}}" === "1"
+		</constraint>
+		<constraint display="Requires CTSU Interrupt (Write) enabled">
+			"${module.driver.ctsu.write_ipl}" != "board.icu.common.irq.disabled"
+		</constraint>
+		<constraint display="Requires CTSU Interrupt (Read) enabled">
+			"${module.driver.ctsu.read_ipl}" != "board.icu.common.irq.disabled"
+		</constraint>
+		<constraint display="Requires CTSU Interrupt (End) enabled">
+			"${module.driver.ctsu.end_ipl}" != "board.icu.common.irq.disabled"
+		</constraint>
+        <requires id="module.driver.touch_on_ctsu.requires.transfer" interface="interface.driver.transfer_on_dtc" display="Add DTC Driver" >
+			<override property="module.driver.transfer.size" value= "module.driver.transfer.size.size_2_byte"/>
+			<override property="module.driver.transfer.mode" value= "module.driver.transfer.mode.mode_block"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+			<override property="module.driver.transfer.p_dest" value="NULL"/>
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="1"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="1"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+			<override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_ctsu_end"/>
+		</requires>
+        <provides interface="interface.driver.ctsu" />
+        <provides interface="interface.driver.ctsu_on_ctsu" />
+        <provides interface="interface.driver.ctsu.${module.driver.ctsu.name}" />		
+		<property default="g_ctsu${_instance}" display="Name" id="module.driver.ctsu.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.name}")</constraint>
+		</property>
+        <property default="g_ctsu_config" display="CTSU configuration used" id="module.driver.ctsu.uses_config">
+			<constraint display="Name must be a valid C symbol"> testSymbol("${module.driver.ctsu.uses_config}")</constraint>
+		</property>
+		<property default="NULL" display="Callback" id="module.driver.ctsu.p_callback">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.p_callback}")</constraint>
+        </property>
+         <property default="module.driver.ctsu.using_processing.default" display="Data Processing Option" id="module.driver.ctsu.using_processing">
+			<option display="Default Processing (Recommended)" id="module.driver.ctsu.using_processing.default" value="CTSU_PROCESS_OPTION_DEFAULT_SETTING"/>
+			<option display="No Processing (Tuning Only)" id="module.driver.ctsu.using_processing.none" value="CTSU_PROCESS_OPTION_NONE"/>
+		</property>
+        <property default="board.icu.common.irq.disabled" display="Write Interrupt Priority" id="module.driver.ctsu.write_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Read Interrupt Priority" id="module.driver.ctsu.read_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="End Interrupt Priority" id="module.driver.ctsu.end_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+
+		<header>
+
+		/** Pointer to a tuned CTSU configuration */
+		extern ctsu_hw_cfg_t ${module.driver.ctsu.uses_config};
+
+		/** Pointer to CTSU API */
+		extern const ctsu_api_t * ${module.driver.ctsu.name}_api;
+
+		/** Pointer to CTSU configuration */
+		extern ctsu_cfg_t ${module.driver.ctsu.name}_cfg_on_ctsu;
+
+		/** Pointer to control handle */
+		extern ctsu_instance_ctrl_t     ${module.driver.ctsu.name}_ctrl;
+
+        /**  CTSU instance */
+        extern ctsu_instance_t ${module.driver.ctsu.name};
+
+        /** Pointer to Advanced Functions*/
+		extern ctsu_functions_t ${module.driver.ctsu.name}_functions;
+
+#ifndef ${module.driver.ctsu.p_callback}
+void ${module.driver.ctsu.p_callback}(ctsu_callback_args_t * p_args);
+#endif
+		</header>
+		<includes>
+		/* Include the headers for the r_touch API use */
+		#include &quot;r_ctsu_api.h&quot;
+		#include &quot;r_ctsu.h&quot;
+        #include &quot;r_dtc.h&quot;
+
+		</includes>
+		<declarations>
+#if ${module.driver.ctsu.write_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.ctsu.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CTSU)
+SSP_VECTOR_DEFINE(ctsu_write_isr, CTSU, WRITE);
+#endif
+#endif
+#if ${module.driver.ctsu.read_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.ctsu.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CTSU)
+SSP_VECTOR_DEFINE(ctsu_read_isr, CTSU, READ);
+#endif
+#endif
+#if ${module.driver.ctsu.end_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.ctsu.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CTSU)
+SSP_VECTOR_DEFINE(ctsu_end_isr, CTSU, END);
+#endif
+#endif
+
+        /** DTC Structures that will be used by the CTSU */
+
+        extern const transfer_instance_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer;
+        extern const transfer_instance_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer;
+
+        dtc_instance_ctrl_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer_ctrl;
+        transfer_info_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer_info[3] =
+        {
+        [0] = {
+                .dest_addr_mode = TRANSFER_ADDR_MODE_INCREMENTED,
+                .repeat_area = TRANSFER_REPEAT_AREA_DESTINATION,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_END,
+                .src_addr_mode = TRANSFER_ADDR_MODE_INCREMENTED,
+                .size = TRANSFER_SIZE_2_BYTE,
+                .mode = TRANSFER_MODE_BLOCK,
+                .p_src = (void *) NULL,
+                .num_blocks = 65535,
+                .length = 3,
+        },
+        [1] = {/* Reloads p_src in the 0th block */
+                .dest_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_END,
+                .src_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .size = TRANSFER_SIZE_4_BYTE,
+                .mode = TRANSFER_MODE_REPEAT,
+                .p_dest = (void *) &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer_info[0].p_src,
+                .length = 1,
+        },
+        [2] = {/* Reloads num_blocks in the 0th block */
+                .dest_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_DISABLED,
+                .src_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .size = TRANSFER_SIZE_2_BYTE,
+                .mode = TRANSFER_MODE_REPEAT,
+                .p_dest = (void *) &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer_info[0].num_blocks,
+                .length = 1,
+        },
+};
+const transfer_cfg_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer_cfg =
+{
+        .p_info =   &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer_info[0],
+        .activation_source = ELC_EVENT_CTSU_WRITE,
+        .auto_enable = true,
+        .p_callback = NULL,
+        .p_context = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer,
+};
+/* Instance structure to use this module. */
+const transfer_instance_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer =
+{
+        .p_ctrl = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer_ctrl,
+        .p_cfg = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer_cfg,
+        .p_api = &amp;g_transfer_on_dtc
+};
+/******************************************************/
+/* CTSUWR Transfer element to use for Synergy driver  */
+/******************************************************/
+dtc_instance_ctrl_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer_ctrl;
+transfer_info_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer_info[3] =
+{
+        [0] = {
+                .dest_addr_mode = TRANSFER_ADDR_MODE_INCREMENTED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_END,
+                .src_addr_mode = TRANSFER_ADDR_MODE_INCREMENTED,
+                .size = TRANSFER_SIZE_2_BYTE,
+                .mode = TRANSFER_MODE_BLOCK,
+                .p_dest = (void *) NULL,
+                .num_blocks = 65535,
+                .length = 2,
+        },
+        [1] = {/* Reloads p_src in the 0th block */
+                .dest_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_END,
+                .src_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .size = TRANSFER_SIZE_4_BYTE,
+                .mode = TRANSFER_MODE_REPEAT,
+                .p_dest = (void *) &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer_info[0].p_dest,
+                .length = 1,
+        },
+        [2] = {/* Reloads num_blocks in the 0th block */
+                .dest_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_DISABLED,
+                .src_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .size = TRANSFER_SIZE_2_BYTE,
+                .mode = TRANSFER_MODE_REPEAT,
+                .p_dest = (void *) &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer_info[0].num_blocks,
+                .length = 1,
+        },
+};
+const transfer_cfg_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer_cfg =
+{
+        .p_info = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer_info[0],
+        .activation_source = ELC_EVENT_CTSU_READ,
+        .auto_enable = true,
+        .p_callback = NULL,
+        .p_context = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer,
+};
+/* Instance structure to use this module. */
+const transfer_instance_t ${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer =
+{
+        .p_ctrl = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer_ctrl,
+        .p_cfg = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer_cfg,
+        .p_api = &amp;g_transfer_on_dtc
+};
+
+
+
+
+
+
+		/* Data functions to use for advanced usage.*/
+		ctsu_functions_t ${module.driver.ctsu.name}_functions = { 0 };
+
+		ctsu_instance_ctrl_t    ${module.driver.ctsu.name}_ctrl;
+		ctsu_cfg_t     ${module.driver.ctsu.name}_cfg =
+		{
+            .p_lower_lvl_transfer_read = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsurd_block_xfer,
+            .p_lower_lvl_transfer_write = &amp;${module.driver.touch_on_ctsu.requires.transfer::module.driver.transfer.name}_ctsuwr_block_xfer,
+			.p_ctsu_hw_cfg    = 	&amp;${module.driver.ctsu.uses_config},
+			.p_ctsu_functions = 	&amp;${module.driver.ctsu.name}_functions,
+			.p_callback       =		${module.driver.ctsu.p_callback},
+            .p_context        =     &amp;${module.driver.ctsu.name}_ctrl,
+			.ctsu_soft_option = 	${module.driver.ctsu.using_processing},
+			.ctsu_close_option = 	CTSU_CLOSE_OPTION_RESET_SFRS,
+            .write_ipl         = ${module.driver.ctsu.write_ipl},
+            .read_ipl          = ${module.driver.ctsu.read_ipl},
+            .end_ipl           = ${module.driver.ctsu.end_ipl},
+		};
+
+        ctsu_instance_t ${module.driver.ctsu.name} =
+        {
+            .p_ctrl =   &amp;${module.driver.ctsu.name}_ctrl,
+            .p_cfg  =   &amp;${module.driver.ctsu.name}_cfg,
+            .p_api  =   &amp;g_ctsu_on_ctsu,
+        };
+		const ctsu_api_t * ${module.driver.ctsu.name}_api = &amp;g_ctsu_on_ctsu;
+
+		</declarations>
+		<functions>
+		</functions>
+		<init>
+
+        </init>
+	</module>
+    <!-- CTSU Driver XML END here-->
+   <!-- CTSU Tuning XML START here-->
+   <config id="config.driver.ctsu_tuning" path="ssp_cfg/driver/r_ctsu_tuning_cfg.h" version="0">
+
+    <property default="module.driver.ctsu_tuning.button.false" display="Tuning a board with Buttons" id="module.driver.ctsu_tuning.button">
+        <option display="False" id="module.driver.ctsu_tuning.button.false" value="0"/>
+        <option display="True" id="module.driver.ctsu_tuning.button.true" value="1"/>
+    </property>
+    <property default="module.driver.ctsu_tuning.wheel_slider.false" display="Tuning a board with a Slider or Wheel" id="module.driver.ctsu_tuning.wheel_slider">
+        <option display="False" id="module.driver.ctsu_tuning.wheel_slider.false" value="0"/>
+        <option display="True" id="module.driver.ctsu_tuning.wheel_slider.true" value="1"/>
+    </property>
+    <property default="module.driver.ctsu_tuning.mode.self" display="Self or Mutual Capacitance Mode" id="module.driver.ctsu_tuning.mode">
+        <option display="Self" id="module.driver.ctsu_tuning.mode.self" value="0"/>
+        <option display="Mutual" id="module.driver.ctsu_tuning.mode.mutual" value="1"/>
+    </property>
+      <content>
+        /** This file will only be used when the CapTouch Tuning is performed. The file will be generated when the CTSU module
+        is added for normal usage also but will have no effect in that case */
+
+        #define CTSU_TUNING_BUTTONS         (${module.driver.ctsu_tuning.button})
+        #define CTSU_TUNING_SLIDERS_WHEELS  (${module.driver.ctsu_tuning.wheel_slider})
+        #define CTSU_TUNING_MODE            (${module.driver.ctsu_tuning.mode})
+        /* Define the options for CTSU_TUNING_MODE above */
+        #define CTSU_MODE_SELF              (0)
+        #define CTSU_MODE_MUTUAL            (1)
+      </content>
+   </config>
+   <module config="config.driver.ctsu_tuning" display="Driver|Input|CTSU Tuning on r_ctsu" id="module.driver.ctsu_tuning_on_ctsu" version="1">
+
+    <header>
+
+    </header>
+   </module>
+   <!-- CTSU Tuning XML END here-->
+</synergyModuleDescription>

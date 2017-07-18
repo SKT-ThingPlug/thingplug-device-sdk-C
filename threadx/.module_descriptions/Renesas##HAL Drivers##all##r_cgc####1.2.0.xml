@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.cgc" path="ssp_cfg/driver/r_cgc_cfg.h" version="0">
+        <property default="config.driver.cgc.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.cgc.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.cgc.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.cgc.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.cgc.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="config.driver.cgc.main_osc_wait.wait_8163" display="Main Oscillator Wait Time" id="config.driver.cgc.main_osc_wait">
+             <option display="3 cycles" id="config.driver.cgc.main_osc_wait.wait_3" value="(0)"/>
+             <option display="35 cycles" id="config.driver.cgc.main_osc_wait.wait_35" value="(1)"/>
+             <option display="67 cycles" id="config.driver.cgc.main_osc_wait.wait_67" value="(2)"/>
+             <option display="131 cycles" id="config.driver.cgc.main_osc_wait.wait_131" value="(3)"/>
+             <option display="259 cycles" id="config.driver.cgc.main_osc_wait.wait_259" value="(4)"/>
+             <option display="547 cycles" id="config.driver.cgc.main_osc_wait.wait_547" value="(5)"/>
+             <option display="1059 cycles" id="config.driver.cgc.main_osc_wait.wait_1059" value="(6)"/>
+             <option display="2147 cycles" id="config.driver.cgc.main_osc_wait.wait_2147" value="(7)"/>
+             <option display="4291 cycles" id="config.driver.cgc.main_osc_wait.wait_4291" value="(8)"/>
+            <option display="8163 cycles" id="config.driver.cgc.main_osc_wait.wait_8163" value="(9)"/>
+        </property>
+        <property default="config.driver.cgc.main_osc_clock_source.crystal" display="Main Oscillator Clock Source" id="config.driver.cgc.main_osc_clock_source">
+            <option display="External Oscillator" id="config.driver.cgc.main_osc_clock_source.external_osc" value="(1)"/>
+            <option display="Crystal or Resonator" id="config.driver.cgc.main_osc_clock_source.crystal" value="(0)"/>
+        </property>
+        <property default="config.driver.cgc.osc_stop_det_used.enabled" display="Oscillator Stop Detect" id="config.driver.cgc.osc_stop_det_used">
+            <option display="Enabled" id="config.driver.cgc.osc_stop_det_used.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.cgc.osc_stop_det_used.disabled" value="(0)"/>
+        </property>
+        <property default="config.driver.cgc.subclock_drive.standard" display="Subclock Drive" id="config.driver.cgc.subclock_drive">
+            <option display="Middle (4.4pf)" id="config.driver.cgc.subclock_drive.middle" value="(1)"/>
+            <option display="Standard (12.5pf)" id="config.driver.cgc.subclock_drive.standard" value="(0)"/>
+        </property>
+		<property default="config.driver.cgc.low_voltage_mode.disabled" display="Low Voltage Mode" id="config.driver.cgc.low_voltage_mode">
+            <option display="Enable" id="config.driver.cgc.low_voltage_mode.enabled" value="(1)"/>
+            <option display="Disable" id="config.driver.cgc.low_voltage_mode.disabled" value="(0)"/>
+        </property>
+        <content>
+#define CGC_CFG_MAIN_OSC_WAIT ${config.driver.cgc.main_osc_wait}
+#define CGC_CFG_MAIN_OSC_CLOCK_SOURCE ${config.driver.cgc.main_osc_clock_source}
+#define CGC_CFG_OSC_STOP_DET_USED ${config.driver.cgc.osc_stop_det_used}
+#define CGC_CFG_PARAM_CHECKING_ENABLE ${config.driver.cgc.param_checking_enable}
+#define CGC_CFG_SUBCLOCK_DRIVE ${config.driver.cgc.subclock_drive}
+#define CGC_CFG_USE_LOW_VOLTAGE_MODE ${config.driver.cgc.low_voltage_mode}
+        </content>
+    </config>
+    <module config="config.driver.cgc" display="Driver|System|${module.driver.cgc.name} CGC Driver on r_cgc" id="module.driver.cgc_on_cgc" version="1">
+        <constraint display="Only one CGC driver instance is allowed">
+            "${interface.driver.cgc}" === "1"
+        </constraint>
+        <requires interface="_hal" />
+        <provides interface="interface.driver.cgc" />
+        <property default="g_cgc" display="Name [Fixed]" id="module.driver.cgc.name">
+            <constraint display="Name must be g_cgc">"${module.driver.cgc.name}" == "g_cgc"</constraint>
+        </property>
+        <header>
+        /** CGC Instance */
+        extern const cgc_instance_t ${module.driver.cgc.name};
+        </header>
+        <includes>
+        #include &quot;r_cgc.h&quot;
+        #include &quot;r_cgc_api.h&quot;
+        </includes>
+        <declarations>
+        const cgc_instance_t ${module.driver.cgc.name} = {
+            .p_api = &amp;g_cgc_on_cgc,
+            .p_cfg = NULL
+        };
+        </declarations>
+    </module>
+    <module config="config.driver.cgc_cfg" display="Driver|System|${module.driver.cgc_cfg.name} CGC Configuration Instance" id="module.driver.cgc_cfg" common="100" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.cgc_cfg.${module.driver.cgc_cfg.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.cgc_cfg" />
+        <provides interface="interface.driver.cgc_cfg.${module.driver.cgc_cfg.name}" />
+        <property default="g_cgc_cfg${_instance}" display="Name" id="module.driver.cgc_cfg.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.cgc_cfg.name}")</constraint>
+        </property>
+        <property default="module.driver.cgc_cfg.system_clock.system_clock_hoco" display="System Clock" id="module.driver.cgc_cfg.system_clock">
+            <option display="HOCO" id="module.driver.cgc_cfg.system_clock.system_clock_hoco" value="CGC_CLOCK_HOCO"/>
+            <option display="MOCO" id="module.driver.cgc_cfg.system_clock.system_clock_moco" value="CGC_CLOCK_MOCO"/>
+            <option display="LOCO" id="module.driver.cgc_cfg.system_clock.system_clock_loco" value="CGC_CLOCK_LOCO"/>
+            <option display="Main Oscillator" id="module.driver.cgc_cfg.system_clock.system_clock_main_osc" value="CGC_CLOCK_MAIN_OSC"/>
+            <option display="Sub-Clock" id="module.driver.cgc_cfg.system_clock.system_clock_sub_clk" value="CGC_CLOCK_SUBCLOCK"/>
+            <option display="PLL" id="module.driver.cgc_cfg.system_clock.system_clock_pll" value="CGC_CLOCK_PLL"/>
+        </property>
+        <property default="module.driver.cgc_cfg.loco_state.loco_state_clock_change_none" display="LOCO State Change" id="module.driver.cgc_cfg.loco_state">
+            <option display="None" id="module.driver.cgc_cfg.loco_state.loco_state_clock_change_none" value="CGC_CLOCK_CHANGE_NONE"/>
+            <option display="Stop" id="module.driver.cgc_cfg.loco_state.loco_state_clock_change_stop" value="CGC_CLOCK_CHANGE_STOP"/>
+            <option display="Start" id="module.driver.cgc_cfg.loco_state.loco_state_clock_change_start" value="CGC_CLOCK_CHANGE_START"/>
+         </property>
+        <property default="module.driver.cgc_cfg.moco_state.moco_state_clock_change_none" display="MOCO State Change" id="module.driver.cgc_cfg.moco_state">
+            <option display="None" id="module.driver.cgc_cfg.moco_state.moco_state_clock_change_none" value="CGC_CLOCK_CHANGE_NONE"/>
+            <option display="Stop" id="module.driver.cgc_cfg.moco_state.moco_state_clock_change_stop" value="CGC_CLOCK_CHANGE_STOP"/>
+            <option display="Start" id="module.driver.cgc_cfg.moco_state.moco_state_clock_change_start" value="CGC_CLOCK_CHANGE_START"/>
+        </property>
+        <property default="module.driver.cgc_cfg.hoco_state.hoco_state_clock_change_none" display="HOCO State Change" id="module.driver.cgc_cfg.hoco_state">
+            <option display="None" id="module.driver.cgc_cfg.hoco_state.hoco_state_clock_change_none" value="CGC_CLOCK_CHANGE_NONE"/>
+            <option display="Stop" id="module.driver.cgc_cfg.hoco_state.hoco_state_clock_change_stop" value="CGC_CLOCK_CHANGE_STOP"/>
+            <option display="Start" id="module.driver.cgc_cfg.hoco_state.hoco_state_clock_change_start" value="CGC_CLOCK_CHANGE_START"/>
+        </property>
+        <property default="module.driver.cgc_cfg.subosc_state.subosc_state_clock_change_none" display="Sub-Clock State Change" id="module.driver.cgc_cfg.subosc_state">
+            <option display="None" id="module.driver.cgc_cfg.subosc_state.subosc_state_clock_change_none" value="CGC_CLOCK_CHANGE_NONE"/>
+            <option display="Stop" id="module.driver.cgc_cfg.subosc_state.subosc_state_clock_change_stop" value="CGC_CLOCK_CHANGE_STOP"/>
+            <option display="Start" id="module.driver.cgc_cfg.subosc_state.subosc_state_clock_change_start" value="CGC_CLOCK_CHANGE_START"/>
+        </property>
+        <property default="module.driver.cgc_cfg.subosc_state.mainosc_state_clock_change_none" display="Main Clock State Change" id="module.driver.cgc_cfg.mainosc_state">
+            <option display="None" id="module.driver.cgc_cfg.mainosc_state.mainosc_state_clock_change_none" value="CGC_CLOCK_CHANGE_NONE"/>
+            <option display="Stop" id="module.driver.cgc_cfg.mainosc_state.mainosc_state_clock_change_stop" value="CGC_CLOCK_CHANGE_STOP"/>
+            <option display="Start" id="module.driver.cgc_cfg.mainosc_state.mainosc_state_clock_change_start" value="CGC_CLOCK_CHANGE_START"/>
+        </property>
+        <property default="module.driver.cgc_cfg.subosc_state.pll_state_clock_change_none" display="PLL State Change" id="module.driver.cgc_cfg.pll_state">
+            <option display="None" id="module.driver.cgc_cfg.pll_state.pll_state_clock_change_none" value="CGC_CLOCK_CHANGE_NONE"/>
+            <option display="Stop" id="module.driver.cgc_cfg.pll_state.pll_state_clock_change_stop" value="CGC_CLOCK_CHANGE_STOP"/>
+            <option display="Start" id="module.driver.cgc_cfg.pll_state.pll_state_clock_change_start" value="CGC_CLOCK_CHANGE_START"/>
+        </property>
+        <property default="module.driver.cgc_cfg.source_clock.source_clock_hoco" display="PLL Source Clock" id="module.driver.cgc_cfg.source_clock">
+            <option display="HOCO" id="module.driver.cgc_cfg.source_clock.source_clock_hoco" value="CGC_CLOCK_HOCO"/>
+            <option display="MOCO" id="module.driver.cgc_cfg.source_clock.source_clock_moco" value="CGC_CLOCK_MOCO"/>
+            <option display="LOCO" id="module.driver.cgc_cfg.source_clock.source_clock_loco" value="CGC_CLOCK_LOCO"/>
+            <option display="Main Oscillator" id="module.driver.cgc_cfg.source_clock.source_clock_main_osc" value="CGC_CLOCK_MAIN_OSC"/>
+            <option display="Sub-Clock" id="module.driver.cgc_cfg.source_clock.source_clock_sub_clk" value="CGC_CLOCK_SUBCLOCK"/>
+            <option display="PLL" id="module.driver.cgc_cfg.source_clock.source_clock_pll" value="CGC_CLOCK_PLL"/>
+        </property>
+        <property default="module.driver.cgc_cfg.divider.divider_div_1" display="PLL Divisor" id="module.driver.cgc_cfg.divider">
+            <option display="1" id="module.driver.cgc_cfg.divider.divider_div_1" value="CGC_PLL_DIV_1"/>
+            <option display="2" id="module.driver.cgc_cfg.divider.divider_div_2" value="CGC_PLL_DIV_2"/>
+            <option display="3" id="module.driver.cgc_cfg.divider.divider_div_3" value="CGC_PLL_DIV_3"/>
+            <option display="4" id="module.driver.cgc_cfg.divider.divider_div_4" value="CGC_PLL_DIV_4"/>
+        </property>
+       <property default="module.driver.cgc_cfg.multiplier.multiplier_mul_10.0" display="PLL Multiplier " id="module.driver.cgc_cfg.multiplier">
+            <option display="10.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_10.0" value="10.0"/>
+            <option display="10.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_10.5" value="10.5"/>
+            <option display="11.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_11.0" value="11.0"/>
+            <option display="11.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_11.5" value="11.5"/>
+            <option display="12.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_12.0" value="12.0"/>
+            <option display="12.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_12.5" value="12.5"/>
+            <option display="13.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_13.0" value="13.0"/>
+            <option display="13.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_13.5" value="13.5"/>
+            <option display="14.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_14.0" value="14.0"/>
+            <option display="14.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_14.5" value="14.5"/>
+            <option display="15.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_15.0" value="15.0"/>
+            <option display="15.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_15.5" value="15.5"/>
+            <option display="16.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_16.0" value="16.0"/>
+            <option display="16.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_16.5" value="16.5"/>
+            <option display="17.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_17.0" value="17.0"/>
+            <option display="17.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_17.5" value="17.5"/>
+            <option display="18.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_18.0" value="18.0"/>
+            <option display="18.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_18.5" value="18.5"/>
+            <option display="19.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_19.0" value="19.0"/>
+            <option display="19.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_19.5" value="19.5"/>
+            <option display="20.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_20.0" value="20.0"/>
+            <option display="20.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_20.5" value="20.5"/>
+            <option display="21.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_21.0" value="21.0"/>
+            <option display="21.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_21.5" value="21.5"/>
+            <option display="22.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_22.0" value="22.0"/>
+            <option display="22.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_22.5" value="22.5"/>
+            <option display="23.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_23.0" value="23.0"/>
+            <option display="23.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_23.5" value="23.5"/>
+            <option display="24.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_24.0" value="24.0"/>
+            <option display="24.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_24.5" value="24.5"/>
+            <option display="25.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_25.0" value="25.0"/>
+            <option display="25.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_25.5" value="25.5"/>
+            <option display="26.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_26.0" value="26.0"/>
+            <option display="26.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_26.5" value="26.5"/>
+            <option display="27.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_27.0" value="27.0"/>
+            <option display="27.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_27.5" value="27.5"/>
+            <option display="28.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_28.0" value="28.0"/>
+            <option display="28.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_28.5" value="28.5"/>
+            <option display="29.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_29.0" value="29.0"/>
+            <option display="29.5" id="module.driver.cgc_cfg.multiplier.multiplier_mul_29.5" value="29.5"/>
+            <option display="30.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_30.0" value="30.0"/>
+            <option display="31.0" id="module.driver.cgc_cfg.multiplier.multiplier_mul_31.0" value="31.0"/>
+         </property>
+         <property default="module.driver.cgc_cfg.pclka_div.pclka_div_div_1" display="PCLKA Divisor" id="module.driver.cgc_cfg.pclka_div">
+            <option display="1" id="module.driver.cgc_cfg.pclka_div.pclka_div_div_1" value="CGC_SYS_CLOCK_DIV_1"/>
+            <option display="2" id="module.driver.cgc_cfg.pclka_div.pclka_div_div_2" value="CGC_SYS_CLOCK_DIV_2"/>
+            <option display="4" id="module.driver.cgc_cfg.pclka_div.pclka_div_div_4" value="CGC_SYS_CLOCK_DIV_4"/>
+            <option display="8" id="module.driver.cgc_cfg.pclka_div.pclka_div_div_8" value="CGC_SYS_CLOCK_DIV_8"/>
+            <option display="16" id="module.driver.cgc_cfg.pclka_div.pclka_div_div_16" value="CGC_SYS_CLOCK_DIV_16"/>
+            <option display="64" id="module.driver.cgc_cfg.pclka_div.pclka_div_div_64" value="CGC_SYS_CLOCK_DIV_64"/>
+        </property>
+        <property default="module.driver.cgc_cfg.pclkb_div.pclkb_div_div_1" display="PCLKB Divisor" id="module.driver.cgc_cfg.pclkb_div">
+            <option display="1" id="module.driver.cgc_cfg.pclkb_div.pclkb_div_div_1" value="CGC_SYS_CLOCK_DIV_1"/>
+            <option display="2" id="module.driver.cgc_cfg.pclkb_div.pclkb_div_div_2" value="CGC_SYS_CLOCK_DIV_2"/>
+            <option display="4" id="module.driver.cgc_cfg.pclkb_div.pclkb_div_div_4" value="CGC_SYS_CLOCK_DIV_4"/>
+            <option display="8" id="module.driver.cgc_cfg.pclkb_div.pclkb_div_div_8" value="CGC_SYS_CLOCK_DIV_8"/>
+            <option display="16" id="module.driver.cgc_cfg.pclkb_div.pclkb_div_div_16" value="CGC_SYS_CLOCK_DIV_16"/>
+            <option display="64" id="module.driver.cgc_cfg.pclkb_div.pclkb_div_div_64" value="CGC_SYS_CLOCK_DIV_64"/>
+        </property>
+        <property default="module.driver.cgc_cfg.pclkc_div.pclkc_div_div_1" display="PCLKC Divisor" id="module.driver.cgc_cfg.pclkc_div">
+            <option display="1" id="module.driver.cgc_cfg.pclkc_div.pclkc_div_div_1" value="CGC_SYS_CLOCK_DIV_1"/>
+            <option display="2" id="module.driver.cgc_cfg.pclkc_div.pclkc_div_div_2" value="CGC_SYS_CLOCK_DIV_2"/>
+            <option display="4" id="module.driver.cgc_cfg.pclkc_div.pclkc_div_div_4" value="CGC_SYS_CLOCK_DIV_4"/>
+            <option display="8" id="module.driver.cgc_cfg.pclkc_div.pclkc_div_div_8" value="CGC_SYS_CLOCK_DIV_8"/>
+            <option display="16" id="module.driver.cgc_cfg.pclkc_div.pclkc_div_div_16" value="CGC_SYS_CLOCK_DIV_16"/>
+            <option display="64" id="module.driver.cgc_cfg.pclkc_div.pclkc_div_div_64" value="CGC_SYS_CLOCK_DIV_64"/>
+        </property>
+        <property default="module.driver.cgc_cfg.pclkd_div.pclkd_div_div_1" display="PCLKD Divisor" id="module.driver.cgc_cfg.pclkd_div">
+            <option display="1" id="module.driver.cgc_cfg.pclkd_div.pclkd_div_div_1" value="CGC_SYS_CLOCK_DIV_1"/>
+            <option display="2" id="module.driver.cgc_cfg.pclkd_div.pclkd_div_div_2" value="CGC_SYS_CLOCK_DIV_2"/>
+            <option display="4" id="module.driver.cgc_cfg.pclkd_div.pclkd_div_div_4" value="CGC_SYS_CLOCK_DIV_4"/>
+            <option display="8" id="module.driver.cgc_cfg.pclkd_div.pclkd_div_div_8" value="CGC_SYS_CLOCK_DIV_8"/>
+            <option display="16" id="module.driver.cgc_cfg.pclkd_div.pclkd_div_div_16" value="CGC_SYS_CLOCK_DIV_16"/>
+            <option display="64" id="module.driver.cgc_cfg.pclkd_div.pclkd_div_div_64" value="CGC_SYS_CLOCK_DIV_64"/>
+        </property>
+        <property default="module.driver.cgc_cfg.bclk_div.bclk_div_div_1" display="BCLK Divisor" id="module.driver.cgc_cfg.bclk_div">
+            <option display="1" id="module.driver.cgc_cfg.bclk_div.bclk_div_div_1" value="CGC_SYS_CLOCK_DIV_1"/>
+            <option display="2" id="module.driver.cgc_cfg.bclk_div.bclk_div_div_2" value="CGC_SYS_CLOCK_DIV_2"/>
+            <option display="4" id="module.driver.cgc_cfg.bclk_div.bclk_div_div_4" value="CGC_SYS_CLOCK_DIV_4"/>
+            <option display="8" id="module.driver.cgc_cfg.bclk_div.bclk_div_div_8" value="CGC_SYS_CLOCK_DIV_8"/>
+            <option display="16" id="module.driver.cgc_cfg.bclk_div.bclk_div_div_16" value="CGC_SYS_CLOCK_DIV_16"/>
+            <option display="64" id="module.driver.cgc_cfg.bclk_div.bclk_div_div_64" value="CGC_SYS_CLOCK_DIV_64"/>
+        </property>
+        <property default="module.driver.cgc_cfg.fclk_div.fclk_div_div_1" display="FCLK Divisor" id="module.driver.cgc_cfg.fclk_div">
+            <option display="1" id="module.driver.cgc_cfg.fclk_div.fclk_div_div_1" value="CGC_SYS_CLOCK_DIV_1"/>
+            <option display="2" id="module.driver.cgc_cfg.fclk_div.fclk_div_div_2" value="CGC_SYS_CLOCK_DIV_2"/>
+            <option display="4" id="module.driver.cgc_cfg.fclk_div.fclk_div_div_4" value="CGC_SYS_CLOCK_DIV_4"/>
+            <option display="8" id="module.driver.cgc_cfg.fclk_div.fclk_div_div_8" value="CGC_SYS_CLOCK_DIV_8"/>
+            <option display="16" id="module.driver.cgc_cfg.fclk_div.fclk_div_div_16" value="CGC_SYS_CLOCK_DIV_16"/>
+            <option display="64" id="module.driver.cgc_cfg.fclk_div.fclk_div_div_64" value="CGC_SYS_CLOCK_DIV_64"/>
+        </property>
+        <property default="module.driver.cgc_cfg.iclk_div.iclk_div_div_1" display="ICLK Divisor" id="module.driver.cgc_cfg.iclk_div">
+            <option display="1" id="module.driver.cgc_cfg.iclk_div.iclk_div_div_1" value="CGC_SYS_CLOCK_DIV_1"/>
+            <option display="2" id="module.driver.cgc_cfg.iclk_div.iclk_div_div_2" value="CGC_SYS_CLOCK_DIV_2"/>
+            <option display="4" id="module.driver.cgc_cfg.iclk_div.iclk_div_div_4" value="CGC_SYS_CLOCK_DIV_4"/>
+            <option display="8" id="module.driver.cgc_cfg.iclk_div.iclk_div_div_8" value="CGC_SYS_CLOCK_DIV_8"/>
+            <option display="16" id="module.driver.cgc_cfg.iclk_div.iclk_div_div_16" value="CGC_SYS_CLOCK_DIV_16"/>
+            <option display="64" id="module.driver.cgc_cfg.iclk_div.iclk_div_div_64" value="CGC_SYS_CLOCK_DIV_64"/>
+        </property>
+        <header>
+            /** CGC Clocks */
+            extern const cgc_clocks_cfg_t ${module.driver.cgc_cfg.name};
+        </header>
+        <includes>
+#include &quot;r_cgc.h&quot;
+#include &quot;r_cgc_api.h&quot;
+        </includes>
+        <declarations>
+const cgc_clocks_cfg_t ${module.driver.cgc_cfg.name} =
+   {
+        .system_clock           = ${module.driver.cgc_cfg.system_clock},
+        .pll_cfg                = {
+                                       .source_clock = ${module.driver.cgc_cfg.source_clock},
+                                       .divider      = ${module.driver.cgc_cfg.divider},
+                                       .multiplier   = (float)(${module.driver.cgc_cfg.multiplier}),
+                                  },
+        .sys_cfg                = {
+                                       .pclka_div    = ${module.driver.cgc_cfg.pclka_div},
+                                       .pclkb_div    = ${module.driver.cgc_cfg.pclkb_div},
+                                       .pclkc_div    = ${module.driver.cgc_cfg.pclkc_div},
+                                       .pclkd_div    = ${module.driver.cgc_cfg.pclkd_div},
+                                       .bclk_div     = ${module.driver.cgc_cfg.bclk_div},
+                                       .fclk_div     = ${module.driver.cgc_cfg.fclk_div},
+                                       .iclk_div     = ${module.driver.cgc_cfg.iclk_div},
+                                  },
+        .loco_state             = ${module.driver.cgc_cfg.loco_state},
+        .moco_state             = ${module.driver.cgc_cfg.moco_state},
+        .hoco_state             = ${module.driver.cgc_cfg.hoco_state},
+        .subosc_state           = ${module.driver.cgc_cfg.subosc_state},
+        .mainosc_state          = ${module.driver.cgc_cfg.mainosc_state},
+        .pll_state              = ${module.driver.cgc_cfg.pll_state},
+
+     };
+        </declarations>
+        </module>
+</synergyModuleDescription>

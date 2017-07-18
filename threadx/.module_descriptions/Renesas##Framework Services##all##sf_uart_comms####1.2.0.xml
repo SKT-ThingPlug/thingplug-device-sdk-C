@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.framework.sf_uart_comms" path="ssp_cfg/framework/sf_uart_comms_cfg.h" version="0">
+		<property default="config.framework.sf_comms.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_comms.param_checking_enable">
+			<option display="Default (BSP)" id="config.framework.sf_comms.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.framework.sf_comms.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.framework.sf_comms.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<property default="15" display="Read Input Queue Size (4-Byte Words)" id="config.framework.sf_comms.read_size" >
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.read_size}") &amp;&amp; "${config.framework.sf_comms.read_size}" &gt; 0</constraint>
+ 		</property>
+		<content>#define SF_UART_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_comms.param_checking_enable}
+#define SF_UART_COMMS_CFG_QUEUE_SIZE_WORDS (${config.framework.sf_comms.read_size})
+</content>
+	</config>
+	<module config="config.framework.sf_uart_comms" display="Framework|Connectivity|${module.framework.sf_comms.name} Communications Framework on sf_uart_comms" id="module.framework.sf_comms_on_sf_uart_comms" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.framework.sf_comms.${module.framework.sf_comms.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_comms_on_sf_uart_comms.requires.uart" interface="interface.driver.uart" display="Add UART Driver" >
+            <override property="module.driver.uart.callback" value= "NULL"/>
+        </requires>
+        <provides interface="interface.framework.sf_comms" />
+        <provides interface="interface.framework.sf_comms_on_sf_uart_comms" />
+        <provides interface="interface.framework.sf_comms.${module.framework.sf_comms.name}" />
+        <property default="g_sf_comms${_instance}" display="Name" id="module.framework.sf_comms.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_comms.name}")</constraint>
+        </property>
+        <header>
+            /* UART Communications Framework Instance. */
+            extern const sf_comms_instance_t ${module.framework.sf_comms.name};
+        void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+		<includes>#include &quot;sf_uart_comms.h&quot;
+        </includes>
+		<declarations>
+#if defined(__ICCARM__)
+#define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE
+#pragma weak ${module.framework.sf_comms.name}_err_callback  = ${module.framework.sf_comms.name}_err_callback_internal
+#elif defined(__GNUC__)
+#define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_comms.name}_err_callback_internal")))
+#endif
+void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE;
+static sf_uart_comms_instance_ctrl_t ${module.framework.sf_comms.name}_ctrl;
+static const sf_uart_comms_cfg_t ${module.framework.sf_comms.name}_cfg_extend =
+{
+	.p_lower_lvl_uart = &amp;${module.framework.sf_comms_on_sf_uart_comms.requires.uart::module.driver.uart.name},
+};
+static const sf_comms_cfg_t ${module.framework.sf_comms.name}_cfg =
+{
+    .p_extend = &amp;${module.framework.sf_comms.name}_cfg_extend,
+};
+/* Instance structure to use this module. */
+const sf_comms_instance_t ${module.framework.sf_comms.name} = 
+{
+    .p_ctrl        = &amp;${module.framework.sf_comms.name}_ctrl,
+    .p_cfg         = &amp;${module.framework.sf_comms.name}_cfg,
+    .p_api         = &amp;g_sf_comms_on_sf_uart_comms
+};
+ /*******************************************************************************************************************//**
+  * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+  *             with the prototype below.
+  *             - void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data)
+  *
+  * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+  **********************************************************************************************************************/
+ void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data);
+ void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data)
+ {
+    /** Suppress compiler warning for not using parameters. */
+     SSP_PARAMETER_NOT_USED(p_instance);
+     SSP_PARAMETER_NOT_USED(p_data);
+
+    /** An error has occurred. Please check function arguments for more information. */
+     BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+ }
+</declarations>
+        <init>
+            ssp_err_t ssp_err_${module.framework.sf_comms.name};
+            ssp_err_${module.framework.sf_comms.name} = ${module.framework.sf_comms.name}.p_api->open(${module.framework.sf_comms.name}.p_ctrl, ${module.framework.sf_comms.name}.p_cfg);
+            if (SSP_SUCCESS != ssp_err_${module.framework.sf_comms.name})
+            {
+                ${module.framework.sf_comms.name}_err_callback((void *)&amp;${module.framework.sf_comms.name},&amp;ssp_err_${module.framework.sf_comms.name});
+            }
+        </init>
+	</module>
+</synergyModuleDescription>

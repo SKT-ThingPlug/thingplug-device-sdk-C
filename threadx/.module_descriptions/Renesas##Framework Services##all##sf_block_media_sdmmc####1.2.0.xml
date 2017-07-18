@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>  
+    <config id="config.framework.block_media_sdmmc" path="ssp_cfg/framework/sf_block_media_sdmmc_cfg.h" version="0">
+        <property default="config.framework.block_media_sdmmc.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.block_media_sdmmc.param_checking_enable">
+            <option display="Default (BSP)" id="config.framework.block_media_sdmmc.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.block_media_sdmmc.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.block_media_sdmmc.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define BLOCK_MEDIA_SDMMC_CFG_PARAM_CHECKING_ENABLE ${config.framework.block_media_sdmmc.param_checking_enable}
+        </content>
+    </config>   
+    <module config="config.framework.block_media_sdmmc" display="Framework|File System|${module.framework.block_media.name} Block Media Framework on sf_block_media_sdmmc" id="module.framework.block_media_on_sdmmc" version="1">        
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.block_media.${module.framework.block_media.name}}" === "1"
+        </constraint>       
+        <requires interface="_rtos" />
+        <requires id="module.framework.block_media_on_sdmmc.requires.sdmmc" interface="interface.driver.sdmmc" display="Add SDMMC Driver" />
+        <provides interface="interface.framework.block_media" />
+        <provides interface="interface.framework.block_media_on_sf_block_media_sdmmc" />
+        <provides interface="interface.framework.block_media.${module.framework.block_media.name}" />
+        <property id="module.framework.block_media.name" display="Name" default="g_sf_block_media_sdmmc${_instance}">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.block_media.name}")</constraint>
+        </property>     
+        <property id="module.framework.block_media.block_size" display="Block size of media in bytes" default="512">
+            <constraint display="Value must be an integer greather than 0">testInteger("${module.framework.block_media.block_size}")  &amp;&amp; ("${module.framework.block_media.block_size}" &gt; 0)</constraint>
+        </property>     
+        <header>
+            /** Block Media on SDMMC Instance */
+            extern sf_block_media_instance_t ${module.framework.block_media.name};
+        </header>
+        <includes>
+            #include &quot;sf_block_media_sdmmc.h&quot;
+            #include &quot;sf_block_media_api.h&quot;
+        </includes>
+        <declarations>
+            static const sf_block_media_on_sdmmc_cfg_t ${module.framework.block_media.name}_block_media_cfg =
+			{
+				.p_lower_lvl_sdmmc  =  &amp;${module.framework.block_media_on_sdmmc.requires.sdmmc::module.driver.sdmmc.name},
+			};
+			static sf_block_media_sdmmc_instance_ctrl_t ${module.framework.block_media.name}_ctrl;
+            static sf_block_media_cfg_t ${module.framework.block_media.name}_cfg =
+            {
+                .block_size          = ${module.framework.block_media.block_size},
+                .p_extend            = &amp;${module.framework.block_media.name}_block_media_cfg
+            };
+		    
+			sf_block_media_instance_t ${module.framework.block_media.name} =
+			{
+				.p_ctrl = &amp;${module.framework.block_media.name}_ctrl,
+				.p_cfg =  &amp;${module.framework.block_media.name}_cfg,
+				.p_api =  &amp;g_sf_block_media_on_sdmmc
+			};		
+
+</declarations>
+    </module>
+</synergyModuleDescription>

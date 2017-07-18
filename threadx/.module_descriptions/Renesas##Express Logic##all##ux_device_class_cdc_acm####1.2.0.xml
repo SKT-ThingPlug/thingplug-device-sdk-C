@@ -1,0 +1,424 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+
+    <module config="config.el.ux_device_class_cdc_acm" display="Framework|USB|[DEPRECATED] ${module.el.ux_device_class_cdc_acm.name} USBX Device Class CDC ACM on ux_device_class_cdc_acm" id="module.el.ux_device_class_cdc_acm" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.ux_device_class_cdc_acm.${module.el.ux_device_class_cdc_acm.name}}" === "1"
+        </constraint>
+        <constraint display="This module has been deprecated. Please consider moving to the updated USBX Device Class CDC-ACM implementation found under X-Ware/USBX/Device/Classes/CDC-ACM/.">
+            "${module.el.ux_device_class_cdc_acm.deprecation_warning}" === "module.el.ux_device_class_cdc_acm.deprecation_warning.disabled"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.ux_device_class_cdc_acm.requires.ux" interface="interface.el.ux" display="Add USBX" />
+        <provides interface="interface.el.ux_device_class_cdc_acm" />
+        <provides interface="interface.el.ux_device_class_cdc_acm.${module.el.ux_device_class_cdc_acm.name}" />
+        <property default="g_ux_device_class_cdc_acm${_instance}" display="Name" id="module.el.ux_device_class_cdc_acm.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_cdc_acm.name}")</constraint>
+        </property>
+        <property default="module.el.ux_device_class_cdc_acm.deprecation_warning.enabled" display="Show deprecation warning" id="module.el.ux_device_class_cdc_acm.deprecation_warning">
+            <option display="Enabled" id="module.el.ux_device_class_cdc_acm.deprecation_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.ux_device_class_cdc_acm.deprecation_warning.disabled" value="1"/>
+        </property>
+    </module>
+
+    <module config="config.el.ux_device_class_cdc_acm_v2" display="X-Ware|USBX|Device|Classes|CDC-ACM|${module.el.ux_device_class_cdc_acm_v2.name} USBX Device Class CDC-ACM" common="100" id="module.el.ux_device_class_cdc_acm_v2" version="1">
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_device_class_cdc_acm_src" display="Add USBX Device Class CDC-ACM Source [Optional]" id="module.el.ux_device_class_cdc_acm_v2.requires.ux_device_class_cdc_acm_src" find="false" />
+        <requires id="module.el.ux_device_class_cdc_acm_v2.requires.ux_device" interface="interface.el.ux_device" display="Add USB Device Configuration" />
+        <requires id="module.el.ux_device_class_cdc_acm_v2.requires.interface_descriptor_cdcacm" interface="interface.el.ux.interface_descriptor_cdcacm" display="Add USB CDC-ACM Interface Descriptor" />
+        <provides interface="interface.el.ux_device_class_cdc_acm_v2" />
+        <property default="g_ux_device_class_cdc_acm${_instance}" display="Name" id="module.el.ux_device_class_cdc_acm_v2.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_cdc_acm_v2.name}")</constraint>
+        </property>
+        <property default="ux_cdc_device${_instance}_instance_activate" display="USBX CDC-ACM instance_activate Function Callback" id="module.el.ux_device_class_cdc_acm_v2.pfunc_activate">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_cdc_acm_v2.pfunc_activate}")</constraint>
+        </property>
+        <property default="ux_cdc_device${_instance}_instance_deactivate" display="USBX CDC-ACM instance_deactivate Function Callback" id="module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate}")</constraint>
+        </property>
+        <header>
+            /* Header section starts for ${module.el.ux_device_class_cdc_acm_v2.name} */
+            #include "ux_api.h"
+            #include "ux_device_class_cdc_acm.h"
+            /* USBX CDC-ACM Instance Activate User Callback Function */
+            extern VOID ${module.el.ux_device_class_cdc_acm_v2.pfunc_activate} (VOID * cdc_instance);
+            /* USBX CDC-ACM Instance Deactivate User Callback Function */
+            extern VOID ${module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate} (VOID * cdc_instance);
+            /* Header section ends for ${module.el.ux_device_class_cdc_acm_v2.name} */
+        </header>
+        <macros>
+        </macros>
+        <declarations>
+            /***********************************************************************************************************************
+             * Function prototypes for USBX CDC-ACM
+             **********************************************************************************************************************/
+            static void ${module.el.ux_device_class_cdc_acm_v2.name}_setup(void);
+
+            /***********************************************************************************************************************
+             * USBX CDC-ACM Parameter Setup Function.
+             **********************************************************************************************************************/
+            static UX_SLAVE_CLASS_CDC_ACM_PARAMETER ${module.el.ux_device_class_cdc_acm_v2.name}_parameter;
+            void ${module.el.ux_device_class_cdc_acm_v2.name}_setup(void)
+            {
+                ${module.el.ux_device_class_cdc_acm_v2.name}_parameter.ux_slave_class_cdc_acm_instance_activate   = ${module.el.ux_device_class_cdc_acm_v2.pfunc_activate};
+                ${module.el.ux_device_class_cdc_acm_v2.name}_parameter.ux_slave_class_cdc_acm_instance_deactivate = ${module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate};
+                /* Initializes the device cdc class. */
+                ux_device_stack_class_register(_ux_system_slave_class_cdc_acm_name, ux_device_class_cdc_acm_entry, 1, ${module.el.ux_device_class_cdc_acm_v2.requires.interface_descriptor_cdcacm::module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}, (VOID *)&amp;${module.el.ux_device_class_cdc_acm_v2.name}_parameter);
+
+                /* Counts up the number of Interfaces. */
+                g_usbx_number_of_interface_count = (uint8_t)(g_usbx_number_of_interface_count + 2);
+            }
+        </declarations>
+        <init>
+            /* Setups USB CDC-ACM Class to create the instance */
+            ${module.el.ux_device_class_cdc_acm_v2.name}_setup();
+
+            /* USB DCD initialization (Only executed once after all the class registration completed). */
+            if (g_usbx_number_of_interface_count == USB_NUMBER_OF_INTERFACE)
+            {
+                /* Initializes USBX Device Control Driver */
+                 ux_dcd_initialize();
+            }
+        </init>
+    </module>
+
+    <module config="" display="X-Ware|USBX|Device|Classes|CDC-ACM|Descriptors|${module.el.ux.interface_descriptor_cdcacm.name} USBX Interface Configuration CDC-ACM" id="module.el.ux.interface_descriptor_cdcacm.cdc_acm"  common="100" version="1">
+        <constraint display="Device Descriptor must have unique names">
+            "${interface.el.ux.interface_descriptor_cdcacm.${module.el.ux.interface_descriptor_cdcacm.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux.interface_descriptor_cdcacm" />
+        <provides interface="interface.el.ux.interface_descriptor_cdcacm.${module.el.ux.interface_descriptor_cdcacm.name}" />
+        <property default="g_usb_interface_desc_cdcacm_${_instance}" display="Name" id="module.el.ux.interface_descriptor_cdcacm.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux.interface_descriptor_cdcacm.name}")</constraint>
+        </property>
+        <property default="0x00" display="Interface Number of Communications Class interface" id="module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}") &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}") &gt;= 0) &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}") &lt;= 255)</constraint>
+        </property>
+        <property default="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep3" display="Interrupt Transfer endpoint to use for Communications Class" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt">
+            <option display="Endpoint 1" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep1" value="1"/>
+            <option display="Endpoint 2" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep2" value="2"/>
+            <option display="Endpoint 3" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep3" value="3"/>
+            <option display="Endpoint 4" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep4" value="4"/>
+            <option display="Endpoint 5" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep5" value="5"/>
+            <option display="Endpoint 6" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep6" value="6"/>
+            <option display="Endpoint 7" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep7" value="7"/>
+            <option display="Endpoint 8" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep8" value="8"/>
+            <option display="Endpoint 9" id="module.el.ux.interface_descriptor_cdcacm.ep_interrupt.ep9" value="9"/>
+        </property>
+        <property default="0x0F" display="Polling period for Interrupt Endpoint (in mS/125us units for FS/HS)" id="module.el.ux.interface_descriptor_cdcacm.bInterval">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_cdcacm.bInterval}") &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.bInterval}") &gt;= 1) &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.bInterval}") &lt;= 255)</constraint>
+        </property>
+        <property default="0x01" display="Interface Number of Data Class interface" id="module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}") &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}") &gt;= 0) &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}") &lt;= 255)</constraint>
+        </property>
+        <property default="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep1" display="Bulk In Transfer endpoint to use for Data Class" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out">
+            <option display="Endpoint 1" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep1" value="1"/>
+            <option display="Endpoint 2" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep2" value="2"/>
+            <option display="Endpoint 3" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep3" value="3"/>
+            <option display="Endpoint 4" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep4" value="4"/>
+            <option display="Endpoint 5" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep5" value="5"/>
+            <option display="Endpoint 6" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep6" value="6"/>
+            <option display="Endpoint 7" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep7" value="7"/>
+            <option display="Endpoint 8" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep8" value="8"/>
+            <option display="Endpoint 9" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_out.ep9" value="9"/>
+        </property>
+        <property default="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep2" display="Bulk Out Transfer endpoint to use for Data Class" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in">
+            <option display="Endpoint 1" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep1" value="1"/>
+            <option display="Endpoint 2" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep2" value="2"/>
+            <option display="Endpoint 3" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep3" value="3"/>
+            <option display="Endpoint 4" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep4" value="4"/>
+            <option display="Endpoint 5" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep5" value="5"/>
+            <option display="Endpoint 6" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep6" value="6"/>
+            <option display="Endpoint 7" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep7" value="7"/>
+            <option display="Endpoint 8" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep8" value="8"/>
+            <option display="Endpoint 9" id="module.el.ux.interface_descriptor_cdcacm.ep_bulk_in.ep9" value="9"/>
+        </property>
+        <property default="0x00" display="Index of String Descriptor Describing Communications Class interface (Interface Descriptor:iInterface)." id="module.el.ux.interface_descriptor_cdcacm.iInterface_comm">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_cdcacm.iInterface_comm}") &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.iInterface_comm}") &gt;= 0) &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.iInterface_comm}") &lt;= 255)</constraint>
+        </property>
+        <property default="0x00" display="Index of String Descriptor Describing Data Class interface (Interface Descriptor:iInterface)." id="module.el.ux.interface_descriptor_cdcacm.iInterface_data">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_cdcacm.iInterface_data}") &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.iInterface_data}") &gt;= 0) &amp;&amp; (("${module.el.ux.interface_descriptor_cdcacm.iInterface_data}") &lt;= 255)</constraint>
+        </property>
+        <header>
+        </header>
+        <macros>
+        </macros>
+        <declarations>
+            /***********************************************************************************************************************
+             * USB CDC-ACM Interface Descriptor for FS mode ${module.el.ux.interface_descriptor_cdcacm.name}
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char ${module.el.ux.interface_descriptor_cdcacm.name}_full_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_fs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_interface_desc_fs" 1
+            __root static const unsigned char ${module.el.ux.interface_descriptor_cdcacm.name}_full_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_fs")
+            #endif
+            = {
+                /****************************************************************
+                 * Interface Association Descriptor(IAD)                        *
+                 ****************************************************************/
+                0x08, /* 0 bLength */
+                UX_INTERFACE_ASSOCIATION_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}, /* 2 bFirstInterface */
+                0x02, /* 3 bInterfaceCount */
+                0x02, /* 4 bFunctionClass : Communication */
+                0x02, /* 5 bFunctionSubClass : Abstract Control Model */
+                0x00, /* 6 bFunctionProtocol : Standard or enhanced AT Command set protocol */
+                0x00, /* 7 iFunction : String descriptor index */
+                /****************************************************************
+                 * Communication Class Interface Descriptor                     *
+                 ****************************************************************/
+                0x09, /* 0 bLength */
+                UX_INTERFACE_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}, /* 2 bInterfaceNumber */
+                0x00, /* 3 bAlternateSetting  : Alternate for SetInterface Request */
+                0x01, /* 4 bNumEndpoints      : 1 Endpoint for Interface#1 */
+                0x02, /* 5 bInterfaceClass    : Communications Interface Class(0x2) */
+                0x02, /* 6 bInterfaceSubClass : Abstract Control Model(0x2) */
+                0x01, /* 7 bInterfaceProtocol : Common AT command(0x01) */
+                ${module.el.ux.interface_descriptor_cdcacm.iInterface_comm}, /* 8 iInterface Index */
+                /****************************************************************
+                 * Header Functional Descriptor                                 *
+                 ****************************************************************/
+                0x05, /* 0 bFunctionLength */
+                0x24, /* 1 bDescriptorType : CS_INTERFACE(24h) */
+                0x00, /* 2 bDescriptorSubtype : Header Functional Descriptor(0x0) */
+                0x10, /* 3 bcdCDC Number  0x0110 == 1.10 */
+                0x01, /* 4 bcdCDC */
+                /****************************************************************
+                 * Abstract Control Management Functional Functional Descriptor *
+                 ****************************************************************/
+                0x04, /* 0 bFunctionLength */
+                0x24, /* 1 bDescriptorType : CS_INTERFACE(24h) */
+                0x02, /* 2 bDescriptorSubtype : Abstract Control Management Functional Descriptor(0x2) */
+                0x06, /* 3 bmCapabilities (Supports SendBreak, GetLineCoding, SetControlLineState, GetLineCoding) */
+                /****************************************************************
+                 * Union Functional Descriptor                                  *
+                 ****************************************************************/
+                0x05, /* 0 bFunctionLength */
+                0x24, /* 1 bDescriptorType : CS_INTERFACE(24h) */
+                0x06, /* 2 bDescriptorSubtype : Union Functional Descriptor(0x6) */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}, /* 3 bMasterInterface */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}, /* 4 bSubordinateInterface0 */
+                /****************************************************************
+                 * Call Management Functional Descriptor                        *
+                 ****************************************************************/
+                0x05, /* 0 bFunctionLength */
+                0x24, /* 1 bDescriptorType */
+                0x01, /* 2 bDescriptorSubtype : Call Management Functional Descriptor(0x1) */
+                0x03, /* 3 bmCapabilities */
+                 ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}, /* 4 bDataInterface */
+                /****************************************************************
+                 * CDC-ACM Endpoint descriptor (Interrupt) for Interface#0      *
+                 ****************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                (UX_ENDPOINT_IN | ${module.el.ux.interface_descriptor_cdcacm.ep_interrupt}), /* 2 bEndpointAddress */
+                UX_INTERRUPT_ENDPOINT, /* 3 bmAttributes  */
+                0x08, /* 4 wMaxPacketSize */
+                0x00, /* 5 wMaxPacketSize */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterval}, /* 6 bInterval */
+                /****************************************************************
+                 * CDC-ACM Data Class Interface Descriptor                      *
+                 ****************************************************************/
+                0x09, /* 0 bLength */
+                UX_INTERFACE_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}, /* 2 bInterfaceNumber */
+                0x00, /* 3 bAlternateSetting  : Alternate for SetInterface Request */
+                0x02, /* 4 bNumEndpoints      : 2 Endpoints for Interface#0 */
+                0x0A, /* 5 bInterfaceClass    : Data Interface Class(0xA) */
+                0x00, /* 6 bInterfaceSubClass : Abstract Control Model */
+                0x00, /* 7 bInterfaceProtocol : No class specific protocol required */
+                ${module.el.ux.interface_descriptor_cdcacm.iInterface_data}, /* 8 iInterface Index   : String descriptor index */
+                /****************************************************************
+                 * CDC-ACM Endpoint Descriptor (Bulk-Out)  for Interface#1      *
+                 ****************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                (UX_ENDPOINT_OUT | ${module.el.ux.interface_descriptor_cdcacm.ep_bulk_out}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT, /* 3 bmAttributes  */
+                0x40, /* 4 wMaxPacketSize */
+                0x00, /* 5 wMaxPacketSize */
+                0x00, /* 6 bInterval */
+                /****************************************************************
+                 * CDC-ACM Endpoint Descriptor (Bulk-In) for Interface#1        *
+                 ****************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                (UX_ENDPOINT_IN | ${module.el.ux.interface_descriptor_cdcacm.ep_bulk_in}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT, /* 3 bmAttributes  */
+                0x40, /* 4 wMaxPacketSize */
+                0x00, /* 5 wMaxPacketSize */
+                0x00, /* 6 bInterval */
+            };
+
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+            /***********************************************************************************************************************
+             * USB CDC-ACM Interface Descriptor for HS mode ${module.el.ux.interface_descriptor_cdcacm.name}
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char ${module.el.ux.interface_descriptor_cdcacm.name}_high_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_hs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_interface_desc_hs" 1
+            __root static const unsigned char ${module.el.ux.interface_descriptor_cdcacm.name}_high_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_hs")
+            #endif
+            = {
+                /****************************************************************
+                 * Interface Association Descriptor(IAD)                        *
+                 ****************************************************************/
+                0x08, /* 0 bLength */
+                UX_INTERFACE_ASSOCIATION_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}, /* 2 bFirstInterface */
+                0x02, /* 3 bInterfaceCount */
+                0x02, /* 4 bFunctionClass : Communication */
+                0x02, /* 5 bFunctionSubClass : Abstract Control Model */
+                0x00, /* 6 bFunctionProtocol : Standard or enhanced AT Command set protocol */
+                0x00, /* 7 iFunction : String descriptor index */
+                /****************************************************************
+                 * Communication Class Interface Descriptor                     *
+                 ****************************************************************/
+                0x09, /* 0 bLength */
+                UX_INTERFACE_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}, /* 2 bInterfaceNumber */
+                0x00, /* 3 bAlternateSetting  : Alternate for SetInterface Request */
+                0x01, /* 4 bNumEndpoints      : 1 Endpoint for Interface#1 */
+                0x02, /* 5 bInterfaceClass    : Communications Interface Class(0x2) */
+                0x02, /* 6 bInterfaceSubClass : Abstract Control Model(0x2) */
+                0x01, /* 7 bInterfaceProtocol : Common AT command(0x01) */
+                0x00, /* 8 iInterface Index */
+                /****************************************************************
+                 * Header Functional Descriptor                                 *
+                 ****************************************************************/
+                0x05, /* 0 bFunctionLength */
+                0x24, /* 1 bDescriptorType : CS_INTERFACE(24h) */
+                0x00, /* 2 bDescriptorSubtype : Header Functional Descriptor(0x0) */
+                0x10, /* 3 bcdCDC Number  0x0110 == 1.10 */
+                0x01, /* 4 bcdCDC */
+                /****************************************************************
+                 * Abstract Control Management Functional Functional Descriptor *
+                 ****************************************************************/
+                0x04, /* 0 bFunctionLength */
+                0x24, /* 1 bDescriptorType : CS_INTERFACE(24h) */
+                0x02, /* 2 bDescriptorSubtype : Abstract Control Management Functional Descriptor(0x2) */
+                0x06, /* 3 bmCapabilities (Supports SendBreak, GetLineCoding, SetControlLineState, GetLineCoding) */
+                /****************************************************************
+                 * Union Functional Descriptor                                  *
+                 ****************************************************************/
+                0x05, /* 0 bFunctionLength */
+                0x24, /* 1 bDescriptorType : CS_INTERFACE(24h) */
+                0x06, /* 2 bDescriptorSubtype : Union Functional Descriptor(0x6) */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}, /* 3 bMasterInterface */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}, /* 4 bSubordinateInterface0 */
+                /****************************************************************
+                 * Call Management Functional Descriptor                        *
+                 ****************************************************************/
+                0x05, /* 0 bFunctionLength */
+                0x24, /* 1 bDescriptorType */
+                0x01, /* 2 bDescriptorSubtype : Call Management Functional Descriptor(0x1) */
+                0x03, /* 3 bmCapabilities */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}, /* 4 bDataInterface */
+                /****************************************************************
+                 * CDC-ACM Endpoint descriptor (Interrupt) for Interface#0      *
+                 ****************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                (UX_ENDPOINT_IN | ${module.el.ux.interface_descriptor_cdcacm.ep_interrupt}), /* 2 bEndpointAddress */
+                UX_INTERRUPT_ENDPOINT, /* 3 bmAttributes  */
+                0x08, /* 4 wMaxPacketSize */
+                0x00, /* 5 wMaxPacketSize */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterval}, /* 6 bInterval */
+                /****************************************************************
+                 * CDC-ACM Data Class Interface Descriptor                      *
+                 ****************************************************************/
+                0x09, /* 0 bLength */
+                UX_INTERFACE_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_data}, /* 2 bInterfaceNumber */
+                0x00, /* 3 bAlternateSetting  : Alternate for SetInterface Request */
+                0x02, /* 4 bNumEndpoints      : 2 Endpoints for Interface#0 */
+                0x0A, /* 5 bInterfaceClass    : Data Interface Class(0xA) */
+                0x00, /* 6 bInterfaceSubClass : Abstract Control Model */
+                0x00, /* 7 bInterfaceProtocol : No class specific protocol required */
+                0x00, /* 8 iInterface Index   : String descriptor index */
+                /****************************************************************
+                 * CDC-ACM Endpoint Descriptor (Bulk-Out)  for Interface#1      *
+                 ****************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                (UX_ENDPOINT_OUT | ${module.el.ux.interface_descriptor_cdcacm.ep_bulk_out}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT, /* 3 bmAttributes  */
+                0x00, /* 4 wMaxPacketSize */
+                0x02, /* 5 wMaxPacketSize */
+                0x00, /* 6 bInterval */
+                /****************************************************************
+                 * CDC-ACM Endpoint Descriptor (Bulk-In) for Interface#1        *
+                 ****************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                (UX_ENDPOINT_IN | ${module.el.ux.interface_descriptor_cdcacm.ep_bulk_in}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT, /* 3 bmAttributes  */
+                0x00, /* 4 wMaxPacketSize */
+                0x02, /* 5 wMaxPacketSize */
+                0x00, /* 6 bInterval */
+            };
+            #endif
+
+            /* Size of this USB Interface Descriptor */
+            #define USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}       (sizeof(${module.el.ux.interface_descriptor_cdcacm.name}_full_speed))
+            /* Number of Interface this USB Interface Descriptor has */
+            #define USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}        (2)
+#ifndef USB_IFD_NUM_0
+ #define USB_IFD_NUM_0  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+ #define USB_IFD_SIZE_0 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+#else
+ #ifndef USB_IFD_NUM_1
+  #define USB_IFD_NUM_1  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+  #define USB_IFD_SIZE_1 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+ #else
+  #ifndef USB_IFD_NUM_2
+   #define USB_IFD_NUM_2  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+   #define USB_IFD_SIZE_2 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+  #else
+   #ifndef USB_IFD_NUM_3
+    #define USB_IFD_NUM_3  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+    #define USB_IFD_SIZE_3 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+   #else
+    #ifndef USB_IFD_NUM_4
+     #define USB_IFD_NUM_4  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+     #define USB_IFD_SIZE_4 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+    #else
+     #ifndef USB_IFD_NUM_5
+      #define USB_IFD_NUM_5  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+      #define USB_IFD_SIZE_5 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+     #else
+      #ifndef USB_IFD_NUM_6
+       #define USB_IFD_NUM_6  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+       #define USB_IFD_SIZE_6 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+      #else
+       #ifndef USB_IFD_NUM_7
+        #define USB_IFD_NUM_7  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+        #define USB_IFD_SIZE_7 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+       #else
+        #ifndef USB_IFD_NUM_8
+         #define USB_IFD_NUM_8  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+         #define USB_IFD_SIZE_8 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+        #else
+         #ifndef USB_IFD_NUM_9
+          #define USB_IFD_NUM_9  USB_IFD_NUM_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+          #define USB_IFD_SIZE_9 USB_IFD_SIZE_${module.el.ux.interface_descriptor_cdcacm.bInterfaceNumber_comm}
+         #endif 
+        #endif
+       #endif
+      #endif
+     #endif
+    #endif
+   #endif
+  #endif
+ #endif
+#endif
+        </declarations>
+        <init>
+        </init>
+    </module>
+</synergyModuleDescription>

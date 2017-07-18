@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+<!-- SF Audio Record ADC XML START here-->  
+    <config id="config.framework.sf_audio_record_adc" path="ssp_cfg/framework/sf_audio_record_adc_cfg.h" version="0">
+        <property default="config.framework.sf_audio_record_adc.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_audio_record_adc.param_checking_enable">
+            <option display="Default (BSP)" id="config.framework.sf_audio_record_adc.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_audio_record_adc.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_audio_record_adc.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define SF_AUDIO_RECORD_ADC_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_audio_record_adc.param_checking_enable}
+        </content>
+    </config>   
+    <module config="config.framework.sf_audio_record_adc" display="Framework|Audio|${module.framework.sf_audio_record_adc.name} Audio Record ADC Framework on sf_audio_record_adc" id="module.framework.sf_audio_record_adc_on_sf_audio_record_adc" version="1">
+         <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_audio_record_adc.${module.framework.sf_audio_record_adc.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_audio_record_adc.requires.sf_adc_periodic" interface="interface.framework.sf_adc_periodic" display="Add ADC Periodic Framework" >
+            <override property="module.framework.sf_adc_periodic.data_buffer_length" value="${module.framework.sf_audio_record_adc.capture_data_buffer_size}"/>
+            <override property="module.framework.sf_adc_periodic.sample_count" value="${module.framework.sf_audio_record_adc.sample_count}"/>
+            <override property="module.framework.sf_adc_periodic.p_callback" value= "NULL"/>
+        </requires>        
+        <provides interface="interface.framework.sf_audio_record_adc" />
+        <provides interface="interface.framework.sf_audio_record_adc_on_sf_audio_record_adc" />
+        <provides interface="interface.framework.sf_audio_record_adc.${module.framework.sf_audio_record_adc.name}" />
+        
+        <property id="module.framework.sf_audio_record_adc.name" display="Name" default="g_sf_audio_record_adc${_instance}">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_record_adc.name}")</constraint>
+        </property>        
+        <property id="module.framework.sf_audio_record_adc.p_capture_data_buffer" display="Name of the data-buffer to store samples" default="p_capture_data_buffer">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_record_adc.p_capture_data_buffer}")</constraint>
+        </property>        
+        <property id="module.framework.sf_audio_record_adc.capture_data_buffer_size" display="Length of the data-buffer" default="2048">
+            <constraint display="Value must be an integer greater than 0">testInteger("${module.framework.sf_audio_record_adc.capture_data_buffer_size}")  &amp;&amp; ("${module.framework.sf_audio_record_adc.capture_data_buffer_size}" &gt; 0)</constraint>
+        </property>       
+        <property id="module.framework.sf_audio_record_adc.capture_data_size" display="Audio Record Data Size" default="0">
+        	   <option display="8-Bit"  id="module.driver.adc.resolution.resolution_8_bit" value="SF_AUDIO_RECORD_DATA_SIZE_8BIT"/>
+		   <option display="16-Bit" id="module.driver.adc.resolution.resolution_16_bit" value="SF_AUDIO_RECORD_DATA_SIZE_16BIT"/>	            
+        </property>        
+        <property id="module.framework.sf_audio_record_adc.sampling_rate_hz" display="Sampling Rate In HZ" default="8000">
+	            <constraint display="Value must be an integer greater than 0">testInteger("${module.framework.sf_audio_record_adc.sampling_rate_hz}")  &amp;&amp; ("${module.framework.sf_audio_record_adc.sampling_rate_hz}" &gt; 0)</constraint>
+        </property>        
+        <property id="module.framework.sf_audio_record_adc.sample_count" display="Number of sampling iterations" default="256">
+            <constraint display="Value must be an integer greater than 0">testInteger("${module.framework.sf_audio_record_adc.sample_count}")  &amp;&amp; ("${module.framework.sf_audio_record_adc.sample_count}" &gt; 0)</constraint>
+        </property>        
+        <property id="module.framework.sf_audio_record_adc.p_callback" display="Callback" default="g_audio_record_framework_user_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_record_adc.p_callback}")</constraint>
+        </property>          
+        <header>
+            /** Audio Record Adc on  Audio Record Adc instance */
+            extern sf_audio_record_instance_t ${module.framework.sf_audio_record_adc.name};
+            /** Buffer where the sampled data will be stored for application usage */
+            extern void * ${module.framework.sf_audio_record_adc.p_capture_data_buffer};
+            /** Buffer where the sampled data will be stored for application usage */
+	    extern uint16_t ${module.framework.sf_adc_periodic.data_buffer}[${module.framework.sf_adc_periodic.data_buffer_length}];
+  
+            #ifndef ${module.framework.sf_audio_record_adc.p_callback}
+            /** Declaration of user callback function. This function MUST be defined in the user application.*/
+            void ${module.framework.sf_audio_record_adc.p_callback}(sf_audio_record_callback_args_t * p_args);
+            #endif            
+            void ${module.framework.sf_audio_record_adc.name}_err_callback(void * p_instance, void * p_data);			
+        </header>
+        <includes>
+            #include &quot;sf_audio_record_adc.h&quot;
+        </includes>
+    <declarations>
+              #if defined(__ICCARM__)
+              #define ${module.framework.sf_audio_record_adc.name}_err_callback_WEAK_ATTRIBUTE
+              #pragma weak ${module.framework.sf_audio_record_adc.name}_err_callback  = ${module.framework.sf_audio_record_adc.name}_err_callback_internal
+              #elif defined(__GNUC__)
+              #define ${module.framework.sf_audio_record_adc.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_audio_record_adc.name}_err_callback_internal")))
+              #endif
+              void ${module.framework.sf_audio_record_adc.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_audio_record_adc.name}_err_callback_WEAK_ATTRIBUTE;
+        static const sf_audio_record_adc_hw_cfg_t ${module.framework.sf_audio_record_adc.name}_cfg_extend =
+        {
+            .p_lower_lvl_adc_periodic = &amp;${module.framework.sf_adc_periodic.name},                        
+        };
+        
+        sf_audio_record_adc_instance_ctrl_t ${module.framework.sf_audio_record_adc.name}_ctrl; 
+        sf_audio_record_cfg_t ${module.framework.sf_audio_record_adc.name}_cfg =
+        {
+            .capture_data_size        = ${module.framework.sf_audio_record_adc.capture_data_size},
+            .sampling_rate_hz         = ${module.framework.sf_audio_record_adc.sampling_rate_hz},
+            .p_capture_data_buffer    = ${module.framework.sf_adc_periodic.data_buffer},
+            .capture_data_buffer_size = ${module.framework.sf_audio_record_adc.capture_data_buffer_size},
+            .sample_count             = ${module.framework.sf_audio_record_adc.sample_count},
+            .p_callback               = ${module.framework.sf_audio_record_adc.p_callback},
+            .p_extend                 = &amp;${module.framework.sf_audio_record_adc.name}_cfg_extend,
+            .p_context                = NULL,
+        };
+    
+        sf_audio_record_instance_t ${module.framework.sf_audio_record_adc.name} =
+        {
+            .p_ctrl = &amp;${module.framework.sf_audio_record_adc.name}_ctrl,
+            .p_cfg =  &amp;${module.framework.sf_audio_record_adc.name}_cfg,
+            .p_api =  &amp;g_sf_audio_record_adc_on_sf_audio_record_adc,
+        };
+              /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.framework.sf_audio_record_adc.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+               **********************************************************************************************************************/
+              void ${module.framework.sf_audio_record_adc.name}_err_callback_internal(void * p_instance, void * p_data);
+              void ${module.framework.sf_audio_record_adc.name}_err_callback_internal(void * p_instance, void * p_data)
+              {
+                 /** Suppress compiler warning for not using parameters. */
+                 SSP_PARAMETER_NOT_USED(p_instance);
+                 SSP_PARAMETER_NOT_USED(p_data);
+
+                 /** An error has occurred. Please check function arguments for more information. */
+                 BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+              }
+
+    </declarations>
+            <init>
+            ssp_err_t ssp_err_${module.framework.sf_audio_record_adc.name};
+            ssp_err_${module.framework.sf_audio_record_adc.name} = ${module.framework.sf_audio_record_adc.name}.p_api->open(${module.framework.sf_audio_record_adc.name}.p_ctrl, ${module.framework.sf_audio_record_adc.name}.p_cfg);
+            if (SSP_SUCCESS != ssp_err_${module.framework.sf_audio_record_adc.name})
+            {
+               ${module.framework.sf_audio_record_adc.name}_err_callback((void *)&amp;${module.framework.sf_audio_record_adc.name},&amp;ssp_err_${module.framework.sf_audio_record_adc.name});
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

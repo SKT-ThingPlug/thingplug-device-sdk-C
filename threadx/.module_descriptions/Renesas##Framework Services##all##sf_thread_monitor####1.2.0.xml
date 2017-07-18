@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.thread_monitor" path="ssp_cfg/framework/sf_thread_monitor_cfg.h" version="0">
+        <property id="config.framework.thread_monitor.param_checking_enable" display="Parameter Checking" default="config.framework.thread_monitor.param_checking_enable.bsp">
+            <option id="config.framework.thread_monitor.param_checking_enable.bsp" display="Default (BSP)" value="BSP_CFG_PARAM_CHECKING_ENABLE" />
+            <option id="config.framework.thread_monitor.param_checking_enable.enabled" display="Enabled" value="(1)" />
+            <option id="config.framework.thread_monitor.param_checking_enable.disabled" display="Disabled" value="(0)" />
+        </property>
+        <property id="config.framework.thread_monitor.max_threads" display="Maximum Number of Monitored Threads" default="5">
+            <constraint display="Value must be an integer">testInteger("${config.framework.thread_monitor.max_threads}")</constraint>
+        </property>
+        <content>
+            #define THREAD_MONITOR_CFG_PARAM_CHECKING_ENABLE        (${config.framework.thread_monitor.param_checking_enable})
+            #define THREAD_MONITOR_CFG_MAX_NUMBER_OF_THREADS        (${config.framework.thread_monitor.max_threads})
+        </content>
+    </config>
+    <module id="module.framework.thread_monitor" config="config.framework.thread_monitor" display="Framework|Services|${module.framework.sf_thread_monitor.name} Thread Monitor Framework on sf_thread_monitor" version="0">
+        <constraint display="Unique name required for each instance">
+            "${interface.framework.thread_monitor.${module.framework.sf_thread_monitor.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.thread_monitor.requires.wdt" interface="interface.driver.wdt" display="Add WDT Driver" />
+        <provides interface="interface.framework.thread_monitor" />
+        <provides interface="interface.framework.thread_monitor_on_sf_thread_monitor" />
+        <provides interface="interface.framework.thread_monitor.${module.framework.sf_thread_monitor.name}" />
+        <property default="g_sf_thread_monitor${_instance}" display="Name" id="module.framework.sf_thread_monitor.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_thread_monitor.name}")</constraint>
+        </property>
+        <property id="module.framework.thread_monitor.profiling_mode_enable" display="Profiling Mode" default="module.framework.thread_monitor.profiling_mode_enable.disabled">
+            <option id="module.framework.thread_monitor.profiling_mode_enable.enabled" display="Enabled" value="true" />
+            <option id="module.framework.thread_monitor.profiling_mode_enable.disabled" display="Disabled" value="false" />
+        </property>
+        <property display="Thread Monitor Thread Priority" id="module.framework.thread_monitor.priority" default="1">
+		</property>
+		<header>
+		  extern const sf_thread_monitor_instance_t ${module.framework.sf_thread_monitor.name};
+          void ${module.framework.sf_thread_monitor.name}_err_callback(void * p_instance, void * p_data);
+		</header>
+		<includes>
+			#include "sf_thread_monitor.h"
+		</includes>
+		<macros>
+        </macros>
+		<declarations>
+            #if defined(__ICCARM__)
+            #define ${module.framework.sf_thread_monitor.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.framework.sf_thread_monitor.name}_err_callback  = ${module.framework.sf_thread_monitor.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.framework.sf_thread_monitor.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_thread_monitor.name}_err_callback_internal")))
+            #endif
+            void ${module.framework.sf_thread_monitor.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_thread_monitor.name}_err_callback_WEAK_ATTRIBUTE;
+			static sf_thread_monitor_instance_ctrl_t ${module.framework.sf_thread_monitor.name}_ctrl;
+            static sf_thread_monitor_cfg_t ${module.framework.sf_thread_monitor.name}_cfg =
+			{
+				.p_lower_lvl_wdt = &amp;${module.framework.thread_monitor.requires.wdt::module.driver.watchdog.name},
+                .priority = ${module.framework.thread_monitor.priority},
+                .profiling_mode_enabled = ${module.framework.thread_monitor.profiling_mode_enable}
+			};
+            /* Instance structure to use this module. */
+            const sf_thread_monitor_instance_t ${module.framework.sf_thread_monitor.name} =
+            {
+                .p_ctrl        = &amp;${module.framework.sf_thread_monitor.name}_ctrl,
+                .p_cfg         = &amp;${module.framework.sf_thread_monitor.name}_cfg,
+                .p_api         = &amp;g_sf_thread_monitor_on_sf_thread_monitor
+            };
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.framework.sf_thread_monitor.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.framework.sf_thread_monitor.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.framework.sf_thread_monitor.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+                /** Suppress compiler warning for not using parameters. */
+                 SSP_PARAMETER_NOT_USED(p_instance);
+                 SSP_PARAMETER_NOT_USED(p_data);
+
+                /** An error has occurred. Please check function arguments for more information. */
+                 BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+		</declarations>
+		<init>
+			ssp_err_t ssp_err_${module.framework.sf_thread_monitor.name};
+			ssp_err_${module.framework.sf_thread_monitor.name} = ${module.framework.sf_thread_monitor.name}.p_api->open(${module.framework.sf_thread_monitor.name}.p_ctrl, ${module.framework.sf_thread_monitor.name}.p_cfg);
+            if (SSP_SUCCESS != ssp_err_${module.framework.sf_thread_monitor.name})
+            {
+                ${module.framework.sf_thread_monitor.name}_err_callback((void *)&amp;${module.framework.sf_thread_monitor.name},&amp;ssp_err_${module.framework.sf_thread_monitor.name});
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

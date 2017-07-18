@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.gx_src" path="ssp_cfg/framework/el/gx_src_user.h" version="0">
+        <property id="config.el.gx_src.disable_multithread_support" display="Disable Multithread Support" default="config.el.gx_src.disable_multithread_support.no" description="If your application has only one thread which utilizes the GUI API services, say yes to reduce system overhead.">
+            <option id="config.el.gx_src.disable_multithread_support.yes" display="Yes" value="(1)" />
+            <option id="config.el.gx_src.disable_multithread_support.no"  display="No(default)" value="(0)" />
+        </property>
+        <property id="config.el.gx_src.disable_utf8_support" display="Disable UTF8 Support" default="config.el.gx_src.disable_utf8_support.no" description="GUIX disables UTF8 support if you say yes.">
+            <option id="config.el.gx_src.disable_utf8_support.yes" display="Yes" value="(1)" />
+            <option id="config.el.gx_src.disable_utf8_support.no"  display="No(default)" value="(0)" />
+        </property>
+        <property default="" display="System Timer (Milliseconds)" id="config.el.gx_src.system_timer_ms" description="GUIX system timer. Must be a multiple of TX_TIMER_TICKS_PER_SECOND or empty.">
+            <constraint display="Value must be greater than or equal to 10 or empty">("${config.el.gx_src.system_timer_ms}".length === 0) || ("${config.el.gx_src.system_timer_ms}" &gt; 9)</constraint>
+        </property>
+        <content>
+#if (${config.el.gx_src.disable_multithread_support})
+#define GUIX_DISABLE_MULTITHREAD_SUPPORT
+#endif
+#if (${config.el.gx_src.disable_utf8_support})
+#define GX_DISABLE_UTF8_SUPPORT
+#endif
+#if (${config.el.gx_src.system_timer_ms}+0)
+#define GX_SYSTEM_TIMER_MS (${config.el.gx_src.system_timer_ms})
+#endif
+        </content>
+    </config>
+    <module config="config.el.gx_src" id="module.el.gx_src" display="X-Ware|GUIX|GUIX Source" common="1" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.gx_src.linkage_warning}" === "module.el.gx_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <provides interface="interface.el.gx_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.gx_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.gx_src.linkage_warning">
+            <option display="Enabled" id="module.el.gx_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.gx_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

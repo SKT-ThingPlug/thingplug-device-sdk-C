@@ -1,0 +1,386 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nxd_dhcp_server" path="ssp_cfg/framework/el/nxd_dhcp_server_cfg.h" version="0">
+        <property default="1" display="Internal thread priority" id="config.el.nxd_dhcp_server.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.priority}")  &amp;&amp; ("${config.el.nxd_dhcp_server.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2" display="Packet allocate timeout (seconds)" id="config.el.nxd_dhcp_server.packet_alloc_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.packet_alloc_timeout}")  &amp;&amp; ("${config.el.nxd_dhcp_server.packet_alloc_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="192,168,0,1" display="Server IPv4 address (use commas for separation)" id="config.el.nxd_dhcp_server.ip_address">
+            <constraint display="Must be valid IP address separated by commas">"${config.el.nxd_dhcp_server.ip_address}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="255,255,255,0" display="Subnet Mask for clients (use commas for separation)" id="config.el.nxd_dhcp_server.sub_net">
+            <constraint display="Must be valid Subnet Mask separated by commas">"${config.el.nxd_dhcp_server.sub_net}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="192,168,0,1" display="Subnet router IPv4 address (use commas for separation)" id="config.el.nxd_dhcp_server.dns_router_ip_address">
+            <constraint display="Must be valid IP address separated by commas">"${config.el.nxd_dhcp_server.dns_router_ip_address}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="192,168,0,1" display="Subnet DNS IPv4 address (use commas for separation)" id="config.el.nxd_dhcp_server.dns_ip_address">
+            <constraint display="Must be valid IP address separated by commas">"${config.el.nxd_dhcp_server.dns_ip_address}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="8" display="Maximum client identifier length (bytes)" id="config.el.nxd_dhcp_server.dhcp_client_identifier">
+            <constraint display="Value must be between 6 to 8">
+                testInteger("${config.el.nxd_dhcp_server.dhcp_client_identifier}")  &amp;&amp; ("${config.el.nxd_dhcp_server.dhcp_client_identifier}" &gt;= 6)  &amp;&amp; ("${config.el.nxd_dhcp_server.dhcp_client_identifier}" &lt;= 8)
+            </constraint>
+        </property>
+        <property default="10" display="Fast periodic timer interval to check valid sessions (ticks)" id="config.el.nxd_dhcp_server.fast_periodic_time_interval">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.fast_periodic_time_interval}")  &amp;&amp; ("${config.el.nxd_dhcp_server.fast_periodic_time_interval}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Next Client message wait (ticks)" id="config.el.nxd_dhcp_server.client_session_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.client_session_timeout}")  &amp;&amp; ("${config.el.nxd_dhcp_server.client_session_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="0xFFFFFFFF" display="Client IP address lease time (seconds)" id="config.el.nxd_dhcp_server.assigned_lease_time">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.assigned_lease_time}")  &amp;&amp; ("${config.el.nxd_dhcp_server.assigned_lease_time}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="50" display="Size of array for holding available IP addresses" id="config.el.nxd_dhcp_server.ip_address_list_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.ip_address_list_size}")  &amp;&amp; ("${config.el.nxd_dhcp_server.ip_address_list_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="12" display="Size of the array containing current requested options (units)" id="config.el.nxd_dhcp_server.client_options_max" description="This is size of the array in the DHCP Client instance for holding the all the requested options in the parameter request list in the current session">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.client_options_max}")  &amp;&amp; ("${config.el.nxd_dhcp_server.client_options_max}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1 3 6" display="Server option list (optional - use space for separation) " id="config.el.nxd_dhcp_server.optional_server_option_list">
+        </property>
+        <property default="3" display="Server option list size (optional)" id="config.el.nxd_dhcp_server.optional_server_option_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.optional_server_option_size}")  &amp;&amp; ("${config.el.nxd_dhcp_server.optional_server_option_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="53 54" display="Server option list (required - use space for separation) " id="config.el.nxd_dhcp_server.required_server_option_list">
+        </property>
+        <property default="30" display="Size of the current client hostname buffer (bytes)" id="config.el.nxd_dhcp_server.client_hostname_max">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.client_hostname_max}")  &amp;&amp; ("${config.el.nxd_dhcp_server.client_hostname_max}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Maximum size of an IP addresses list (units)" id="config.el.nxd_dhcp_server.ip_address_max_list_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.ip_address_max_list_size}")  &amp;&amp; ("${config.el.nxd_dhcp_server.ip_address_max_list_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="50" display="Size of client record table (units)" id="config.el.nxd_dhcp_server.client_record_table_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.client_record_table_size}")  &amp;&amp; ("${config.el.nxd_dhcp_server.client_record_table_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="548" display="Size of the BOOT buffer (bytes)" id="config.el.nxd_dhcp_server.boot_buffer_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.boot_buffer_size}")  &amp;&amp; ("${config.el.nxd_dhcp_server.boot_buffer_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="236" display="Size of the DHCP header (bytes)" id="config.el.nxd_dhcp_server.header_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_server.header_size}")  &amp;&amp; ("${config.el.nxd_dhcp_server.header_size}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_DHCP_SERVER_THREAD_PRIORITY             (${config.el.nxd_dhcp_server.priority})
+            #define NX_DHCP_PACKET_ALLOCATE_TIMEOUT            (${config.el.nxd_dhcp_server.packet_alloc_timeout} * NX_IP_PERIODIC_RATE)
+            #define NX_DHCP_SERVER_IP_ADDRESS                  IP_ADDRESS(${config.el.nxd_dhcp_server.ip_address})
+            #define NX_DHCP_ROUTER_IP_ADDRESS                  IP_ADDRESS(${config.el.nxd_dhcp_server.dns_router_ip_address})
+            #define NX_DHCP_DNS_IP_ADDRESS                     IP_ADDRESS(${config.el.nxd_dhcp_server.dns_ip_address})
+            #define NX_DHCP_SUBNET_MASK                        IP_ADDRESS(${config.el.nxd_dhcp_server.sub_net})
+            #define NX_DHCP_CLIENT_IDENTIFIER_MAX              (${config.el.nxd_dhcp_server.dhcp_client_identifier})
+            #define NX_DHCP_FAST_PERIODIC_TIME_INTERVAL        (${config.el.nxd_dhcp_server.fast_periodic_time_interval})
+            #define NX_DHCP_CLIENT_SESSION_TIMEOUT             (${config.el.nxd_dhcp_server.client_session_timeout} * NX_DHCP_FAST_PERIODIC_TIME_INTERVAL)
+            #define NX_DHCP_ASSIGNED_LEASE_TIME                (${config.el.nxd_dhcp_server.assigned_lease_time})
+            #define NX_DHCP_IP_ADDRESS_LIST_SIZE               (${config.el.nxd_dhcp_server.ip_address_list_size})
+            #define NX_DHCP_CLIENT_OPTIONS_MAX                 (${config.el.nxd_dhcp_server.client_options_max})
+            #define NX_DHCP_OPTIONAL_SERVER_OPTION_LIST        "${config.el.nxd_dhcp_server.optional_server_option_list}"
+            #define NX_DHCP_DEFAULT_SERVER_OPTION_LIST          NX_DHCP_OPTIONAL_SERVER_OPTION_LIST
+            #define NX_DHCP_OPTIONAL_SERVER_OPTION_SIZE        (${config.el.nxd_dhcp_server.optional_server_option_size})
+            #define NX_DHCP_DEFAULT_SERVER_OPTION_SIZE          NX_DHCP_OPTIONAL_SERVER_OPTION_SIZE
+            #define NX_DHCP_REQUIRED_SERVER_OPTION_LIST        "${config.el.nxd_dhcp_server.required_server_option_list}"
+            #define NX_DHCP_CLIENT_HOSTNAME_MAX                (${config.el.nxd_dhcp_server.client_hostname_max})
+            #define NX_DHCP_IP_ADDRESS_MAX_LIST_SIZE           ${config.el.nxd_dhcp_server.ip_address_max_list_size}
+            #define NX_DHCP_CLIENT_RECORD_TABLE_SIZE           ${config.el.nxd_dhcp_server.client_record_table_size}
+            #define NX_BOOT_BUFFER_SIZE                        ${config.el.nxd_dhcp_server.boot_buffer_size}
+            #define NX_DHCP_HEADER_SIZE                        ${config.el.nxd_dhcp_server.header_size}
+        </content>
+    </config>
+    <module config="config.el.nxd_dhcp_server" display="X-Ware|NetX Duo|Protocols|${module.el.nx_dhcp_server.name} NetX Duo DHCP IPv4 Server" id="module.el.nxd_dhcp_server" version="1">
+        <constraint display="Module instances must have unique names"> 
+            "${interface.el.nx_dhcp_server.${module.el.nx_dhcp_server.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_dhcp_server.requires.nxd.ip" interface="interface.el.nxd.ip" display="Add NetX Duo IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.rarp" value="module.el.nx.ip.rarp.disable" />
+            <override property="module.el.nx.ip.udp" value="module.el.nx.ip.udp.enable" />
+        </requires>
+        <requires id="module.el.nx_dhcp_server.requires.nxd.packet_pool" interface="interface.el.nxd.packet_pool" display="Add NetX Duo Packet Pool" />
+        <requires id="module.el.nx_dhcp_server.requires.nxd_dhcp_common" interface="interface.el.nxd_dhcp_common" display="Add DHCP Common" />
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_dhcp_server" />
+        <provides interface="interface.el.nx_dhcp_server.${module.el.nx_dhcp_server.name}" />
+        <!-- NetX Duo only -->
+        <provides interface="interface.el.nxd_dhcp_server" />
+        <provides interface="interface.el.nxd_dhcp_server.${module.el.nx_dhcp_server.name}" />
+        
+        <property default="g_dhcp_server${_instance}" display="Name" id="module.el.nx_dhcp_server.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_dhcp_server.name}")
+            </constraint>
+        </property>
+        <property default="4096" display="Internal thread stack size (bytes)" id="module.el.nx_dhcp_server.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_dhcp_server.stack_size}")  &amp;&amp; (("${module.el.nx_dhcp_server.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <header>
+            extern NX_DHCP_SERVER ${module.el.nx_dhcp_server.name};
+            void ${module.el.nx_dhcp_server.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nxd_dhcp_server.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            NX_DHCP_SERVER ${module.el.nx_dhcp_server.name};
+            uint8_t ${module.el.nx_dhcp_server.name}_stack_memory[${module.el.nx_dhcp_server.stack_size}];
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_dhcp_server.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_dhcp_server.name}_err_callback  = ${module.el.nx_dhcp_server.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_dhcp_server.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_dhcp_server.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_dhcp_server.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_dhcp_server.name}_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.nx_dhcp_server.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_dhcp_server.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_dhcp_server.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_dhcp_server.name}_err;
+            /* Create DHCP Server. */
+            ${module.el.nx_dhcp_server.name}_err = nx_dhcp_server_create(&amp;${module.el.nx_dhcp_server.name},
+                                                                         &amp;${module.el.nx_dhcp_server.requires.nxd.ip::module.el.nx.ip.name},
+                                                                         &amp;${module.el.nx_dhcp_server.name}_stack_memory[0],
+                                                                         ${module.el.nx_dhcp_server.stack_size},
+                                                                         "${module.el.nx_dhcp_server.name} dhcp Server",
+                                                                         &amp;${module.el.nx_dhcp_server.requires.nxd.packet_pool::module.el.nx.packet_pool.name});
+            if (NX_SUCCESS != ${module.el.nx_dhcp_server.name}_err)
+            {
+                ${module.el.nx_dhcp_server.name}_err_callback((void *)&amp;${module.el.nx_dhcp_server.name},&amp;${module.el.nx_dhcp_server.name}_err);
+            }
+        </init>
+    </module>
+    <config id="config.el.nxd_dhcpv6_server" path="ssp_cfg/framework/el/nxd_dhcpv6_server_cfg.h" version="0">
+        <property default="1" display="Internal thread priority" id="config.el.nxd_dhcpv6_server.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.priority}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="60" display="Client lease time expiration check interval (seconds)" id="config.el.nxd_dhcpv6_server.ip_lease_timer_interval">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.ip_lease_timer_interval}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.ip_lease_timer_interval}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1" display="DHCPv6 packet receive timeout (seconds)" id="config.el.nxd_dhcpv6_server.packet_wait_option">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.packet_wait_option}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.packet_wait_option}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="0" display="Server preference ranking for clients" id="config.el.nxd_dhcpv6_server.preference_value" description="0 - client is free to choose &lt;= preference value &lt;= 255 - use this server)">
+            <constraint display="Value must be in range 0 - 255">
+                testInteger("${config.el.nxd_dhcpv6_server.preference_value}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.preference_value}" &gt;= 0) &amp;&amp; ("${config.el.nxd_dhcpv6_server.preference_value}" &lt;= 255)
+            </constraint>
+        </property>
+        <property default="6" display="Maximum options to extract from a client message" id="config.el.nxd_dhcpv6_server.max_option_request_options">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.max_option_request_options}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.max_option_request_options}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2000" display="Server interval for first client IP address renewal attempt (seconds)" id="config.el.nxd_dhcpv6_server.t1_time">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.t1_time}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.t1_time}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="3000" display="Server interval for second client IP address renewal attempt (seconds)" id="config.el.nxd_dhcpv6_server.t2_time">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.t2_time}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.t2_time}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2 * NX_DHCPV6_DEFAULT_T1_TIME" display="Time interval after which client IP is deprecated (seconds)" id="config.el.nxd_dhcpv6_server.default_preferred_time">
+        </property>
+        <property default="2 * NX_DHCPV6_DEFAULT_PREFERRED_TIME" display="Time interval after which leased IP is invalid (seconds)" id="config.el.nxd_dhcpv6_server.default_valid_time">
+        </property>
+        <property default="100" display="Maximum server status option message size (bytes)" id="config.el.nxd_dhcpv6_server.status_message_max">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.status_message_max}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.status_message_max}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="100" display="Maximum Size of the Server’s IP lease table (count)" id="config.el.nxd_dhcpv6_server.max_leases">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.max_leases}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.max_leases}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="120" display="Size of the Server’s Client record table (count)" id="config.el.nxd_dhcpv6_server.max_clients" description="This value should be less than or equal to the value - Maximum Size of the Server’s IP lease table" >
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_server.max_clients}")  &amp;&amp; ("${config.el.nxd_dhcpv6_server.max_clients}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nxd_dhcpv6_server.fragment_option.dont_fragment" display="Server socket fragmentation option" id="config.el.nxd_dhcpv6_server.fragment_option">
+            <option display="Dont fragment" id="config.el.nxd_dhcpv6_server.fragment_option.dont_fragment" value="NX_DONT_FRAGMENT"/>
+            <option display="Fragment okay" id="config.el.nxd_dhcpv6_server.fragment_option.fragment_okay" value="NX_FRAGMENT_OKAY"/>
+        </property>
+        <property default="IA OPTION GRANTED" display="Client request success message : granted" id="config.el.nxd_dhcpv6_server.success_granted">
+        </property>
+        <property default="IA OPTION NOT GRANTED-FAILURE UNSPECIFIED" display="Client request failure message : Failure unspecified" id="config.el.nxd_dhcpv6_server.failure_unspecified">
+        </property>
+        <property default="IA OPTION NOT GRANTED-NO ADDRESSES AVAILABLE" display="Client request failure message : No addresses available" id="config.el.nxd_dhcpv6_server.failure_no_addresses">
+        </property>
+        <property default="IA OPTION NOT GRANTED-INVALID CLIENT REQUEST" display="Client request failure message : Invalid client request" id="config.el.nxd_dhcpv6_server.failure_invalid_request">
+        </property>
+        <property default="IA OPTION NOT GRANTED-CLIENT NOT ON LINK" display="Client request failure message : Client not on link" id="config.el.nxd_dhcpv6_server.failure_not_on_link">
+        </property>
+        <property default="IA OPTION NOT GRANTED-CLIENT MUST USE MULTICAST" display="Client request failure message : Client must use multicast" id="config.el.nxd_dhcpv6_server.failure_use_multicast">
+        </property>
+        <content>
+            #define NX_DHCPV6_SERVER_THREAD_PRIORITY               (${config.el.nxd_dhcpv6_server.priority})
+            #define NX_DHCPV6_IP_LEASE_TIMER_INTERVAL              (${config.el.nxd_dhcpv6_server.ip_lease_timer_interval})
+            #define NX_DHCPV6_PACKET_WAIT_OPTION                   (${config.el.nxd_dhcpv6_server.packet_wait_option})
+            #define NX_DHCPV6_PREFERENCE_VALUE                     (${config.el.nxd_dhcpv6_server.preference_value})
+            #define NX_DHCPV6_MAX_OPTION_REQUEST_OPTIONS           (${config.el.nxd_dhcpv6_server.max_option_request_options})
+            #define NX_DHCPV6_DEFAULT_T1_TIME                      (${config.el.nxd_dhcpv6_server.t1_time})
+            #define NX_DHCPV6_DEFAULT_T2_TIME                      (${config.el.nxd_dhcpv6_server.t2_time})
+            #define NX_DHCPV6_STATUS_MESSAGE_MAX                   (${config.el.nxd_dhcpv6_server.status_message_max})
+            #define NX_DHCPV6_MAX_LEASES                           (${config.el.nxd_dhcpv6_server.max_leases})
+            #define NX_DHCPV6_MAX_CLIENTS                          (${config.el.nxd_dhcpv6_server.max_clients})
+            #define NX_DHCPV6_FRAGMENT_OPTION                      (${config.el.nxd_dhcpv6_server.fragment_option})
+            #define NX_DHCPV6_DEFAULT_PREFERRED_TIME               (${config.el.nxd_dhcpv6_server.default_preferred_time})
+            #define NX_DHCPV6_DEFAULT_VALID_TIME                   (${config.el.nxd_dhcpv6_server.default_valid_time})
+            #define NX_DHCPV6_STATUS_MESSAGE_SUCCESS               "${config.el.nxd_dhcpv6_server.success_granted}"
+            #define NX_DHCPV6_STATUS_MESSAGE_UNSPECIFIED           "${config.el.nxd_dhcpv6_server.failure_unspecified}"
+            #define NX_DHCPV6_STATUS_MESSAGE_NO_ADDRS_AVAILABLE    "${config.el.nxd_dhcpv6_server.failure_no_addresses}"
+            #define NX_DHCPV6_STATUS_MESSAGE_NO_BINDING            "${config.el.nxd_dhcpv6_server.failure_invalid_request}"
+            #define NX_DHCPV6_STATUS_MESSAGE_NOT_ON_LINK           "${config.el.nxd_dhcpv6_server.failure_not_on_link}"
+            #define NX_DHCPV6_STATUS_MESSAGE_USE_MULTICAST         "${config.el.nxd_dhcpv6_server.failure_use_multicast}"
+        </content>
+    </config>
+    <module config="config.el.nxd_dhcpv6_server" display="X-Ware|NetX Duo|Protocols|${module.el.nx_dhcpv6_server.name} NetX Duo DHCP IPv6 Server" id="module.el.nxd_dhcpv6_server" version="1">
+        <constraint display="Module instances must have unique names"> 
+            "${interface.el.nx_dhcpv6_server.${module.el.nx_dhcpv6_server.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_dhcpv6_server.requires.nxd.ip" interface="interface.el.nxd.ip" display="Add NetX Duo IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.rarp" value="module.el.nx.ip.rarp.disable" />
+            <override property="module.el.nx.ip.udp" value="module.el.nx.ip.udp.enable" />
+        </requires>
+        <requires id="module.el.nx_dhcpv6_server.requires.nxd.packet_pool" interface="interface.el.nxd.packet_pool" display="Add NetX Duo Packet Pool" />
+        <requires id="module.el.nx_dhcpv6_server.requires.nxd_dhcpv6_common" interface="interface.el.nxd_dhcpv6_common" display="Add DHCPv6 Common" />
+        <!-- NetX does not suport DHCPv6, but doing this for consistency with other XMLs -->
+        <provides interface="interface.el.nx_dhcpv6_server" />
+        <provides interface="interface.el.nx_dhcpv6_server.${module.el.nx_dhcpv6_server.name}" />
+        <!-- NetX Duo Only -->
+        <provides interface="interface.el.nxd_dhcpv6_server" />
+        <provides interface="interface.el.nxd_dhcpv6_server.${module.el.nx_dhcpv6_server.name}" />
+        <property default="g_dhcpv6_server${_instance}" display="Name" id="module.el.nx_dhcpv6_server.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_dhcpv6_server.name}")
+            </constraint>
+        </property>
+        <property default="4096" display="Internal thread stack size (bytes)" id="module.el.nx_dhcpv6_server.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_dhcpv6_server.stack_size}")  &amp;&amp; (("${module.el.nx_dhcpv6_server.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <property default="dhcpv6_address_declined_handler" display="Name of address declined handler function" id="module.el.nx_dhcpv6_server.dhcpv6_address_declined_handler">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_dhcpv6_server.dhcpv6_address_declined_handler}")</constraint>
+        </property>
+        <property default="dhcpv6_option_request_handler" display="Name of option request handler" id="module.el.nx_dhcpv6_server.dhcpv6_option_request_handler">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_dhcpv6_server.dhcpv6_option_request_handler}")</constraint>
+        </property>
+        <header>
+            extern NX_DHCPV6_SERVER ${module.el.nx_dhcpv6_server.name};
+            #if !defined(${module.el.nx_dhcpv6_server.dhcpv6_address_declined_handler})
+            VOID ${module.el.nx_dhcpv6_server.dhcpv6_address_declined_handler}(struct NX_DHCPV6_SERVER_STRUCT *dhcpv6_server_ptr, NX_DHCPV6_CLIENT *dhcpv6_client_ptr, UINT message);
+            #endif
+            #if !defined(${module.el.nx_dhcpv6_server.dhcpv6_option_request_handler})
+            VOID ${module.el.nx_dhcpv6_server.dhcpv6_option_request_handler}(struct NX_DHCPV6_SERVER_STRUCT *dhcpv6_server_ptr, UINT option_request, UCHAR *buffer_ptr, UINT *index);
+            #endif
+            void ${module.el.nx_dhcpv6_server.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nxd_dhcpv6_server.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            NX_DHCPV6_SERVER ${module.el.nx_dhcpv6_server.name};
+            uint8_t ${module.el.nx_dhcpv6_server.name}_stack_memory[${module.el.nx_dhcpv6_server.stack_size}];
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_dhcpv6_server.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_dhcpv6_server.name}_err_callback  = ${module.el.nx_dhcpv6_server.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_dhcpv6_server.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_dhcpv6_server.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_dhcpv6_server.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_dhcpv6_server.name}_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.nx_dhcpv6_server.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_dhcpv6_server.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_dhcpv6_server.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }            
+        </declarations>
+        <init>
+            UINT ${module.el.nx_dhcpv6_server.name}_err;
+            /* Create DHCP Server. */
+            ${module.el.nx_dhcpv6_server.name}_err  = nx_dhcpv6_server_create(&amp;${module.el.nx_dhcpv6_server.name},
+                                                                               &amp;${module.el.nx_dhcpv6_server.requires.nxd.ip::module.el.nx.ip.name},
+                                                                               "${module.el.nx_dhcpv6_server.name} dhcp Server",
+                                                                               &amp;${module.el.nx_dhcpv6_server.requires.nxd.packet_pool::module.el.nx.packet_pool.name},
+                                                                               &amp;${module.el.nx_dhcpv6_server.name}_stack_memory[0],
+                                                                               ${module.el.nx_dhcpv6_server.stack_size},
+                                                                               ${module.el.nx_dhcpv6_server.dhcpv6_address_declined_handler},
+                                                                               ${module.el.nx_dhcpv6_server.dhcpv6_option_request_handler});
+            if (NX_SUCCESS != ${module.el.nx_dhcpv6_server.name}_err)
+            {
+                ${module.el.nx_dhcpv6_server.name}_err_callback((void *)&amp;${module.el.nx_dhcpv6_server.name},&amp;${module.el.nx_dhcpv6_server.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

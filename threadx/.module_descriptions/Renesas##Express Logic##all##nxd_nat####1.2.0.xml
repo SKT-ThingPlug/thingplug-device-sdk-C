@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nxd_nat" path="ssp_cfg/framework/el/nxd_nat_cfg.h" version="0">
+        <property default="3" display="Minimum count for translation entry" id="config.el.nxd_smtp_client.min_entry_count">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_smtp_client.min_entry_count}")  &amp;&amp; ("${config.el.nxd_smtp_client.min_entry_count}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="240" display="timeout for translation entry (ticks)" id="config.el.nxd_smtp_client.entry_response_timeout">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_smtp_client.entry_response_timeout}")  &amp;&amp; ("${config.el.nxd_smtp_client.entry_response_timeout}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20000" display="Minimum assigned port number for outbound TCP packets" id="config.el.nxd_smtp_client.start_tcp_port">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_smtp_client.start_tcp_port}")  &amp;&amp; ("${config.el.nxd_smtp_client.start_tcp_port}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="30000" display="Maximum assigned port number for outbound TCP packets" id="config.el.nxd_smtp_client.end_tcp_port">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_smtp_client.end_tcp_port}")  &amp;&amp; ("${config.el.nxd_smtp_client.end_tcp_port}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20000" display="Minimum assigned port number for outbound UDP packets" id="config.el.nxd_smtp_client.start_udp_port">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_smtp_client.start_udp_port}")  &amp;&amp; ("${config.el.nxd_smtp_client.start_udp_port}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="30000" display="Maximum assigned port number for outbound UDP packets" id="config.el.nxd_smtp_client.end_udp_port">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_smtp_client.end_udp_port}")  &amp;&amp; ("${config.el.nxd_smtp_client.end_udp_port}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20000" display="Minimum ICMP query identifier" id="config.el.nxd_smtp_client.start_icmp_query_id" description="Minimum ICMP query identifier for assigning to outbound ICMP packets">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_smtp_client.start_icmp_query_id}")  &amp;&amp; ("${config.el.nxd_smtp_client.start_icmp_query_id}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="30000" display="Maximum ICMP query identifier" id="config.el.nxd_smtp_client.end_icmp_query_id" description="Maximum ICMP query identifier for assigning to outbound ICMP packets" >
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_smtp_client.end_icmp_query_id}")  &amp;&amp; ("${config.el.nxd_smtp_client.end_icmp_query_id}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_NAT_MIN_ENTRY_COUNT              (${config.el.nxd_smtp_client.min_entry_count})
+            #define NX_NAT_ENTRY_RESPONSE_TIMEOUT       (${config.el.nxd_smtp_client.entry_response_timeout})
+            #define NX_NAT_START_TCP_PORT               (${config.el.nxd_smtp_client.start_tcp_port})
+            #define NX_NAT_END_TCP_PORT                 (${config.el.nxd_smtp_client.end_tcp_port})
+            #define NX_NAT_START_UDP_PORT               (${config.el.nxd_smtp_client.start_udp_port})
+            #define NX_NAT_END_UDP_PORT                 (${config.el.nxd_smtp_client.end_udp_port})
+            #define NX_NAT_START_ICMP_QUERY_ID          (${config.el.nxd_smtp_client.start_icmp_query_id})
+            #define NX_NAT_END_ICMP_QUERY_ID            (${config.el.nxd_smtp_client.end_icmp_query_id})
+        </content>
+    </config>
+    <module config="config.el.nxd_nat" display="X-Ware|NetX Duo|Protocols|${module.el.nx_nat.name} NetX Duo NAT" id="module.el.nxd_nat" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_nat.${module.el.nx_nat.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_nat.requires.nxd.ip_external" interface="interface.el.nxd.ip" display="Add NetX Duo IP Instance for Global Network" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.tcp" value="module.el.nx.ip.tcp.enable" />
+        </requires>
+        <requires id="module.el.nx_nat.requires.sf_el_nx" interface="interface.framework.sf_el_nx" display="Add NetX Duo Network Driver for Private Network" />
+        <!-- NetX & NetX Duo -->
+        <provides interface="interface.el.nx_nat" />
+        <provides interface="interface.el.nx_nat.${module.el.nx_nat.name}" />
+        <!-- NetX Duo Only -->
+        <provides interface="interface.el.nxd_nat" />
+        <provides interface="interface.el.nxd_nat.${module.el.nx_nat.name}" />
+        <property default="g_nat${_instance}" display="Name" id="module.el.nx_nat.name">
+            <constraint display="Name must be a valid C symbol"> testSymbol("${module.el.nx_nat.name}") </constraint>
+        </property>
+        <property default="1024" display="Cache Size (bytes)" id="module.el.nx_nat.cache_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8"> testInteger("${module.el.nx_nat.cache_size}")  &amp;&amp; (("${module.el.nx_nat.cache_size}" % 8) == 0)</constraint>
+        </property>
+        <property default="192,168,0,2" display="Private IPv4 Address (use commas for separation)" id="module.el.nx_nat.private_address_ipv4">
+            <constraint display="Must be valid IP address separated by commas">"${module.el.nx_nat.private_address_ipv4}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="255,255,255,0" display="Private IPv4 Netmask (use commas for separation)" id="module.el.nx_nat.private_address_netmask">
+            <constraint display="Must be valid IP Mask separated by commas">"${module.el.nx_nat.private_address_netmask}".split(",").length == 4
+            </constraint>
+        </property>
+        <property default="0" display="Global network interface index" id="module.el.nx_nat.global_interface_index">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.nx_nat.global_interface_index}")  &amp;&amp; ("${module.el.nx_nat.global_interface_index}"  &gt;= 0 )</constraint>
+        </property>        
+        <header>
+            extern NX_NAT_DEVICE   ${module.el.nx_nat.name};
+            void ${module.el.nx_nat.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_nat.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            NX_NAT_DEVICE   ${module.el.nx_nat.name};
+            uint8_t         ${module.el.nx_nat.name}_cache_memory[${module.el.nx_nat.cache_size}];
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_nat.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_nat.name}_err_callback  = ${module.el.nx_nat.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_nat.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_nat.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_nat.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_nat.name}_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.nx_nat.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_nat.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_nat.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }            
+        </declarations>
+        <init>
+            UINT  ${module.el.nx_nat.name}_err;
+            /* Set the private interface. External was already created. */
+            ${module.el.nx_nat.name}_err = nx_ip_interface_attach( &amp;${module.el.nx_nat.requires.nxd.ip_external::module.el.nx.ip.name},
+                                                                    "${module.el.nx_nat.name} Private Interface",
+                                                                    IP_ADDRESS(${module.el.nx_nat.private_address_ipv4}),
+                                                                    IP_ADDRESS(${module.el.nx_nat.private_address_netmask}),
+                                                                    ${module.el.nx_nat.requires.sf_el_nx::module.framework.sf_el_nx.name});
+            if (NX_SUCCESS != ${module.el.nx_nat.name}_err)
+            {
+                ${module.el.nx_nat.name}_err_callback((void *)&amp;${module.el.nx_nat.name},&amp;${module.el.nx_nat.name}_err);
+            }                                                                    
+            /* Create a NAT server and cache with a global interface index. */
+            ${module.el.nx_nat.name}_err = nx_nat_create( &amp;${module.el.nx_nat.name},
+                                                            &amp;${module.el.nx_nat.requires.nxd.ip_external::module.el.nx.ip.name},
+                                                            ${module.el.nx_nat.global_interface_index},
+                                                            &amp;${module.el.nx_nat.name}_cache_memory[0],
+                                                            ${module.el.nx_nat.cache_size});
+            
+            if (NX_SUCCESS != ${module.el.nx_nat.name}_err)
+            {
+                ${module.el.nx_nat.name}_err_callback((void *)&amp;${module.el.nx_nat.name},&amp;${module.el.nx_nat.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

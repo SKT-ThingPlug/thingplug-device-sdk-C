@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <module display="X-Ware|NetX|NetX MD5" id="module.el.ns_md5" common="1" version="1">
+        <requires interface="_rtos" />
+        <!-- There is only one NetX MD5 component at this time -->
+        <provides interface="interface.el.nx_md5" />
+        <provides interface="interface.el.nx_original_md5" />
+        <provides interface="interface.el.nxd_md5" />
+        <includes>
+            #include "nx_api.h"
+            #include "nx_md5.h"
+        </includes>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_external_irq" path="ssp_cfg/framework/sf_external_irq_cfg.h" version="0">
+        <property default="config.framework.sf_external_irq.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_external_irq.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_external_irq.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_external_irq.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_external_irq.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define SF_EXTERNAL_IRQ_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_external_irq.param_checking_enable}
+</content>
+    </config>
+    <module config="config.framework.sf_external_irq" display="Framework|Input|${module.framework.sf_external_irq.name} External IRQ Framework on sf_external_irq" id="module.framework.sf_external_irq_on_sf_external_irq" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_external_irq.${module.framework.sf_external_irq.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_external_irq_on_sf_external_irq.requires.external_irq" interface="interface.driver.external_irq" display="Add External IRQ Driver" />        
+        <provides interface="interface.framework.sf_external_irq" />
+        <provides interface="interface.framework.sf_external_irq_on_sf_external_irq" />
+        <provides interface="interface.framework.sf_external_irq.${module.framework.sf_external_irq.name}" />
+        <property default="g_sf_external_irq${_instance}" display="Name" id="module.framework.sf_external_irq.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_external_irq.name}")</constraint>
+        </property>
+        <property default="module.framework.sf_external_irq.event.button_event_semaphore_put" display="Event" id="module.framework.sf_external_irq.event">
+            <option display="None" id="module.framework.sf_external_irq.event.button_event_none" value="SF_EXTERNAL_IRQ_EVENT_NONE"/>
+            <option display="Semaphore Put" id="module.framework.sf_external_irq.event.button_event_semaphore_put" value="SF_EXTERNAL_IRQ_EVENT_SEMAPHORE_PUT"/>
+        </property>
+        <header>
+            /** SF External IRQ on SF External IRQ Instance. */
+            extern const sf_external_irq_instance_t ${module.framework.sf_external_irq.name};            
+        </header>
+        <includes>#include &quot;sf_external_irq.h&quot;</includes>
+        <declarations>sf_external_irq_instance_ctrl_t ${module.framework.sf_external_irq.name}_ctrl;
+const sf_external_irq_cfg_t ${module.framework.sf_external_irq.name}_cfg =
+{
+    .event             = ${module.framework.sf_external_irq.event},
+    .p_lower_lvl_irq   = &amp;${module.framework.sf_external_irq_on_sf_external_irq.requires.external_irq::module.driver.external_irq.name},  
+};
+/* Instance structure to use this module. */
+const sf_external_irq_instance_t ${module.framework.sf_external_irq.name} = 
+{
+    .p_ctrl        = &amp;${module.framework.sf_external_irq.name}_ctrl,
+    .p_cfg         = &amp;${module.framework.sf_external_irq.name}_cfg,
+    .p_api         = &amp;g_sf_external_irq_on_sf_external_irq
+};  
+</declarations>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.cac" path="ssp_cfg/driver/r_cac_cfg.h" version="1">
+        <property default="config.driver.cac.param_checking.bsp" display="Parameter Checking" id="config.driver.cac.param_checking">
+            <option display="Default (BSP)" id="config.driver.cac.param_checking.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.cac.param_checking.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.cac.param_checking.disabled" value="(0)"/>
+        </property>
+        <content>#define CAC_CFG_PARAM_CHECKING_ENABLE ${config.driver.cac.param_checking}
+        </content>
+    </config>
+    <module config="config.driver.cac" display="Driver|Monitoring|${module.driver.cac.name} Clock Accuracy Circuit Driver on r_cac" id="module.driver.cac_on_cac" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.cac.${module.driver.cac.name}}" === "1"
+        </constraint>
+        <constraint display="All CAC interrupt priorities must be the same priority level.">
+            "${module.driver.cac.frequency_error_ipl}" == "board.icu.common.irq.disabled" || "${module.driver.cac.measurement_end_ipl}" == "board.icu.common.irq.disabled" || "${module.driver.cac.frequency_error_ipl}" == "${module.driver.cac.measurement_end_ipl}"
+        </constraint>
+        <constraint display="All CAC interrupt priorities must be the same priority level.">
+            "${module.driver.cac.frequency_error_ipl}" == "board.icu.common.irq.disabled" || "${module.driver.cac.overflow_ipl}" == "board.icu.common.irq.disabled" || "${module.driver.cac.frequency_error_ipl}" == "${module.driver.cac.overflow_ipl}"
+        </constraint>
+        <constraint display="All CAC interrupt priorities must be the same priority level.">
+            "${module.driver.cac.measurement_end_ipl}" == "board.icu.common.irq.disabled" || "${module.driver.cac.overflow_ipl}" == "board.icu.common.irq.disabled" || "${module.driver.cac.measurement_end_ipl}" == "${module.driver.cac.overflow_ipl}"
+        </constraint>
+        <provides interface="interface.driver.cac" />
+        <provides interface="interface.driver.cac_on_cac" />
+        <provides interface="interface.driver.cac.${module.driver.cac.name}" />
+        <property default="g_cac${_instance}" display="Name" id="module.driver.cac.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.cac.name}")</constraint>
+        </property>
+            <property default="module.driver.cac.continuous_mode.false" display="Continuous Measurement Operation" id="module.driver.cac.continuous_mode">
+            <option display="Enabled" id="module.driver.cac.continuous_mode.enabled" value="true"/>
+            <option display="Disabled" id="module.driver.cac.continuous_mode.disabled" value="false"/>
+        </property>
+        <property default="module.driver.cac.mei_interrupt_enabled.false" display="Measurement Complete Interrupt" id="module.driver.cac.mei_interrupt_enabled">
+            <option display="Enabled" id="module.driver.cac.mei_interrupt_enabled.enabled" value="true"/>
+            <option display="Disabled" id="module.driver.cac.mei_interrupt_enabled.disabled" value="false"/>
+        </property>
+        <property default="module.driver.cac.ovf_interrupt_enabled.false" display="Overflow Interrupt" id="module.driver.cac.ovf_interrupt_enabled">
+            <option display="Enabled" id="module.driver.cac.ovf_interrupt_enabled.enabled" value="true"/>
+            <option display="Disabled" id="module.driver.cac.ovf_interrupt_enabled.disabled" value="false"/>
+        </property>
+        <property default="module.driver.cac.ferr_interrupt_enabled.false" display="Frequency Error Interrupt" id="module.driver.cac.ferr_interrupt_enabled">
+            <option display="Enabled" id="module.driver.cac.ferr_interrupt_enabled.enabled" value="true"/>
+            <option display="Disabled" id="module.driver.cac.ferr_interrupt_enabled.disabled" value="false"/>
+        </property>
+        <property default="0" display="Upper Limit Threshold" id="module.driver.cac.cac_upper_limit">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.cac.cac_upper_limit}")  &amp;&amp; ("${module.driver.cac.cac_upper_limit}" &gt;= 0)</constraint>
+        </property>
+        <property default="0" display="Lower Limit Threshold" id="module.driver.cac.cac_lower_limit">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.cac.cac_lower_limit}")  &amp;&amp; ("${module.driver.cac.cac_lower_limit}" &gt;= 0)</constraint>
+        </property>
+        <property default="module.driver.cac.cac_ref_clock.main" display="Reference clock source" id="module.driver.cac.cac_ref_clock.clock">
+            <option display="Main Oscillator" id="module.driver.cac.cac_ref_clock.main" value="CAC_CLOCK_SOURCE_MAIN_OSC"/>
+            <option display="Sub-clock" id="module.driver.cac.cac_ref_clock.sub" value="CAC_CLOCK_SOURCE_SUBCLOCK"/>
+            <option display="HOCO" id="module.driver.cac.cac_ref_clock.hoco" value="CAC_CLOCK_SOURCE_HOCO"/>
+            <option display="MOCO" id="module.driver.cac.cac_ref_clock.moco" value="CAC_CLOCK_SOURCE_MOCO"/>
+            <option display="LOCO" id="module.driver.cac.cac_ref_clock.loco" value="CAC_CLOCK_SOURCE_LOCO"/>
+            <option display="PCLKB" id="module.driver.cac.cac_ref_clock.pclkb" value="CAC_CLOCK_SOURCE_PCLKB"/>
+            <option display="IWDT" id="module.driver.cac.cac_ref_clock.iwdt" value="CAC_CLOCK_SOURCE_IWDT"/>
+        </property>
+        <property default="module.driver.cac.cac_ref_clock.divider.32" display="Reference clock divider" id="module.driver.cac.cac_ref_clock.divider">
+            <option display="32" id="module.driver.cac.cac_ref_clock.divider.32" value="CAC_REF_DIV_32"/>
+            <option display="128" id="module.driver.cac.cac_ref_clock.divider.128" value="CAC_REF_DIV_128"/>
+            <option display="1024" id="module.driver.cac.cac_ref_clock.divider.1024" value="CAC_REF_DIV_1024"/>
+            <option display="8192" id="module.driver.cac.cac_ref_clock.divider.8192" value="CAC_REF_DIV_8192"/>
+        </property>
+        <property default="module.driver.cac.cac_ref_clock.edge.rise" display="Reference clock edge detect" id="module.driver.cac.cac_ref_clock.edge">
+            <option display="Rising" id="module.driver.cac.cac_ref_clock.edge.rise" value="CAC_REF_EDGE_RISE"/>
+            <option display="Falling" id="module.driver.cac.cac_ref_clock.edge.fall" value="CAC_REF_EDGE_FALL"/>
+            <option display="Both" id="module.driver.cac.cac_ref_clock.edge.both" value="CAC_REF_EDGE_BOTH"/>
+        </property>
+        <property default="module.driver.cac.cac_ref_clock.digfilter.off" display="Reference clock digital filter" id="module.driver.cac.cac_ref_clock.digfilter">
+            <option display="Disabled" id="module.driver.cac.cac_ref_clock.digfilter.off" value="CAC_REF_DIGITAL_FILTER_OFF"/>
+            <option display="Sampling clock=Measuring freq" id="module.driver.cac.cac_ref_clock.digfilter.1" value="CAC_REF_DIGITAL_FILTER_1"/>
+            <option display="Sampling clock=Measuring freq/4" id="module.driver.cac.cac_ref_clock.digfilter.4" value="CAC_REF_DIGITAL_FILTER_4"/>
+            <option display="Sampling clock=Measuring freq/16" id="module.driver.cac.cac_ref_clock.digfilter.16" value="CAC_REF_DIGITAL_FILTER_16"/>
+        </property>        
+        <property default="module.driver.cac.cac_meas_clock.hoco" display="Measurement clock source" id="module.driver.cac.cac_meas_clock.clock">
+            <option display="Main Oscillator" id="module.driver.cac.cac_meas_clock.main" value="CAC_CLOCK_SOURCE_MAIN_OSC"/>
+            <option display="Sub-clock" id="module.driver.cac.cac_meas_clock.sub" value="CAC_CLOCK_SOURCE_SUBCLOCK"/>
+            <option display="HOCO" id="module.driver.cac.cac_meas_clock.hoco" value="CAC_CLOCK_SOURCE_HOCO"/>
+            <option display="MOCO" id="module.driver.cac.cac_meas_clock.moco" value="CAC_CLOCK_SOURCE_MOCO"/>
+            <option display="LOCO" id="module.driver.cac.cac_meas_clock.loco" value="CAC_CLOCK_SOURCE_LOCO"/>
+            <option display="PCLKB" id="module.driver.cac.cac_meas_clock.pclkb" value="CAC_CLOCK_SOURCE_PCLKB"/>
+            <option display="IWDT" id="module.driver.cac.cac_meas_clock.iwdt" value="CAC_CLOCK_SOURCE_IWDT"/>
+            <option display="External" id="module.driver.cac.cac_meas_clock.ext" value="CAC_CLOCK_SOURCE_EXTERNAL"/>
+        </property>
+        <property default="module.driver.cac.cac_meas_clock.divider.1" display="Measurement clock divider" id="module.driver.cac.cac_meas_clock.divider">
+            <option display="1" id="module.driver.cac.cac_meas_clock.divider.1" value="CAC_MEAS_DIV_1"/>
+            <option display="4" id="module.driver.cac.cac_meas_clock.divider.4" value="CAC_MEAS_DIV_4"/>
+            <option display="8" id="module.driver.cac.cac_meas_clock.divider.8" value="CAC_MEAS_DIV_8"/>
+            <option display="32" id="module.driver.cac.cac_meas_clock.divider.32" value="CAC_MEAS_DIV_32"/>
+        </property>
+        
+        <property default="NULL" display="Callback" id="module.driver.cac.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.cac.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Frequency Error Interrupt Priority" id="module.driver.cac.frequency_error_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Measurement End Interrupt Priority" id="module.driver.cac.measurement_end_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Overflow Interrupt Priority" id="module.driver.cac.overflow_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <header>
+        extern const cac_instance_t ${module.driver.cac.name};
+        </header>
+        
+        <includes>#include &quot;r_cac.h&quot;
+#include &quot;r_cac_api.h&quot;</includes>
+        <declarations>
+#if ${module.driver.cac.frequency_error_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.cac.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CAC)
+SSP_VECTOR_DEFINE(cac_frequency_error_isr, CAC, FREQUENCY_ERROR);
+#endif
+#endif
+#if ${module.driver.cac.measurement_end_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.cac.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CAC)
+SSP_VECTOR_DEFINE(cac_measurement_end_isr, CAC, MEASUREMENT_END);
+#endif
+#endif
+#if ${module.driver.cac.overflow_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.cac.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_CAC)
+SSP_VECTOR_DEFINE(cac_overflow_isr, CAC, OVERFLOW);
+#endif
+#endif
+#ifndef ${module.driver.cac.p_callback}
+void ${module.driver.cac.p_callback}(cac_callback_args_t * p_args);
+#endif
+static cac_instance_ctrl_t ${module.driver.cac.name}_ctrl;
+
+
+static const cac_cfg_t ${module.driver.cac.name}_cfg =
+{
+    .mei_interrupt_enabled      = ${module.driver.cac.mei_interrupt_enabled},
+    .ovf_interrupt_enabled      = ${module.driver.cac.ovf_interrupt_enabled},
+    .cac_ref_clock.digfilter    = ${module.driver.cac.cac_ref_clock.digfilter},
+    .cac_ref_clock.edge         = ${module.driver.cac.cac_ref_clock.edge},
+    .ferr_interrupt_enabled     = ${module.driver.cac.ferr_interrupt_enabled},
+    .continuous_mode            = ${module.driver.cac.continuous_mode},
+    .cac_ref_clock.clock        = ${module.driver.cac.cac_ref_clock.clock},
+    .cac_ref_clock.divider      = ${module.driver.cac.cac_ref_clock.divider},
+    .cac_meas_clock.clock        = ${module.driver.cac.cac_meas_clock.clock},
+    .cac_meas_clock.divider      = ${module.driver.cac.cac_meas_clock.divider},
+    .cac_upper_limit            = ${module.driver.cac.cac_upper_limit},
+    .cac_lower_limit            = ${module.driver.cac.cac_lower_limit},
+    .frequency_error_ipl        = ${module.driver.cac.frequency_error_ipl},
+    .measurement_end_ipl        = ${module.driver.cac.measurement_end_ipl},
+    .overflow_ipl               = ${module.driver.cac.overflow_ipl},
+    .p_callback          = ${module.driver.cac.p_callback},
+    .p_context           = &amp;${module.driver.cac.name}
+
+};
+/* Instance structure to use this module. */
+const cac_instance_t ${module.driver.cac.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.cac.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.cac.name}_cfg,
+    .p_api         = &amp;g_cac_on_cac
+};
+
+</declarations>
+    </module>
+</synergyModuleDescription>

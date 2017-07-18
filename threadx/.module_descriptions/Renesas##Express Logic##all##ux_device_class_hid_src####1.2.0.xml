@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <module config="config.el.ux_device_class_hid_src" display="X-Ware|USBX|Device|Classes|HID|USBX Device Class HID Source" common="1" id="module.el.ux_device_class_hid_src" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.ux_device_class_hid_src.linkage_warning}" === "module.el.ux_device_class_hid_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_device_class_hid_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.ux_device_class_hid_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.ux_device_class_hid_src.linkage_warning">
+            <option display="Enabled" id="module.el.ux_device_class_hid_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.ux_device_class_hid_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

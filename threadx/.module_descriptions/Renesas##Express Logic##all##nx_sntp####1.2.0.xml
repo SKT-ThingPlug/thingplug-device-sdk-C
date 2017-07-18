@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nx_sntp_client" path="ssp_cfg/framework/el/nx_sntp_client_cfg.h" version="0">
+        <property default="2048" display="Internal thread stack size (bytes)" id="config.el.nx_sntp_client.stack_size">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.stack_size}")  &amp;&amp; (("${config.el.nx_sntp_client.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+         <property default="TX_NO_TIME_SLICE" id="config.el.nx_sntp_client.time_silce" display="SNTP client thread time slicing interval (ticks)"
+            description="Number of timer-ticks this thread is allowed to run before other ready threads of the same priority are given a chance to run. Legal time-slice values range from 1 to 0xFFFFFFFF (inclusive). A value of TX_NO_TIME_SLICE (a value of 0) disables time-slicing of this thread." >
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.time_silce}")  &amp;&amp; ("${config.el.nx_sntp_client.time_silce}" &gt;= 0)
+            </constraint>
+         </property>
+         <property default="2" display="Internal thread priority" id="config.el.nx_sntp_client.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.priority}")  &amp;&amp; ("${config.el.nx_sntp_client.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="SNTP Client socket" display="UDP socket name" id="config.el.nx_sntp_client.udp_socket_name">
+        </property>
+        <property default="123" display="UDP port number" id="config.el.nx_sntp_client.client_udp_port">
+            <constraint display="Value must be between 1 to 65535">
+                testInteger("${config.el.nx_sntp_client.client_udp_port}")  &amp;&amp; ("${config.el.nx_sntp_client.client_udp_port}" &gt;= 1)&amp;&amp; ("${config.el.nx_sntp_client.client_udp_port}" &gt;= 65535)
+            </constraint>
+        </property>
+        <property default="123" display="Server UDP port" id="config.el.nx_sntp_client.server_udp_port">
+            <constraint display="Value must be between 1 to 65535">
+                testInteger("${config.el.nx_sntp_client.server_udp_port}")  &amp;&amp; ("${config.el.nx_sntp_client.server_udp_port}" &gt;= 1)&amp;&amp; ("${config.el.nx_sntp_client.server_udp_port}" &gt;= 65535)
+            </constraint>
+        </property>
+        <property default="128" display="Time to live" id="config.el.nx_sntp_client.time_to_live">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.time_to_live}")  &amp;&amp; ("${config.el.nx_sntp_client.time_to_live}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="5" display="Maximum UDP packets queue depth (units)" id="config.el.nx_sntp_client.queue_depth">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.queue_depth}")  &amp;&amp; ("${config.el.nx_sntp_client.queue_depth}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1" display="Packet allocation timeout (seconds)" id="config.el.nx_sntp_client.packet_time_out">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.packet_time_out}")  &amp;&amp; ("${config.el.nx_sntp_client.packet_time_out}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="3" display="SNTP version to use" id="config.el.nx_sntp_client.ntp_version">
+            <constraint display="Value must be between 3 to 4">
+                testInteger("${config.el.nx_sntp_client.ntp_version}")  &amp;&amp; ("${config.el.nx_sntp_client.ntp_version}" &gt;= 3)  &amp;&amp; ("${config.el.nx_sntp_client.ntp_version}" &lt;= 4)
+            </constraint>
+        </property>
+        <property default="3" display="NTP minimum version" id="config.el.nx_sntp_client.ntp_min_version">
+            <constraint display="Value must be between 3 to 4">
+                testInteger("${config.el.nx_sntp_client.ntp_min_version}")  &amp;&amp; ("${config.el.nx_sntp_client.ntp_min_version}" &gt;= 3)  &amp;&amp; ("${config.el.nx_sntp_client.ntp_min_version}" &lt;= 4)
+            </constraint>
+        </property>
+        <property default="2" display="Lowest level server stratum client accepts" id="config.el.nx_sntp_client.min_server_stratum">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.min_server_stratum}")  &amp;&amp; ("${config.el.nx_sntp_client.min_server_stratum}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="10" display="Minimum time difference that triggers adjustment (milliseconds)" id="config.el.nx_sntp_client.min_time_adjustment">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.min_time_adjustment}")  &amp;&amp; ("${config.el.nx_sntp_client.min_time_adjustment}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="180000" display="Maximum time adjustment allowed to local clock time (milliseconds)" id="config.el.nx_sntp_client.max_time_adjustment">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.max_time_adjustment}")  &amp;&amp; ("${config.el.nx_sntp_client.max_time_adjustment}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nx_sntp_client.ignore_max_adjust_startup.enable" display="Ignore maximum time adjust limit at startup" id="config.el.nx_sntp_client.ignore_max_adjust_startup">
+            <option display="True" id="config.el.nx_sntp_client.ignore_max_adjust_startup.enable" value="NX_TRUE"/>
+            <option display="False" id="config.el.nx_sntp_client.ignore_max_adjust_startup.disable" value="NX_FALSE"/>
+        </property>
+        <property default="7200" display="Maximum time lapse without valid update (seconds)" id="config.el.nx_sntp_client.max_time_lapse">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.max_time_lapse}")  &amp;&amp; ("${config.el.nx_sntp_client.max_time_lapse}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="1" display="'Update time remaining' timer update interval (seconds)" id="config.el.nx_sntp_client.update_timeout_interval">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.update_timeout_interval}")  &amp;&amp; ("${config.el.nx_sntp_client.update_timeout_interval}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="3600" display="Starting poll interval for unicast update request (seconds)" id="config.el.nx_sntp_client.unicast_poll_interval">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.unicast_poll_interval}")  &amp;&amp; ("${config.el.nx_sntp_client.unicast_poll_interval}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2" display="Poll interval increment after failed time update" id="config.el.nx_sntp_client.exp_backoff_rate">
+            <constraint display="Value must be less than or equal to time lapse">
+                testInteger("${config.el.nx_sntp_client.exp_backoff_rate}")  &amp;&amp; ("${config.el.nx_sntp_client.exp_backoff_rate}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nx_sntp_client.rtt_required.disable" display="Calculate round trip time of messages" id="config.el.nx_sntp_client.rtt_required">
+            <option display="True" id="config.el.nx_sntp_client.rtt_required.enable" value="NX_TRUE"/>
+            <option display="False" id="config.el.nx_sntp_client.rtt_required.disable" value="NX_FALSE"/>
+        </property>
+        <property default="3" display="Invalid message limit to mark server invalid" id="config.el.nx_sntp_client.invalid_update_limit">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.invalid_update_limit}")  &amp;&amp; ("${config.el.nx_sntp_client.invalid_update_limit}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nx_sntp_client.randomize_on_startup.disable" display="Randomize update request interval on startup" id="config.el.nx_sntp_client.randomize_on_startup">
+            <option display="True" id="config.el.nx_sntp_client.randomize_on_startup.enable" value="NX_TRUE"/>
+            <option display="False" id="config.el.nx_sntp_client.randomize_on_startup.disable" value="NX_FALSE"/>
+        </property>
+        <property default="1" display="Internal Task sleep interval (ticks)" id="config.el.nx_sntp_client.client_sleep_interval">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.client_sleep_interval}")  &amp;&amp; ("${config.el.nx_sntp_client.client_sleep_interval}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="2016" display="Current calendar year" id="config.el.nx_sntp_client.cur_year">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.cur_year}")  &amp;&amp; ("${config.el.nx_sntp_client.cur_year}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="0xBA368E80" display="Number of seconds on the master NTP clock" id="config.el.nx_sntp_client.ntp_seconds">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nx_sntp_client.ntp_seconds}")  &amp;&amp; ("${config.el.nx_sntp_client.ntp_seconds}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_SNTP_CLIENT_THREAD_STACK_SIZE           (${config.el.nx_sntp_client.stack_size})
+            #define NX_SNTP_CLIENT_THREAD_TIME_SLICE           (${config.el.nx_sntp_client.time_silce})
+            #define NX_SNTP_CLIENT_THREAD_PRIORITY             (${config.el.nx_sntp_client.priority})
+            #define NX_SNTP_CLIENT_PREEMPTION_THRESHOLD         NX_SNTP_CLIENT_THREAD_PRIORITY
+            #define NX_SNTP_CLIENT_UDP_SOCKET_NAME             "${config.el.nx_sntp_client.udp_socket_name}"
+            #define NX_SNTP_CLIENT_UDP_PORT                    (${config.el.nx_sntp_client.client_udp_port})
+            #define NX_SNTP_SERVER_UDP_PORT                    (${config.el.nx_sntp_client.server_udp_port})
+            #define NX_SNTP_CLIENT_TIME_TO_LIVE                (${config.el.nx_sntp_client.time_to_live})
+            #define NX_SNTP_CLIENT_MAX_QUEUE_DEPTH             (${config.el.nx_sntp_client.queue_depth})
+            #define NX_SNTP_CLIENT_PACKET_TIMEOUT              (${config.el.nx_sntp_client.packet_time_out} * NX_IP_PERIODIC_RATE)
+            #define NX_SNTP_CLIENT_NTP_VERSION                 (${config.el.nx_sntp_client.ntp_version})
+            #define NX_SNTP_CLIENT_MIN_NTP_VERSION             (${config.el.nx_sntp_client.ntp_min_version})
+            #define NX_SNTP_CLIENT_MIN_SERVER_STRATUM          (${config.el.nx_sntp_client.min_server_stratum})
+            #define NX_SNTP_CLIENT_MIN_TIME_ADJUSTMENT         (${config.el.nx_sntp_client.min_time_adjustment})
+            #define NX_SNTP_CLIENT_MAX_TIME_ADJUSTMENT         (${config.el.nx_sntp_client.max_time_adjustment})
+            #define NX_SNTP_CLIENT_IGNORE_MAX_ADJUST_STARTUP   (${config.el.nx_sntp_client.ignore_max_adjust_startup})
+            #define NX_SNTP_CLIENT_MAX_TIME_LAPSE              (${config.el.nx_sntp_client.max_time_lapse})
+            #define NX_SNTP_UPDATE_TIMEOUT_INTERVAL            (${config.el.nx_sntp_client.update_timeout_interval})
+            #define NX_SNTP_CLIENT_UNICAST_POLL_INTERVAL       (${config.el.nx_sntp_client.unicast_poll_interval})
+            #define NX_SNTP_CLIENT_EXP_BACKOFF_RATE            (${config.el.nx_sntp_client.exp_backoff_rate})
+            #define NX_SNTP_CLIENT_RTT_REQUIRED                (${config.el.nx_sntp_client.rtt_required})
+            #define NX_SNTP_CLIENT_INVALID_UPDATE_LIMIT        (${config.el.nx_sntp_client.invalid_update_limit})
+            #define NX_SNTP_CLIENT_RANDOMIZE_ON_STARTUP        (${config.el.nx_sntp_client.randomize_on_startup})
+            #define NX_SNTP_CLIENT_SLEEP_INTERVAL              (${config.el.nx_sntp_client.client_sleep_interval})
+            #define NX_SNTP_CURRENT_YEAR                       (${config.el.nx_sntp_client.cur_year})
+            #define NTP_SECONDS_AT_01011999                    (${config.el.nx_sntp_client.ntp_seconds})
+        </content>
+    </config>
+    <module  config="config.el.nx_sntp_client" display="X-Ware|NetX|Protocols|${module.el.nx_sntp_client.name} NetX SNTP Client" id="module.el.nx_sntp_client" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.nx_sntp_client.${module.el.nx_sntp_client.name}}" === "1"
+            </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_sntp_client.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+            <override property="module.el.nx.ip.udp" value="module.el.nx.ip.udp.enable" />
+        </requires>
+        <requires id="module.el.nx_sntp_client.requires.nx.packet_pool" interface="interface.el.nx_original.packet_pool" display="Add NetX Packet Pool" />
+        
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_sntp_client" />
+        <provides interface="interface.el.nx_sntp_client.${module.el.nx_sntp_client.name}" />
+        <!-- NetX only -->
+        <provides interface="interface.el.nx_original_sntp_client" />
+        <provides interface="interface.el.nx_original_sntp_client.${module.el.nx_sntp_client.name}" />
+        
+        <property default="g_sntp_client${_instance}" display="Name" id="module.el.nx_sntp_client.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_sntp_client.name}")
+            </constraint>
+        </property>
+        <property default="0" display="Index to SNTP Network Interface" id="module.el.nx_sntp_client.index_network_interface">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${module.el.nx_sntp_client.index_network_interface}")  &amp;&amp; ("${module.el.nx_sntp_client.index_network_interface}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="leap_second_handler" display="Name of Leap Second Handler" id="module.el.nx_sntp_client.leap_second_handler">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_sntp_client.leap_second_handler}")
+            </constraint>
+        </property>
+        <property default="kiss_of_death_handler" display="Name of Kiss of Death Handler" id="module.el.nx_sntp_client.kiss_of_death_handler">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_sntp_client.kiss_of_death_handler}")
+            </constraint>
+        </property>
+        <property default="NULL" display="Name of Random Number Generator Function (optional)" id="module.el.nx_sntp_client.random_number_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx_sntp_client.random_number_function}")
+            </constraint>
+        </property>
+        <header>
+            extern NX_SNTP_CLIENT ${module.el.nx_sntp_client.name};
+            #if !defined(${module.el.nx_sntp_client.leap_second_handler})
+            UINT ${module.el.nx_sntp_client.leap_second_handler}(NX_SNTP_CLIENT *client_ptr, UINT indicator);
+            #endif
+            #if !defined(${module.el.nx_sntp_client.kiss_of_death_handler})
+            UINT ${module.el.nx_sntp_client.kiss_of_death_handler}(NX_SNTP_CLIENT *client_ptr, UINT code);
+            #endif
+            #if !defined(${module.el.nx_sntp_client.random_number_function})
+            VOID ${module.el.nx_sntp_client.random_number_function}(struct NX_SNTP_CLIENT_STRUCT *client_ptr, ULONG *rand);
+            #endif
+            void ${module.el.nx_sntp_client.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_sntp_client.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.nx_sntp_client.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx_sntp_client.name}_err_callback  = ${module.el.nx_sntp_client.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx_sntp_client.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx_sntp_client.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx_sntp_client.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx_sntp_client.name}_err_callback_WEAK_ATTRIBUTE;
+            NX_SNTP_CLIENT   ${module.el.nx_sntp_client.name};
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.el.nx_sntp_client.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx_sntp_client.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx_sntp_client.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx_sntp_client.name}_err;
+            /* Create SNTP Client. */
+            ${module.el.nx_sntp_client.name}_err = nx_sntp_client_create(&amp;${module.el.nx_sntp_client.name},
+                                                                         &amp;${module.el.nx_sntp_client.requires.nx.ip::module.el.nx.ip.name},
+                                                                         ${module.el.nx_sntp_client.index_network_interface},
+                                                                         &amp;${module.el.nx_sntp_client.requires.nx.packet_pool::module.el.nx.packet_pool.name}, ${module.el.nx_sntp_client.leap_second_handler},
+                                                                         ${module.el.nx_sntp_client.kiss_of_death_handler},
+                                                                         ${module.el.nx_sntp_client.random_number_function});
+            if (NX_SUCCESS != ${module.el.nx_sntp_client.name}_err)
+            {
+                ${module.el.nx_sntp_client.name}_err_callback((void *)&amp;${module.el.nx_sntp_client.name},&amp;${module.el.nx_sntp_client.name}_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

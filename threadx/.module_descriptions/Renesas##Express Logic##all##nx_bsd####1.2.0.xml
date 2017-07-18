@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <module display="X-Ware|NetX|Protocols|NetX BSD Support" id="module.el.nx_bsd" version="1" common="100">
+        <!-- NetX BSD Adaptation Layer requires compilation with _POSIX_SOURCE preprocess MACRO defined for GCC -->
+        <constraint display="For GCC compiler, define the C preprocessor symbol _POSIX_SOURCE">
+            "${module.el.nx_bsd.warning}" === "module.el.nx_bsd.warning.disabled"
+        </constraint>
+        <constraint display="Requires NetX Source, Refer NetX BSD User Guide">
+            "${module.el.nx_bsd.warning}" === "module.el.nx_bsd.warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_bsd.requires.nx.ip" interface="interface.el.nx_original.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+        </requires>
+        <requires id="module.el.nx_bsd.requires.nx.packet_pool" interface="interface.el.nx_original.packet_pool" display="Add NetX Packet Pool" />
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx_bsd" />
+        <!-- NetX Only -->
+        <provides interface="interface.el.nx_original_bsd" />        
+        <!-- NetX BSD Adaptation Layer requires compilation with _POSIX_SOURCE preprocess MACRO defined for GCC -->
+        <property default="module.el.nx_bsd.warning.enabled" display="NetX BSD Warning" id="module.el.nx_bsd.warning">
+            <option display="Enabled" id="module.el.nx_bsd.warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.nx_bsd.warning.disabled" value="1"/>
+        </property>
+
+        <property default="2048" display="Internal thread stack size (bytes)" id="module.el.nx_bsd.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_bsd.stack_size}")  &amp;&amp; (("${module.el.nx_bsd.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <property default="3" display="Internal thread priority" id="module.el.nx_bsd.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${module.el.nx_bsd.priority}")  &amp;&amp; ("${module.el.nx_bsd.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <header>
+            void nx_bsd_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include "nx_bsd.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            uint8_t         nx_bsd_stack_memory[${module.el.nx_bsd.stack_size}];
+            #if defined(__ICCARM__)
+            #define nx_bsd_err_callback_WEAK_ATTRIBUTE
+            #pragma weak nx_bsd_err_callback  = nx_bsd_err_callback_internal
+            #elif defined(__GNUC__)
+            #define nx_bsd_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("nx_bsd_err_callback_internal")))
+            #endif
+            void nx_bsd_err_callback(void * p_instance, void * p_data) nx_bsd_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void nx_bsd_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void nx_bsd_err_callback_internal(void * p_instance, void * p_data);
+            void nx_bsd_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }              
+        </declarations>
+        <init>
+            INT nx_bsd_err;
+            /* Initialize BSD Support for NetX. */
+            nx_bsd_err = bsd_initialize(&amp;${module.el.nx_bsd.requires.nx.ip::module.el.nx.ip.name},
+                                        &amp;${module.el.nx_bsd.requires.nx.packet_pool::module.el.nx.packet_pool.name},
+                                        &amp;nx_bsd_stack_memory[0],
+                                        ${module.el.nx_bsd.stack_size},
+                                        ${module.el.nx_bsd.priority});
+            if (NX_SUCCESS != nx_bsd_err)
+            {
+                nx_bsd_err_callback((void *)NULL,&amp;nx_bsd_err);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

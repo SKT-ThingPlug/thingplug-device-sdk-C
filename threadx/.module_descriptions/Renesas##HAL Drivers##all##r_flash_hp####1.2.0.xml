@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.flash_hp" path="ssp_cfg/driver/r_flash_cfg.h" version="1">
+		<property default="config.driver.flash_hp.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.flash_hp.param_checking_enable">
+            <option display="Default (BSP)" id="config.flash_hp.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.flash_hp.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.flash_hp.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<property default="config.driver.flash_hp.param_code_flash_programming_enable.disabled" display="Code Flash Programming Enable" id="config.driver.flash_hp.param_code_flash_programming_enable">
+			<option display="Enabled" id="config.driver.flash_hp.param_code_flash_programming_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.flash_hp.param_code_flash_programming_enable.disabled" value="(0)"/>
+		</property>	
+		<content>#define FLASH_CFG_PARAM_CHECKING_ENABLE ${config.driver.flash_hp.param_checking_enable}
+		         #define FLASH_CFG_PARAM_CODE_FLASH_PROGRAMMING_ENABLE ${config.driver.flash_hp.param_code_flash_programming_enable}
+		</content>
+ 	</config>
+	<module config="config.driver.flash_hp" display="Driver|Storage|${module.driver.flash.name} Flash Driver on r_flash_hp" id="module.driver.flash_on_flash_hp" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.flash.${module.driver.flash.name}}" === "1"
+        </constraint>
+        <constraint display="Interrupts must be enabled if BGO is enabled.">
+            ("${module.driver.flash.data_flash_bgo}" != "module.driver.flash.data_flash_bgo.enabled") ||
+            (("${module.driver.flash.irq_ipl}" != "board.icu.common.irq.disabled") &amp;&amp;
+             ("${module.driver.flash.err_irq_ipl}" != "board.icu.common.irq.disabled"))
+        </constraint>
+        <constraint display="All flash interrupt priorities must be the same priority level.">
+            "${module.driver.flash.irq_ipl}" == "board.icu.common.irq.disabled" || "${module.driver.flash.err_irq_ipl}" == "board.icu.common.irq.disabled" || "${module.driver.flash.irq_ipl}" == "${module.driver.flash.err_irq_ipl}"
+        </constraint>
+        <provides interface="interface.driver.flash" />
+        <provides interface="interface.driver.flash_on_flash_hp" />
+        <provides interface="interface.driver.flash.${module.driver.flash.name}" />
+        <property default="g_flash${_instance}" display="Name" id="module.driver.flash.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.flash.name}")</constraint>
+        </property>
+     	<property default="module.driver.flash.data_flash_bgo.enabled" display="Data Flash Background Operation" id="module.driver.flash.data_flash_bgo">
+			<option display="Enabled" id="module.driver.flash.data_flash_bgo.enabled" value="true"/>
+			<option display="Disabled" id="module.driver.flash.data_flash_bgo.disabled" value="false"/>
+		</property>
+        <property default="NULL" display="Callback" id="module.driver.flash.p_callback">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.flash.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Flash Ready Interrupt Priority" id="module.driver.flash.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Flash Error Interrupt Priority" id="module.driver.flash.err_irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <header>
+            /* Flash on Flash HP Instance */
+            extern const flash_instance_t ${module.driver.flash.name};
+#ifndef ${module.driver.flash.p_callback}
+void ${module.driver.flash.p_callback}(flash_callback_args_t * p_args);
+#endif
+        </header>
+		
+		<includes>#include &quot;r_flash_hp.h&quot;
+#include &quot;r_flash_api.h&quot;</includes>
+		<declarations>
+#if ${module.driver.flash.irq_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.flash.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_FLASH)
+SSP_VECTOR_DEFINE(fcu_frdyi_isr, FCU, FRDYI);
+#endif
+#endif
+#if ${module.driver.flash.err_irq_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.flash.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_FLASH)
+SSP_VECTOR_DEFINE(fcu_fiferr_isr, FCU, FIFERR);
+#endif
+#endif
+flash_hp_instance_ctrl_t ${module.driver.flash.name}_ctrl;
+const flash_cfg_t ${module.driver.flash.name}_cfg =
+{
+    .data_flash_bgo      = ${module.driver.flash.data_flash_bgo},
+    .p_callback          = ${module.driver.flash.p_callback},
+    .p_context           = &amp;${module.driver.flash.name},
+    .irq_ipl             = ${module.driver.flash.irq_ipl},
+    .err_irq_ipl         = ${module.driver.flash.err_irq_ipl},
+};
+/* Instance structure to use this module. */
+const flash_instance_t ${module.driver.flash.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.flash.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.flash.name}_cfg,
+    .p_api         = &amp;g_flash_on_flash_hp
+};
+</declarations>
+	</module>
+</synergyModuleDescription>

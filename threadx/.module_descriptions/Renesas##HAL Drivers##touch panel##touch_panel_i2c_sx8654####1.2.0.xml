@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<module config="config.external.ex_touch_panel_i2c_sx8654" display="Driver|Input|Touch Panel Driver on touch_panel_sx8654" id="module.external.ex_touch_panel_i2c_sx8654_on_ex_touch_panel_i2c_sx8654" version="1">
+      <requires interface="_rtos" />
+      <provides interface="interface.external.ex_touch_panel" />
+	  <!-- Give name of the instance structure used in the driver in the value field -->
+      <property id="module.external.ex_touch_panel.name" display="Name" default="module.external.ex_touch_panel.name.sx8654">
+         <option display="g_sf_touch_panel_i2c_chip_sx8654" id="module.external.ex_touch_panel.name.sx8654" value="g_sf_touch_panel_i2c_chip_sx8654" />
+      </property>
+	</module>
+</synergyModuleDescription>

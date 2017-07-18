@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_host_class_storage_src" path="ssp_cfg/framework/el/ux_host_class_storage_src_user.h" version="0">
+        <property id="config.el.ux_host_class_storage_src.filex_stub" display="Use FileX stub" default="config.el.ux_host_class_storage_src.filex_stub.disabled" description="Only enable this option in cases where FileX is not available to use.">
+            <option id="config.el.ux_host_class_storage_src.filex_stub.enabled" display="Enabled" value="1" />
+            <option id="config.el.ux_host_class_storage_src.filex_stub.disabled" display="Disabled (default)" value="0" />
+        </property>
+        <property default="1" display="Maximum number of SCSI logical units" id="config.el.ux_host_class_storage_src.lun" description="This value represents the maximum number of SCSI logical units represented in the host storage class driver.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_host_class_storage_src.lun}".length === 0) || ("${config.el.ux_host_class_storage_src.lun}" &gt; 0)</constraint>
+        </property>
+        <property default="1" display="Maximum number of storage media instance" id="config.el.ux_host_class_storage_src.max_media" description="This value represents the maximum number of storage media instancets represented in the host storage class driver.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_host_class_storage_src.max_media}".length === 0) || ("${config.el.ux_host_class_storage_src.max_media}" &gt; 0)</constraint>
+        </property>
+        <property default="1024" display="Storage memory size in bytes for FileX used for data transfer" id="config.el.ux_host_class_storage_src.storage_memory_buffer_size" description="This value represents the block of memory in bytes for FileX to use when doing transfers. This value can be changed to save on memory space but should not be smaller than the media sector size. Because USB devices are SCSI devices and there is a great deal of overhead when doing read/writes, it is better to increase it for higher data throughput.">
+            <constraint display="Value must be greater than or equal to 512, or empty. It should be multiple of sector size of media device.">("${config.el.ux_host_class_storage_src.storage_memory_buffer_size}".length === 0) || ("${config.el.ux_host_class_storage_src.storage_memory_buffer_size}" &gt;= 512)</constraint>
+        </property>
+        <property default="1024" display="Maximum transfer size in bytes in one BOT data-transport phase" id="config.el.ux_host_class_storage_src.storage_max_transfer_size" description="This value represents maximum size of memory chunk in bytes to send in one data-transport phase in the Bulk-Only Transport protocol. Large size of data transfer request is split into smaller chunks specified by this configuration. It is better to increase it for higher data throughput.">
+            <constraint display="Value must be greater than or equal to 512, or empty">("${config.el.ux_host_class_storage_src.storage_max_transfer_size}".length === 0) || ("${config.el.ux_host_class_storage_src.storage_max_transfer_size}" &gt;= 512)</constraint>
+        </property>
+        <property default="1024" display="Stack size for the Mass Storage Class internal thread" id="config.el.ux_host_class_storage_src.storage_thread_stack_size" description="This value represents the stack size in bytes for Mass Storage Class internal thread named ux_storage_thread.">
+            <constraint display="Value must be greater than or equal to 512, or empty">("${config.el.ux_host_class_storage_src.storage_thread_stack_size}".length === 0) || ("${config.el.ux_host_class_storage_src.storage_thread_stack_size}" &gt;= 512)</constraint>
+        </property>
+        <property default="100000" display="Timeout in mili second for a BOT transfer request" id="config.el.ux_host_class_storage_src.transfer_timeout" description="This value represents timeout value in mili second for a data transfer request in Bulk-Only Transport protocol.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_host_class_storage_src.transfer_timeout}".length === 0) || ("${config.el.ux_host_class_storage_src.transfer_timeout}" &gt; 0)</constraint>
+        </property>
+        <property default="30000" display="Timeout in mili second for the status from a command in the Control/Bulk/Interrupt transport" id="config.el.ux_host_class_storage_src.cbi_status_timeout" description="This value represents timeout value in mili second for the status from a command, which is returned by the interrupt endpoint in  the Control/Bulk/Interrupt transport. The transport is mainly used by storage devices that have very slow read/write commands.">
+            <constraint display="Value must be greater than 0 or empty">("${config.el.ux_host_class_storage_src.cbi_status_timeout}".length === 0) || ("${config.el.ux_host_class_storage_src.cbi_status_timeout}" &gt; 0)</constraint>
+        </property>
+
+        <content>
+#if (${config.el.ux_host_class_storage_src.filex_stub})
+#define UX_NO_FILEX
+#endif
+#if (${config.el.ux_host_class_storage_src.lun})
+#define UX_MAX_HOST_LUN  (${config.el.ux_host_class_storage_src.lun})
+#endif
+#if (${config.el.ux_host_class_storage_src.max_media})
+#define UX_HOST_CLASS_STORAGE_MAX_MEDIA  (${config.el.ux_host_class_storage_src.max_media})
+#endif
+#if (${config.el.ux_host_class_storage_src.storage_memory_buffer_size})
+#define UX_HOST_CLASS_STORAGE_MEMORY_BUFFER_SIZE  (${config.el.ux_host_class_storage_src.storage_memory_buffer_size})
+#endif
+#if (${config.el.ux_host_class_storage_src.storage_max_transfer_size})
+#define UX_HOST_CLASS_STORAGE_MAX_TRANSFER_SIZE  (${config.el.ux_host_class_storage_src.storage_max_transfer_size})
+#endif
+#if (${config.el.ux_host_class_storage_src.storage_thread_stack_size})
+#define UX_HOST_CLASS_STORAGE_THREAD_STACK_SIZE  (${config.el.ux_host_class_storage_src.storage_thread_stack_size})
+#endif
+#if (${config.el.ux_host_class_storage_src.transfer_timeout})
+#define UX_HOST_CLASS_STORAGE_TRANSFER_TIMEOUT_IN_MS  (${config.el.ux_host_class_storage_src.transfer_timeout})
+#endif
+#if (${config.el.ux_host_class_storage_src.cbi_status_timeout})
+#define UX_HOST_CLASS_STORAGE_CBI_STATUS_TIMEOUT_IN_MS  (${config.el.ux_host_class_storage_src.cbi_status_timeout})
+#endif
+        </content>
+    </config>
+    <module config="config.el.ux_host_class_storage_src" id="module.el.ux_host_class_storage_src" display="X-Ware|USBX|Host|Classes|Mass Storage|USBX Host Class Mass Storage Source" common="1" version="0">
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <constraint display="Refer to release notes if multiple symbol definition linkage error occurs">
+            "${module.el.ux_host_class_storage_src.linkage_warning}" === "module.el.ux_host_class_storage_src.linkage_warning.disabled"
+        </constraint>
+
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_host_class_storage_src" />
+
+        <!-- Remove this warning when a proper fix is implemented to remove the library when source component is added -->
+        <property default="module.el.ux_host_class_storage_src.linkage_warning.enabled" display="Show linkage warning" id="module.el.ux_host_class_storage_src.linkage_warning">
+            <option display="Enabled" id="module.el.ux_host_class_storage_src.linkage_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.ux_host_class_storage_src.linkage_warning.disabled" value="1"/>
+        </property>
+    </module>
+</synergyModuleDescription>

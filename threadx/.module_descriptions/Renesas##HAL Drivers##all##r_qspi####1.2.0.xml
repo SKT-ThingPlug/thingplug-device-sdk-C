@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.qspi" path="ssp_cfg/driver/r_qspi_cfg.h" version="0">
+        <property default="config.driver.qspi.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.qspi.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.qspi.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.qspi.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.qspi.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>
+            #define QSPI_CFG_PARAM_CHECKING_ENABLE ${config.driver.qspi.param_checking_enable}
+        </content>
+    </config>
+    <module config="config.driver.qspi" display="Driver|Storage|${module.driver.qspi.name} QSPI Driver on QSPI" id="module.driver.qspi_on_qspi" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.qspi.${module.driver.qspi.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.qspi" />
+        <provides interface="interface.driver.qspi_on_qspi" />
+        <provides interface="interface.driver.qspi.${module.driver.qspi.name}" />
+        <property default="g_qspi${_instance}" display="Name" id="module.driver.qspi.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.qspi.name}")</constraint>
+        </property>
+        <header>
+            extern const qspi_instance_t ${module.driver.qspi.name};
+        </header>
+        <includes>
+            #include &quot;r_qspi.h&quot;
+            #include &quot;r_qspi_api.h&quot;
+        </includes>
+        <declarations>
+            static qspi_instance_ctrl_t ${module.driver.qspi.name}_ctrl;
+            const qspi_cfg_t ${module.driver.qspi.name}_cfg =
+            {
+            .p_extend = NULL,
+            };
+            /** This structure encompasses everything that is needed to use an instance of this interface. */
+            const qspi_instance_t ${module.driver.qspi.name} =
+            {
+            .p_ctrl = &amp;${module.driver.qspi.name}_ctrl,
+            .p_cfg =  &amp;${module.driver.qspi.name}_cfg,
+            .p_api =  &amp;g_qspi_on_qspi,
+            };
+        </declarations>
+    </module>
+</synergyModuleDescription>

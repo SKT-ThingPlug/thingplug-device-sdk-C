@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.elc" path="ssp_cfg/driver/r_elc_cfg.h" version="0">
+		<property id="config.driver.elc.checking" display="Parameter Checking" default="config.driver.elc.checking.system">
+			<option id="config.driver.elc.checking.system" display="Default (BSP)" value="(BSP_CFG_PARAM_CHECKING_ENABLE)" />		
+	 		<option id="config.driver.elc.checking.enabled" display="Enabled" value="(1)" />
+			<option id="config.driver.elc.checking.disabled" display="Disabled" value="(0)" />				
+		</property>			
+		<content>#define ELC_CFG_PARAM_CHECKING_ENABLE ${config.driver.elc.checking}</content>
+	</config>
+	<module config="config.driver.elc" display="Driver|System|${module.driver.elc.name} ELC Driver on r_elc" id="module.driver.elc_on_elc" version="1">
+        <constraint display="Only one ELC driver instance is allowed">
+            "${interface.driver.elc}" === "1"
+        </constraint>
+        <requires interface="_hal" />
+        <provides interface="interface.driver.elc" />
+        <property default="g_elc" display="Name [Fixed]" id="module.driver.elc.name">
+            <constraint display="Name must be g_elc">"${module.driver.elc.name}" == "g_elc"</constraint>
+        </property>
+		<header>
+		/** ELC Instance */
+		extern const elc_instance_t ${module.driver.elc.name};
+		</header>
+		<includes>
+		#include &quot;r_elc.h&quot;
+		#include &quot;r_elc_api.h&quot;
+		</includes>
+		<declarations>
+		const elc_instance_t ${module.driver.elc.name} = {
+            .p_api = &amp;g_elc_on_elc,
+            .p_cfg = NULL
+        };
+		</declarations>
+    </module>        
+</synergyModuleDescription>

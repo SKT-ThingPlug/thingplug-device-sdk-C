@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.slcdc" path="ssp_cfg/driver/r_slcdc_cfg.h" version="0">
+		<property default="config.driver.slcdc.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.slcdc.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.slcdc.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.slcdc.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.slcdc.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define SLCDC_CFG_PARAM_CHECKING_ENABLE ${config.driver.slcdc.param_checking_enable}
+</content>
+	</config>
+	<module config="config.driver.slcdc" display="Driver|Graphics|${module.driver.slcdc.name} Segment LCD Driver on r_slcdc" id="module.driver.slcdc_on_slcdc" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.slcdc.${module.driver.slcdc.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.slcdc" />
+        <provides interface="interface.driver.slcdc_on_slcdc" />
+        <provides interface="interface.driver.slcdc.${module.driver.slcdc.name}" />
+        <property default="g_slcdc${_instance}" display="Name" id="module.driver.slcdc.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.slcdc.name}")</constraint>
+        </property>
+		<property default="module.driver.slcdc.slcdc_clock.clock_hoco" display="Slcdc Clock" id="module.driver.slcdc.slcdc_clock">
+			<option display="Clock Loco" id="module.driver.slcdc.slcdc_clock.clock_loco" value="SLCDC_CLOCK_LOCO"/>
+			<option display="Clock Sosc" id="module.driver.slcdc.slcdc_clock.clock_sosc" value="SLCDC_CLOCK_SOSC"/>
+			<option display="Clock Mosc" id="module.driver.slcdc.slcdc_clock.clock_mosc" value="SLCDC_CLOCK_MOSC"/>
+			<option display="Clock Hoco" id="module.driver.slcdc.slcdc_clock.clock_hoco" value="SLCDC_CLOCK_HOCO"/>
+		</property>
+		<property default="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_16384" display="Slcdc Clock Divisor" id="module.driver.slcdc.slcdc_clock_setting">
+			<option display="Clk Divisor Loco 4" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_4" value="SLCDC_CLK_DIVISOR_LOCO_4"/>
+			<option display="Clk Divisor Loco 8" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_8" value="SLCDC_CLK_DIVISOR_LOCO_8"/>
+			<option display="Clk Divisor Loco 16" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_16" value="SLCDC_CLK_DIVISOR_LOCO_16"/>
+			<option display="Clk Divisor Loco 32" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_32" value="SLCDC_CLK_DIVISOR_LOCO_32"/>
+			<option display="Clk Divisor Loco 64" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_64" value="SLCDC_CLK_DIVISOR_LOCO_64"/>
+			<option display="Clk Divisor Loco 128" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_128" value="SLCDC_CLK_DIVISOR_LOCO_128"/>
+			<option display="Clk Divisor Loco 256" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_256" value="SLCDC_CLK_DIVISOR_LOCO_256"/>
+			<option display="Clk Divisor Loco 512" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_512" value="SLCDC_CLK_DIVISOR_LOCO_512"/>
+			<option display="Clk Divisor Loco 1024" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_loco_1024" value="SLCDC_CLK_DIVISOR_LOCO_1024"/>
+			<option display="Clk Divisor Hoco 256" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_256" value="SLCDC_CLK_DIVISOR_HOCO_256"/>
+			<option display="Clk Divisor Hoco 512" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_512" value="SLCDC_CLK_DIVISOR_HOCO_512"/>
+			<option display="Clk Divisor Hoco 1024" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_1024" value="SLCDC_CLK_DIVISOR_HOCO_1024"/>
+			<option display="Clk Divisor Hoco 2048" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_2048" value="SLCDC_CLK_DIVISOR_HOCO_2048"/>
+			<option display="Clk Divisor Hoco 4096" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_4096" value="SLCDC_CLK_DIVISOR_HOCO_4096"/>
+			<option display="Clk Divisor Hoco 8192" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_8192" value="SLCDC_CLK_DIVISOR_HOCO_8192"/>
+			<option display="Clk Divisor Hoco 16384" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_16384" value="SLCDC_CLK_DIVISOR_HOCO_16384"/>
+			<option display="Clk Divisor Hoco 32768" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_32768" value="SLCDC_CLK_DIVISOR_HOCO_32768"/>
+			<option display="Clk Divisor Hoco 65536" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_65536" value="SLCDC_CLK_DIVISOR_HOCO_65536"/>
+			<option display="Clk Divisor Hoco 131072" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_131072" value="SLCDC_CLK_DIVISOR_HOCO_131072"/>
+			<option display="Clk Divisor Hoco 262144" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_262144" value="SLCDC_CLK_DIVISOR_HOCO_262144"/>
+			<option display="Clk Divisor Hoco 524288" id="module.driver.slcdc.slcdc_clock_setting.clk_divisor_hoco_524288" value="SLCDC_CLK_DIVISOR_HOCO_524288"/>
+		</property>
+		<property default="module.driver.slcdc.bias_method.bias_2" display="Bias Method" id="module.driver.slcdc.bias_method">
+			<option display="Bias 2" id="module.driver.slcdc.bias_method.bias_2" value="SLCDC_BIAS_2"/>
+			<option display="Bias 3" id="module.driver.slcdc.bias_method.bias_3" value="SLCDC_BIAS_3"/>
+			<option display="Bias 4" id="module.driver.slcdc.bias_method.bias_4" value="SLCDC_BIAS_4"/>
+		</property>
+		<property default="module.driver.slcdc.time_slice.static" display="Time Slice" id="module.driver.slcdc.time_slice">
+			<option display="Static" id="module.driver.slcdc.time_slice.static" value="SLCDC_STATIC"/>
+			<option display="Slice 2" id="module.driver.slcdc.time_slice.slice_2" value="SLCDC_SLICE_2"/>
+			<option display="Slice 3" id="module.driver.slcdc.time_slice.slice_3" value="SLCDC_SLICE_3"/>
+			<option display="Slice 4" id="module.driver.slcdc.time_slice.slice_4" value="SLCDC_SLICE_4"/>
+			<option display="Slice 8" id="module.driver.slcdc.time_slice.slice_8" value="SLCDC_SLICE_8"/>
+		</property>
+		<property default="module.driver.slcdc.wave_form.wave_a" display="Wave Form" id="module.driver.slcdc.wave_form">
+			<option display="Wave A" id="module.driver.slcdc.wave_form.wave_a" value="SLCDC_WAVE_A"/>
+			<option display="Wave B" id="module.driver.slcdc.wave_form.wave_b" value="SLCDC_WAVE_B"/>
+		</property>
+		<property default="module.driver.slcdc.drive_volt_gen.volt_external" display="Slcdc Drive Voltage Generator" id="module.driver.slcdc.drive_volt_gen">
+			<option display="External resistance division" id="module.driver.slcdc.drive_volt_gen.volt_external" value="SLCDC_VOLT_EXTERNAL"/>
+			<option display="Internal voltage boosting" id="module.driver.slcdc.drive_volt_gen.volt_internal" value="SLCDC_VOLT_INTERNAL"/>
+			<option display="Capacitor split" id="module.driver.slcdc.drive_volt_gen.volt_capacitor" value="SLCDC_VOLT_CAPACITOR"/>
+		</property>
+        <header>
+            /** SLCDC Instance. */
+			extern const slcdc_instance_t ${module.driver.slcdc.name};
+        </header>
+		<includes>#include &quot;r_slcdc.h&quot;
+#include &quot;r_slcdc_api.h&quot;</includes>
+		<declarations>
+slcdc_instance_ctrl_t ${module.driver.slcdc.name}_ctrl;
+		const slcdc_cfg_t ${module.driver.slcdc.name}_cfg  =
+{
+    .slcdc_clock         = ${module.driver.slcdc.slcdc_clock},
+    .slcdc_clock_setting = ${module.driver.slcdc.slcdc_clock_setting},
+    .bias_method         = ${module.driver.slcdc.bias_method},
+    .time_slice          = ${module.driver.slcdc.time_slice},
+    .wave_form           = ${module.driver.slcdc.wave_form},
+    .drive_volt_gen      = ${module.driver.slcdc.drive_volt_gen},
+};
+
+/* Instance structure to use this module. */
+const slcdc_instance_t ${module.driver.slcdc.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.slcdc.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.slcdc.name}_cfg,
+    .p_api         = &amp;g_slcdc_on_slcdc
+};
+
+</declarations>
+	</module>
+</synergyModuleDescription>

@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.wdt" path="ssp_cfg/driver/r_wdt_cfg.h" version="0">
+        <property id="config.driver.wdt.param_checking_enable" display="Parameter Checking" default="config.driver.wdt.param_checking_enable.bsp">
+            <option id="config.driver.wdt.param_checking_enable.bsp" display="Default (BSP)" value="BSP_CFG_PARAM_CHECKING_ENABLE" />
+            <option id="config.driver.wdt.param_checking_enable.enabled" display="Enabled" value="(1)" />
+            <option id="config.driver.wdt.param_checking_enable.disabled" display="Disabled" value="(0)" />
+        </property>
+        <content>
+            #define WDT_CFG_PARAM_CHECKING_ENABLE (${config.driver.wdt.param_checking_enable})
+        </content>
+    </config>
+    <module id="module.driver.watchdog_on_wdt" config="config.driver.wdt" display="Driver|Monitoring|${module.driver.watchdog.name} Watchdog Driver on r_wdt" version="0">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.wdt.${module.driver.watchdog.name}}" === "1"
+        </constraint>
+        <constraint display="Driver used multiple times. Can only be used once.">
+            "${interface.driver.wdt_on_wdt}" === "1"
+        </constraint>
+        <provides interface="interface.driver.wdt" />
+        <provides interface="interface.driver.wdt_on_wdt" />
+        <provides interface="interface.driver.wdt.${module.driver.watchdog.name}" />
+        <property default="g_wdt${_instance}" display="Name" id="module.driver.watchdog.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.watchdog.name}")</constraint>
+        </property>
+        <property display="Start Mode" id="module.driver.watchdog.start_mode" default="module.driver.watchdog.start_mode.register">
+            <option id="module.driver.watchdog.start_mode.register" display="Register" value="WDT_START_MODE_REGISTER" />
+            <option id="module.driver.watchdog.start_mode.auto" display="Auto" value="WDT_START_MODE_AUTO" />
+        </property>
+        <property display="Start Watchdog After Configuration" id="module.driver.watchdog.start_wdt_after_cfg" default="module.driver.watchdog.start_mode.start_wdt_after_cfg.true">
+            <option id="module.driver.watchdog.start_mode.start_wdt_after_cfg.true" display="True" value="true" />
+            <option id="module.driver.watchdog.start_mode.start_wdt_after_cfg.false" display="False" value="false" />
+        </property>
+        <property display="Timeout" id="module.driver.watchdog.timeout" default="module.driver.watchdog.timeout.16384">
+            <option id="module.driver.watchdog.timeout.1024" display="1,024 Cycles" value="WDT_TIMEOUT_1024" />
+            <option id="module.driver.watchdog.timeout.4096" display="4,096 Cycles" value="WDT_TIMEOUT_4096" />
+            <option id="module.driver.watchdog.timeout.8192" display="8,192 Cycles" value="WDT_TIMEOUT_8192" />
+            <option id="module.driver.watchdog.timeout.16384" display="16,384 Cycles" value="WDT_TIMEOUT_16384" />
+        </property>
+        <property display="Clock Division Ratio" id="module.driver.watchdog.clock_division" default="module.driver.watchdog.clock_division.8192">
+            <option id="module.driver.watchdog.clock_division.4" display="PCLK/4" value="WDT_CLOCK_DIVISION_4" />
+            <option id="module.driver.watchdog.clock_division.64" display="PCLK/64" value="WDT_CLOCK_DIVISION_64" />
+            <option id="module.driver.watchdog.clock_division.128" display="PCLK/128" value="WDT_CLOCK_DIVISION_128" />
+            <option id="module.driver.watchdog.clock_division.512" display="PCLK/512" value="WDT_CLOCK_DIVISION_512" />
+            <option id="module.driver.watchdog.clock_division.2048" display="PCLK/2048" value="WDT_CLOCK_DIVISION_2048" />
+            <option id="module.driver.watchdog.clock_division.8192" display="PCLK/8192" value="WDT_CLOCK_DIVISION_8192" />
+        </property>
+        <property display="Window Start Position" id="module.driver.watchdog.window_start" default="module.driver.watchdog.window_start.100">
+            <option id="module.driver.watchdog.window_start.100" display="100% (Window Position Not Specified)" value="WDT_WINDOW_START_100" />
+            <option id="module.driver.watchdog.window_start.75" display="75%" value="WDT_WINDOW_START_75" />
+            <option id="module.driver.watchdog.window_start.50" display="50%" value="WDT_WINDOW_START_50" />
+            <option id="module.driver.watchdog.window_start.25" display="25" value="WDT_WINDOW_START_25" />
+        </property>
+        <property display="Window End Position" id="module.driver.watchdog.window_end" default="module.driver.watchdog.window_end.0">
+            <option id="module.driver.watchdog.window_end.0" display="0% (Window Position Not Specified)" value="WDT_WINDOW_END_0" />
+            <option id="module.driver.watchdog.window_end.25" display="25%" value="WDT_WINDOW_END_25" />
+            <option id="module.driver.watchdog.window_end.50" display="50%" value="WDT_WINDOW_END_50" />
+            <option id="module.driver.watchdog.window_end.75" display="75%" value="WDT_WINDOW_END_75" />
+        </property>
+        <property display="Reset Control" id="module.driver.watchdog.reset_control" default="module.driver.watchdog.reset_control.reset">
+            <option id="module.driver.watchdog.reset_control.reset" display="Reset Output" value="WDT_RESET_CONTROL_RESET" />
+            <option id="module.driver.watchdog.reset_control.nmi" display="NMI Generated" value="WDT_RESET_CONTROL_NMI" />
+        </property>
+        <property display="Stop Control" id="module.driver.watchdog.stop_control" default="module.driver.watchdog.stop_control.enable">
+            <option id="module.driver.watchdog.stop_control.disable" display="WDT Count Enabled in Low Power Mode" value="WDT_STOP_CONTROL_DISABLE" />
+            <option id="module.driver.watchdog.stop_control.enable" display="WDT Count Disabled in Low Power Mode" value="WDT_STOP_CONTROL_ENABLE" />
+        </property>
+        <property display="NMI Callback" id="module.driver.watchdog.nmi_callback" default="NULL">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.watchdog.nmi_callback}")</constraint>
+		</property>
+		<header>
+        /** WDT on WDT Instance. */
+        extern const wdt_instance_t ${module.driver.watchdog.name};
+#ifndef ${module.driver.watchdog.nmi_callback}
+void ${module.driver.watchdog.nmi_callback}(wdt_callback_args_t * p_args);
+#endif
+
+		</header>
+		<includes>
+			#include "r_wdt.h"
+			#include "r_wdt_api.h"
+		</includes>
+		<declarations>
+            static wdt_instance_ctrl_t ${module.driver.watchdog.name}_ctrl;
+
+            static const wdt_cfg_t ${module.driver.watchdog.name}_cfg =
+            {
+                .start_mode = ${module.driver.watchdog.start_mode},
+                .autostart = ${module.driver.watchdog.start_wdt_after_cfg},
+                .timeout = ${module.driver.watchdog.timeout},
+                .clock_division = ${module.driver.watchdog.clock_division},
+                .window_start = ${module.driver.watchdog.window_start},
+                .window_end = ${module.driver.watchdog.window_end},
+                .reset_control = ${module.driver.watchdog.reset_control},
+                .stop_control = ${module.driver.watchdog.stop_control},
+                .p_callback = ${module.driver.watchdog.nmi_callback},
+            };
+
+/* Instance structure to use this module. */
+const wdt_instance_t ${module.driver.watchdog.name} =
+{
+    .p_ctrl        = &amp;${module.driver.watchdog.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.watchdog.name}_cfg,
+    .p_api         = &amp;g_wdt_on_wdt
+};
+        </declarations>
+        <functions>
+        </functions>
+    </module>
+</synergyModuleDescription>

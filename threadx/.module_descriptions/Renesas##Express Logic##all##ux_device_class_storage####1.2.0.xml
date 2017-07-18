@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_device_class_storage" path="ssp_cfg/framework/el/ux_device_class_storage_user.h" version="0">
+        <content>
+        #if (${interface.el.ux_device_class_storage_src})
+        #include "ux_device_class_storage_src_user.h"
+        #endif
+        </content>
+    </config>
+    <module config="config.el.ux_device_class_storage" display="X-Ware|USBX|Device|Classes|Mass Storage|${module.el.ux_device_class_storage.name} USBX Device Class Mass Storage" common="100" id="module.el.ux_device_class_storage" version="1">
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_device_class_storage_src" display="Add USBX Device Class Mass Storage Source [Optional]" id="module.el.ux_device_class_storage.requires.ux_device_class_storage_src" find="false" />
+        <requires id="module.el.ux_device_class_storage.requires.ux_device" interface="interface.el.ux_device" display="Add USB Device Configuration" />
+        <requires id="module.el.ux_device_class_storage.requires.interface_descriptor_storage" interface="interface.el.ux.interface_descriptor_storage" display="Add USB Configuration Descriptor" />
+        <provides interface="interface.el.ux_device_class_storage" />
+        <property default="g_ux_device_class_storage" display="Name" id="module.el.ux_device_class_storage.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_storage.name}")</constraint>
+        </property>
+        <property default="module.el.ux.interface_descriptor_storage.autosetup.enable" display="Mass Storage Class Parameter Setup" id="module.el.ux.interface_descriptor_storage.autosetup">
+            <option display="Manual (User Manual Setup if LUN is greater than 1)" id="module.el.ux.interface_descriptor_storage.autosetup.disable" value="0"/>
+            <option display="Auto (Simple Auto Setup if LUN is 1)" id="module.el.ux.interface_descriptor_storage.autosetup.enable"  value="1"/>
+        </property>
+        <property default="ux_device_class_storage_user_setup" display="User Setup Callback (Only valid if Parameter Setup is Auto)" id="module.el.ux_device_class_storage.pfunc_user_setup">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_storage.pfunc_user_setup}")</constraint>
+        </property>
+        <property default="0" display="Last LBA of Storage Media (Only valid if Parameter Setup is Auto)" id="module.el.ux_device_class_storage.last_lba">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device_class_storage.last_lba}") &amp;&amp; (("${module.el.ux_device_class_storage.last_lba}") &gt;= 0)</constraint>
+        </property>
+        <property default="512" display="Bytes Per Sector of Storage Media (Only valid if Parameter Setup is Auto)" id="module.el.ux_device_class_storage.sector_size">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device_class_storage.sector_size}") &amp;&amp; (("${module.el.ux_device_class_storage.sector_size}") &gt; 0)</constraint>
+        </property>
+        <property default="0" display="Type of Storage Media (Only valid if Parameter Setup is Auto)" id="module.el.ux_device_class_storage.media_type">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device_class_storage.media_type}")</constraint>
+        </property>
+        <property default="0x80" display="Removable Flag of Storage Media (Only valid if Parameter Setup is Auto)" id="module.el.ux_device_class_storage.removable_flag">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device_class_storage.removable_flag}")</constraint>
+        </property>
+        <property default="ux_device_msc_media_read" display="Media Read Function Callback (Only valid if Parameter Setup is Auto)" id="module.el.ux_device_class_storage.pfunc_media_read">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_storage.pfunc_media_read}")</constraint>
+        </property>
+        <property default="ux_device_msc_media_write" display="Media Write Function Callback (Only valid if Parameter Setup is Auto)" id="module.el.ux_device_class_storage.pfunc_media_write">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_storage.pfunc_media_write}")</constraint>
+        </property>
+        <property default="ux_device_msc_media_status" display="Media Status Function Callback (Only valid if Parameter Setup is Auto)" id="module.el.ux_device_class_storage.pfunc_media_status">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_storage.pfunc_media_status}")</constraint>
+        </property>
+        <header>
+            #include "ux_api.h"
+            #include "ux_device_class_storage.h"
+            /* USBX Mass Storage Class User Media Setup Callback Function */
+            extern void ${module.el.ux_device_class_storage.pfunc_user_setup}(UX_SLAVE_CLASS_STORAGE_PARAMETER * param);
+            /* USBX Mass Storage Class Media Read User Callback Function */
+            extern UINT ${module.el.ux_device_class_storage.pfunc_media_read}(VOID * storage, ULONG lun, UCHAR * data_pointer, ULONG number_blocks, ULONG lba, ULONG * media_status);
+            /* USBX Mass Storage Class Media Write User Callback Function */
+            extern UINT ${module.el.ux_device_class_storage.pfunc_media_write}(VOID * storage, ULONG lun, UCHAR * data_pointer, ULONG number_blocks, ULONG lba, ULONG * media_status);
+            /* USBX Mass Storage Class Media Status User Callback Function */
+            extern UINT ${module.el.ux_device_class_storage.pfunc_media_status}(VOID * storage, ULONG lun, ULONG media_id, ULONG * media_status);
+            /* USBX Mass Storage Class Parameter Setup Function */
+        </header>
+        <macros>
+        </macros>
+        <declarations>
+            static void ${module.el.ux_device_class_storage.name}_setup(void);
+            /***********************************************************************************************************************
+             * USBX Mass Storage Class Parameter Setup Function.
+             **********************************************************************************************************************/
+            static UX_SLAVE_CLASS_STORAGE_PARAMETER ${module.el.ux_device_class_storage.name}_parameter;
+            void ${module.el.ux_device_class_storage.name}_setup(void)
+            {
+                UINT status;
+                
+                #if (1 == ${module.el.ux.interface_descriptor_storage.autosetup})
+                /* Auto setup for a simple media storage configuration with single Logical Unit Number (LUN). */
+                /* Stores the number of LUN in this device storage instance.  */
+                ${module.el.ux_device_class_storage.name}_parameter.ux_slave_class_storage_parameter_number_lun = 1;
+                ${module.el.ux_device_class_storage.name}_parameter.ux_slave_class_storage_parameter_lun[0].ux_slave_class_storage_media_last_lba       = ${module.el.ux_device_class_storage.last_lba};
+                ${module.el.ux_device_class_storage.name}_parameter.ux_slave_class_storage_parameter_lun[0].ux_slave_class_storage_media_block_length   = ${module.el.ux_device_class_storage.sector_size};
+                ${module.el.ux_device_class_storage.name}_parameter.ux_slave_class_storage_parameter_lun[0].ux_slave_class_storage_media_type           = ${module.el.ux_device_class_storage.media_type};
+                ${module.el.ux_device_class_storage.name}_parameter.ux_slave_class_storage_parameter_lun[0].ux_slave_class_storage_media_removable_flag = ${module.el.ux_device_class_storage.removable_flag};
+                ${module.el.ux_device_class_storage.name}_parameter.ux_slave_class_storage_parameter_lun[0].ux_slave_class_storage_media_read           = ${module.el.ux_device_class_storage.pfunc_media_read};
+                ${module.el.ux_device_class_storage.name}_parameter.ux_slave_class_storage_parameter_lun[0].ux_slave_class_storage_media_write          = ${module.el.ux_device_class_storage.pfunc_media_write};
+                ${module.el.ux_device_class_storage.name}_parameter.ux_slave_class_storage_parameter_lun[0].ux_slave_class_storage_media_status         = ${module.el.ux_device_class_storage.pfunc_media_status};
+                #else
+                /* Manual setup for a media storage(s) configuration. Calls back the user manual setup function. */
+                ${module.el.ux_device_class_storage.pfunc_user_setup}(&amp;${module.el.ux_device_class_storage.name}_parameter);
+                #endif
+
+               /* Initializes the device storage class. The class is connected with interface 0 on configuration 1. */
+               status =  _ux_device_stack_class_register(_ux_system_slave_class_storage_name, ux_device_class_storage_entry, 1, ${module.el.ux_device_class_storage.requires.interface_descriptor_storage::module.el.ux.interface_descriptor_storage.bInterfaceNumber}, (VOID *)&amp;${module.el.ux_device_class_storage.name}_parameter);
+               assert (status == UX_SUCCESS);
+
+                /* Counts up the number of Interfaces. */
+                g_usbx_number_of_interface_count = (uint8_t)(g_usbx_number_of_interface_count + 1);
+            }
+        </declarations>
+        <init>
+            /* Setups USB Mass Storage Class to create the instance (if required) */
+            ${module.el.ux_device_class_storage.name}_setup();
+
+            /* USB DCD initialization (Only executed once after all the class registration completed). */
+            if (g_usbx_number_of_interface_count == USB_NUMBER_OF_INTERFACE)
+            {
+                /* Initializes USBX Device Control Driver */
+                ux_dcd_initialize();
+            }
+        </init>
+    </module>
+
+    <module config="" display="X-Ware|USBX|Device|Classes|Mass Storage|Descriptors|${module.el.ux.interface_descriptor_storage.name} USBX Interface Configuration Mass Storage Class" id="module.el.ux.interface_descriptor_storage"  common="100" version="1">
+        <constraint display="Device Descriptor must have unique names">
+            "${interface.el.ux.interface_descriptor_storage.${module.el.ux.interface_descriptor_storage.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux.interface_descriptor" />
+        <provides interface="interface.el.ux.interface_descriptor_storage" />
+        <provides interface="interface.el.ux.interface_descriptor_storage.${module.el.ux.interface_descriptor_storage.name}" />
+        <property default="g_usb_interface_descriptor_storage_${_instance}" display="Name" id="module.el.ux.interface_descriptor_storage.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux.interface_descriptor_storage.name}")</constraint>
+        </property>
+        <property default="0x00" display="Interface Number of Communications Class interface" id="module.el.ux.interface_descriptor_storage.bInterfaceNumber">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux.interface_descriptor_storage.bInterfaceNumber}") &amp;&amp; (("${module.el.ux.interface_descriptor_storage.bInterfaceNumber}") &gt;= 0) &amp;&amp; (("${module.el.ux.interface_descriptor_storage.bInterfaceNumber}") &lt;= 255)</constraint>
+        </property>
+        <property default="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep1" display="Endpoint Number to be used for Bulk Out transfer" id="module.el.ux.interface_descriptor_storage.ep_bulk_out">
+            <option display="Endpoint 1" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep1" value="1"/>
+            <option display="Endpoint 2" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep2" value="2"/>
+            <option display="Endpoint 3" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep3" value="3"/>
+            <option display="Endpoint 4" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep4" value="4"/>
+            <option display="Endpoint 5" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep5" value="5"/>
+            <option display="Endpoint 6" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep6" value="6"/>
+            <option display="Endpoint 7" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep7" value="7"/>
+            <option display="Endpoint 8" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep8" value="8"/>
+            <option display="Endpoint 9" id="module.el.ux.interface_descriptor_storage.ep_bulk_out.ep9" value="9"/>
+        </property>
+        <property default="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep2" display="Endpoint Number to be used for Bulk In transfer" id="module.el.ux.interface_descriptor_storage.ep_bulk_in">
+            <option display="Endpoint 1" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep1" value="1"/>
+            <option display="Endpoint 2" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep2" value="2"/>
+            <option display="Endpoint 3" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep3" value="3"/>
+            <option display="Endpoint 4" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep4" value="4"/>
+            <option display="Endpoint 5" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep5" value="5"/>
+            <option display="Endpoint 6" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep6" value="6"/>
+            <option display="Endpoint 7" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep7" value="7"/>
+            <option display="Endpoint 8" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep8" value="8"/>
+            <option display="Endpoint 9" id="module.el.ux.interface_descriptor_storage.ep_bulk_in.ep9" value="9"/>
+        </property>
+        <header>
+        </header>
+        <macros>
+        </macros>
+        <declarations>
+            /***********************************************************************************************************************
+             * USB Mass Storage Class Interface Descriptor  for FS mode ${module.el.ux.interface_descriptor_storage.name}
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char ${module.el.ux.interface_descriptor_storage.name}_full_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_fs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_interface_desc_fs" 1
+            __root static const unsigned char ${module.el.ux.interface_descriptor_storage.name}_full_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_fs")
+            #endif
+            = {
+                /***********************************************************************
+                 * Mass Storage Class Interface Descriptor                             *
+                 ***********************************************************************/
+                0x09, /* 0 bLength */
+                UX_INTERFACE_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_storage.bInterfaceNumber}, /* 2 bInterfaceNumber */
+                0x00, /* 3 bAlternateSetting  : Alternate for SetInterface Request */
+                0x02, /* 4 bNumEndpoints      : 2 Endpoints for Interface#1 */
+                0x08, /* 5 bInterfaceClass    : Mass Storage Class(0x8) */
+                0x06, /* 6 bInterfaceSubClass : SCSI transparent command set(0x6) */
+                0x50, /* 7 bInterfaceProtocol : BBB(0x50) */
+                0x00, /* 8 iInterface Index */
+                /***********************************************************************
+                 * Mass Storage Class Endpoint Descriptor (Bulk-Out)  for Interface#${module.el.ux.interface_descriptor_storage.bInterfaceNumber} *
+                 ***********************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                (UX_ENDPOINT_OUT | ${module.el.ux.interface_descriptor_storage.ep_bulk_out}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT, /* 3 bmAttributes  */
+                0x40, /* 4 wMaxPacketSize 64bytes */
+                0x00, /* 5 wMaxPacketSize */
+                0x00, /* 6 bInterval */
+                /***********************************************************************
+                 * Mass Storage Class Endpoint Descriptor (Bulk-In) for Interface#${module.el.ux.interface_descriptor_storage.bInterfaceNumber} *
+                 ***********************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                (UX_ENDPOINT_IN | ${module.el.ux.interface_descriptor_storage.ep_bulk_in}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT, /* 3 bmAttributes  */
+                0x40, /* 4 wMaxPacketSize 64bytes */
+                0x00, /* 5 wMaxPacketSize */
+                0x00, /* 6 bInterval */
+            };
+            
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+            /***********************************************************************************************************************
+             * USB Mass Storage Class Interface Descriptor for HS mode ${module.el.ux.interface_descriptor_storage.name}
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char ${module.el.ux.interface_descriptor_storage.name}_high_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_hs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_interface_desc_hs" 1
+            __root static const unsigned char ${module.el.ux.interface_descriptor_storage.name}_high_speed[] BSP_PLACE_IN_SECTION(".usb_interface_desc_hs")
+            #endif
+            = {
+                /***********************************************************************
+                 * Mass Storage Class Interface Descriptor                             *
+                 ***********************************************************************/
+                0x09, /* 0 bLength */
+                UX_INTERFACE_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                ${module.el.ux.interface_descriptor_storage.bInterfaceNumber}, /* 2 bInterfaceNumber */
+                0x00, /* 3 bAlternateSetting  : Alternate for SetInterface Request */
+                0x02, /* 4 bNumEndpoints      : 2 Endpoints for Interface#1 */
+                0x08, /* 5 bInterfaceClass    : Mass Storage Class(0x8) */
+                0x06, /* 6 bInterfaceSubClass : SCSI transparent command set(0x6) */
+                0x50, /* 7 bInterfaceProtocol : BBB(0x50) */
+                0x00, /* 8 iInterface Index */
+                /***********************************************************************
+                 * Mass Storage Class Endpoint Descriptor (Bulk-Out)  for Interface#${module.el.ux.interface_descriptor_storage.bInterfaceNumber} *
+                 ***********************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM,  /* 1 bDescriptorType */
+                (UX_ENDPOINT_OUT | ${module.el.ux.interface_descriptor_storage.ep_bulk_out}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT, /* 3 bmAttributes  */
+                0x00, /* 4 wMaxPacketSize : 512bytes */
+                0x02, /* 5 wMaxPacketSize */
+                0x00, /* 6 bInterval */
+                /***********************************************************************
+                 * Mass Storage Class Endpoint Descriptor (Bulk-In) for Interface#${module.el.ux.interface_descriptor_storage.bInterfaceNumber} *
+                 ***********************************************************************/
+                0x07, /* 0 bLength */
+                UX_ENDPOINT_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                (UX_ENDPOINT_IN | ${module.el.ux.interface_descriptor_storage.ep_bulk_in}), /* 2 bEndpointAddress */
+                UX_BULK_ENDPOINT, /* 3 bmAttributes  */
+                0x00, /* 4 wMaxPacketSize : 512bytes */
+                0x02, /* 5 wMaxPacketSize */
+                0x00, /* 6 bInterval */
+            };
+            #endif
+
+            /* Size of this USB Interface Descriptor */
+            #define USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}       (sizeof(${module.el.ux.interface_descriptor_storage.name}_full_speed))
+            /* Number of Interface this USB Interface Descriptor has */
+            #define USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}        (1)
+#ifndef USB_IFD_NUM_0
+ #define USB_IFD_NUM_0  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+ #define USB_IFD_SIZE_0 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+#else
+ #ifndef USB_IFD_NUM_1
+  #define USB_IFD_NUM_1  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+  #define USB_IFD_SIZE_1 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+ #else
+  #ifndef USB_IFD_NUM_2
+   #define USB_IFD_NUM_2  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+   #define USB_IFD_SIZE_2 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+  #else
+   #ifndef USB_IFD_NUM_3
+    #define USB_IFD_NUM_3  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+    #define USB_IFD_SIZE_3 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+   #else
+    #ifndef USB_IFD_NUM_4
+     #define USB_IFD_NUM_4  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+     #define USB_IFD_SIZE_4 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+    #else
+     #ifndef USB_IFD_NUM_5
+      #define USB_IFD_NUM_5  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+      #define USB_IFD_SIZE_5 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+     #else
+      #ifndef USB_IFD_NUM_6
+       #define USB_IFD_NUM_6  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+       #define USB_IFD_SIZE_6 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+      #else
+       #ifndef USB_IFD_NUM_7
+        #define USB_IFD_NUM_7  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+        #define USB_IFD_SIZE_7 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+       #else
+        #ifndef USB_IFD_NUM_8
+         #define USB_IFD_NUM_8  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+         #define USB_IFD_SIZE_8 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+        #else
+         #ifndef USB_IFD_NUM_9
+          #define USB_IFD_NUM_9  USB_IFD_NUM_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+          #define USB_IFD_SIZE_9 USB_IFD_SIZE_${module.el.ux.interface_descriptor_storage.bInterfaceNumber}
+         #endif 
+        #endif
+       #endif
+      #endif
+     #endif
+    #endif
+   #endif
+  #endif
+ #endif
+#endif
+        </declarations>
+        <init>
+        </init>
+    </module>
+</synergyModuleDescription>

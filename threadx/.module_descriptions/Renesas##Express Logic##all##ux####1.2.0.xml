@@ -1,0 +1,824 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+
+    <config id="config.el.ux" path="ssp_cfg/framework/el/ux_user.h" version="0">
+        <content>
+        #if (${interface.framework.ux_src})
+        #include "ux_src_user.h"
+        #endif
+        </content>
+    </config>
+    <module display="Framework|USB|[DEPRECATED] ${module.el.ux.name} USBX on ux" common="100" id="module.el.ux" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.ux.${module.el.ux.name}}" === "1"
+        </constraint>
+        <constraint display="This module has been deprecated. Please consider moving to the updated USBX on ux implementation found under X-Ware/USBX/Common/USBX on ux.">
+            "${module.el.ux.deprecation_warning}" === "module.el.ux.deprecation_warning.disabled"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.ux.requires.sf_el_ux" interface="interface.framework.sf_el_ux" display="Add USBX Port" />
+        <provides interface="interface.el.ux" />
+        <provides interface="interface.el.ux.${module.el.ux.name}" />
+        <property default="g_ux${_instance}" display="Name" id="module.el.ux.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux.name}")</constraint>
+        </property>
+        <property default="module.el.ux.deprecation_warning.enabled" display="Show deprecation warning" id="module.el.ux.deprecation_warning">
+            <option display="Enabled" id="module.el.ux.deprecation_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.el.ux.deprecation_warning.disabled" value="1"/>
+        </property>
+    </module>
+
+    <config id="config.el.ux_v2" path="ssp_cfg/framework/el/ux_user.h" version="0">
+        <content>
+        #if (${interface.el.ux_src})
+        #include "ux_src_user.h"
+        #endif
+        #if (${interface.el.ux_device_class_storage})
+        #include "ux_device_class_storage_user.h"
+        #endif
+        #if (${interface.el.ux_host_class_storage})
+        #include "ux_host_class_storage_user.h"
+        #endif
+        #if (${interface.el.ux_host_class_hid})
+        #include "ux_host_class_hid_user.h"
+        #endif
+        </content>
+    </config>
+    <module config="config.el.ux_v2" display="X-Ware|USBX|Common|USBX on ux" common="1" id="module.el.ux_v2" version="1">
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_src" display="Add USBX Source [Optional]" id="module.el.ux_v2.requires.ux_src" find="false" />
+        <provides interface="interface.el.ux_v2" />
+        <property default="g_ux_pool_memory" display="USBX Pool Memory Name" id="module.el.ux_v2.pool_memory_name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_v2.pool_memory_name}")</constraint>
+        </property>
+        <property default="18432" display="USBX Pool Memory Size" id="module.el.ux_v2.pool_memory_size">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_v2.pool_memory_size}")</constraint>
+        </property>
+        <property default="NULL" display="User Callback for Host Event Notification(Only valid for USB Host)" id="module.el.ux_v2.system_change_function">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_v2.system_change_function}")</constraint>
+        </property>
+        <header>
+            #include "ux_api.h"
+            
+            /* USBX Host Stack initialization error callback function. User can override the function if needed. */
+            void ux_v2_err_callback(void * p_instance, void * p_data);
+
+#if !defined(${module.el.ux_v2.system_change_function})
+            /* User Callback for Host Event Notification (Only valid for USB Host). */
+            extern UINT ${module.el.ux_v2.system_change_function}(ULONG event, UX_HOST_CLASS * host_class, VOID * instance);
+#endif
+
+#ifdef UX_HOST_CLASS_STORAGE_H
+            /* Utility function to get the pointer to a FileX Media Control Block for a USB Mass Storage device. */
+            UINT ux_system_host_storage_fx_media_get(UX_HOST_CLASS_STORAGE * instance, UX_HOST_CLASS_STORAGE_MEDIA ** p_storage_media, FX_MEDIA ** p_fx_media);
+#endif
+        </header>
+        <declarations>
+        #if defined(__ICCARM__)
+        #define ux_v2_err_callback_WEAK_ATTRIBUTE
+        #pragma weak ux_v2_err_callback  = ux_v2_err_callback_internal
+        #elif defined(__GNUC__)
+        #define ux_v2_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("ux_v2_err_callback_internal")))
+        #endif
+        void ux_v2_err_callback(void * p_instance, void * p_data) ux_v2_err_callback_WEAK_ATTRIBUTE;
+        /* Static memory pool allocation used by USBX system. */
+        static CHAR ${module.el.ux_v2.pool_memory_name} [${module.el.ux_v2.pool_memory_size}];
+        /*******************************************************************************************************************//**
+        * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+        *             with the prototype below.
+        *             - void ux_v2_err_callback(void * p_instance, void * p_data)
+        *
+        * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+        **********************************************************************************************************************/
+        void ux_v2_err_callback_internal(void * p_instance, void * p_data);
+        void ux_v2_err_callback_internal(void * p_instance, void * p_data)
+        {
+          /** Suppress compiler warning for not using parameters. */
+          SSP_PARAMETER_NOT_USED(p_instance);
+          SSP_PARAMETER_NOT_USED(p_data);
+
+          /** An error has occurred. Please check function arguments for more information. */
+          BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+        }
+
+#ifdef UX_HOST_INITIALIZE
+            /* Function prototype for the function to notify a USB event from the USBX Host system. */
+            static UINT ux_system_host_change_function(ULONG event, UX_HOST_CLASS * host_class, VOID * instance);
+
+#ifdef USB_HOST_STORAGE_CLASS_REGISTER
+
+            /* A semaphore for synchronizing to the USB media storage mount timing. */
+            static TX_SEMAPHORE ux_host_storage_semaphore_insertion;
+            static TX_SEMAPHORE ux_host_storage_semaphore_media_init_done;
+
+            /* Temporary storage place for the pointer to a USBX Host Mass Storage Class Instance. */
+            static UX_HOST_CLASS_STORAGE * g_ux_new_host_storage_instance;
+
+            /* Function prototype for the function to register the USBX Host Class Mass Storage. */
+            static void ux_host_stack_class_register_storage(void);
+
+            /* Function prototype for the function to notify changes happened to the USBX Host Class Mass Storage. */
+            static UINT ux_system_host_storage_change_function(ULONG event, VOID * instance);
+
+            /*******************************************************************************************************************//**
+             * @brief      This is the function to register the USBX Host Class Mass Storage.
+             **********************************************************************************************************************/
+            static void ux_host_stack_class_register_storage(void)
+            {
+                UINT status;
+                status =  ux_host_stack_class_register(_ux_system_host_class_storage_name, ux_host_class_storage_entry);
+                if (UX_SUCCESS != status)
+                {
+                    ux_v2_err_callback(NULL, &amp;status);
+                }
+
+                /* Create semaphores used for the USB Mass Storage Media Initialization. */
+                status = tx_semaphore_create(&amp;ux_host_storage_semaphore_insertion, "ux_host_storage_semaphore_insertion", 0);
+                if (TX_SUCCESS != status)
+                {
+                    ux_v2_err_callback(NULL, &amp;status);
+                }
+
+                status = tx_semaphore_create(&amp;ux_host_storage_semaphore_media_init_done, "ux_host_storage_semaphore_media_init_done", 1);
+                if (TX_SUCCESS != status)
+                {
+                    ux_v2_err_callback(NULL, &amp;status);
+                }
+            }
+
+            /*******************************************************************************************************************//**
+             * @brief      This is the function to notify changes happened to the USBX Host Class Mass Storage.
+             * @param[in]  event      Event code from happened to the USBX Host system.
+             * @param[in]  instance   Pointer to a USBX Host class instance, which occurs a event.
+             * @retval     USBX error code
+             **********************************************************************************************************************/
+            static UINT ux_system_host_storage_change_function(ULONG event, VOID * instance)
+            {
+                if (UX_DEVICE_INSERTION == event) /* Check if there is a device insertion. */
+                {
+                    /* Get the semaphore for a USB Mass Storage Media initialization. */
+                    tx_semaphore_get (&amp;ux_host_storage_semaphore_media_init_done, TX_WAIT_FOREVER);
+
+                    g_ux_new_host_storage_instance = instance;
+
+                    /* Put the semaphore for a USBX Mass Storage Media insertion. */
+                    tx_semaphore_put (&amp;ux_host_storage_semaphore_insertion);
+                }
+                else if (UX_DEVICE_REMOVAL == event) /* Check if there is a device removal. */
+                {
+                    g_ux_new_host_storage_instance = NULL;
+                }
+                return UX_SUCCESS;
+            }
+
+            /*******************************************************************************************************************//**
+             * @brief      This is the function to get the FileX Media Control Block for a USB Mass Storage device.
+             * @param[in]      new_instance     Pointer to a USBX Host Mass Storage Class instance.
+             * @param[in/out]  p_storage_media  Pointer of the pointer to save an instance of the USBX Host Mass Storage Media.
+             * @param[in/out]  p_fx_media       Pointer of the pointer to save an instance of FileX Media Control Block.
+             * @retval     UX_HOST_CLASS_INSTANCE_UNKNOWN  The instance provided was not for a valid Mass Storage device.
+             **********************************************************************************************************************/
+            UINT ux_system_host_storage_fx_media_get(UX_HOST_CLASS_STORAGE * instance, UX_HOST_CLASS_STORAGE_MEDIA ** p_storage_media,
+                                                                                       FX_MEDIA ** p_fx_media)
+            {
+                UINT            error = UX_SUCCESS;
+                UX_HOST_CLASS * p_host_class;
+                UX_HOST_CLASS_STORAGE_MEDIA * p_storage_media_local;
+                FX_MEDIA      * p_fx_media_local;
+                int             index;
+
+                /** Get the USBX Host Mass Storage Class. */
+                ux_host_stack_class_get(_ux_system_host_class_storage_name, &amp;p_host_class);
+
+                /** Get the pointer to a media attached to the class container for USB Host Mass Storage. */
+                p_storage_media_local = (UX_HOST_CLASS_STORAGE_MEDIA *) p_host_class->ux_host_class_media;
+
+                /** Get the pointer to a FileX Media Control Block. */
+                for (index = 0; index &lt; UX_HOST_CLASS_STORAGE_MAX_MEDIA; index++)
+                {
+                    p_fx_media_local = &amp;p_storage_media_local->ux_host_class_storage_media;
+                    if (p_fx_media_local->fx_media_driver_info != instance)
+                    {
+                        /* None of FileX Media Control Blocks matched to this USBX Host Mass Storage Instance. */
+                        p_storage_media_local++;
+                    }
+                    else
+                    {
+                        /* Found a FileX Media Control Block used for this USBX Host Mass Storage Instance. */
+                        break;
+                    }
+                }
+                if (UX_HOST_CLASS_STORAGE_MAX_MEDIA == index)
+                {
+                    error = UX_HOST_CLASS_INSTANCE_UNKNOWN;
+                }
+                else
+                {
+                    *p_storage_media = p_storage_media_local;
+                    *p_fx_media      = p_fx_media_local;
+                }
+
+                /** Resume the USBX internal thread since the initialization of a USB Mass Storage Device done. */
+                tx_semaphore_put (&amp;ux_host_storage_semaphore_media_init_done);
+
+                return error;
+            }
+#endif /* USB_HOST_STORAGE_CLASS_REGISTER */
+
+            /*******************************************************************************************************************//**
+             * @brief      This is the function to notify a USB event from the USBX Host system.
+             * @param[in]  event     Event code from happened to the USBX Host system.
+             * @param[in]  usb_class Pointer to a USBX Host class, which occurs a event.
+             * @param[in]  instance  Pointer to a USBX Host class instance, which occurs a event.
+             * @retval     USBX error code
+             **********************************************************************************************************************/
+            static UINT ux_system_host_change_function(ULONG event, UX_HOST_CLASS * host_class, VOID * instance)
+            {
+                UINT status = UX_SUCCESS;
+                SSP_PARAMETER_NOT_USED (event);
+                SSP_PARAMETER_NOT_USED (host_class);
+                SSP_PARAMETER_NOT_USED (instance);
+
+#if !defined(${module.el.ux_v2.system_change_function})
+                /* Call user function back for USBX Host Class event notification. */
+                status = ${module.el.ux_v2.system_change_function}(event, host_class, instance);
+                if (UX_SUCCESS != status)
+                {
+                   return status;
+                }
+#endif
+
+#ifdef USB_HOST_STORAGE_CLASS_REGISTER
+                /* Check the class container if it is for a USBX Host Mass Storage class. */
+                if (UX_SUCCESS == _ux_utility_memory_compare(_ux_system_host_class_storage_name, host_class, _ux_utility_string_length_get(_ux_system_host_class_storage_name)))
+                {
+                   status = ux_system_host_storage_change_function(event, instance);
+                }
+#endif
+                return status;
+            }
+#endif
+        </declarations>
+        <init>
+            UINT status_ux_init;
+
+            /** Initialize the USBX system. */
+            status_ux_init = ux_system_initialize((CHAR *)${module.el.ux_v2.pool_memory_name}, ${module.el.ux_v2.pool_memory_size}, UX_NULL, 0);
+            if (UX_SUCCESS != status_ux_init)
+            {
+                ux_v2_err_callback(NULL,&amp;status_ux_init);
+            }
+
+#ifdef UX_HOST_INITIALIZE
+            /** Initialize the USBX Host stack. */
+            status_ux_init =  ux_host_stack_initialize(ux_system_host_change_function);
+            if (UX_SUCCESS != status_ux_init)
+            {
+                ux_v2_err_callback(NULL,&amp;status_ux_init);
+            }
+
+            /** Register USB Host classes. */
+#ifdef USB_HOST_HUB_CLASS_REGISTER
+            status_ux_init =  ux_host_stack_class_register(_ux_system_host_class_hub_name, ux_host_class_hub_entry);
+            if (UX_SUCCESS != status_ux_init)
+            {
+                ux_v2_err_callback(NULL,&amp;status_ux_init);
+            }
+#endif
+
+#ifdef USB_HOST_CDC_ACM_CLASS_REGISTER
+            status_ux_init =  ux_host_stack_class_register(_ux_system_host_class_cdc_acm_name, ux_host_class_cdc_acm_entry);
+            if (UX_SUCCESS != status_ux_init)
+            {
+                ux_v2_err_callback(NULL,&amp;status_ux_init);
+            }
+#endif
+
+#ifdef USB_HOST_HID_CLASS_REGISTER
+            status_ux_init =  ux_host_stack_class_register(_ux_system_host_class_hid_name, ux_host_class_hid_entry);
+            if (UX_SUCCESS != status_ux_init)
+            {
+                ux_v2_err_callback(NULL,&amp;status_ux_init);
+            }
+            
+            ux_host_class_hid_clients_register ();
+#endif
+
+#ifdef USB_HOST_STORAGE_CLASS_REGISTER
+            ux_host_stack_class_register_storage();
+#endif
+#endif /* UX_HOST_INITIALIZE */
+
+        </init>
+    </module>
+
+    <module config="config.el.ux_host" display="X-Ware|USBX|Host|Common|USBX Host Configuration ${module.el.ux_host.name}" common="100" id="module.el.ux_host" version="1">
+        <constraint display="Module instances must have unique names.">
+            ("${interface.el.ux_host.${module.el.ux_host.name}}" === "1")
+        </constraint>
+        <constraint display="Same USBX Port HCD instance cannot be used for multiple Host Configurations.">
+            ("${interface.el.ux_host}" === "1") || (("${interface.el.ux_host}" === "2") &amp;&amp; ("${interface.framework.sf_el_ux_hcd}" === "2"))
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.ux_host.requires.sf_el_ux_hcd" interface="interface.framework.sf_el_ux_hcd" display="Add USBX Port HCD" />
+        <requires id="module.el.ux_host.requires.ux_v2"        interface="interface.el.ux_v2"               display="Add USBX on ux" />
+        <provides interface="interface.el.ux_host" />
+        <provides interface="interface.el.ux_host.${module.el.ux_host.name}" />
+        <property default="g_ux_host_${_instance}" display="Name" id="module.el.ux_host.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_host.name}")</constraint>
+        </property>
+        <header>
+            void ${module.el.ux_host.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <macros>
+            #define UX_HOST_INITIALIZE
+        </macros>
+        <declarations>
+              #if defined(__ICCARM__)
+              #define ${module.el.ux_host.name}_err_callback_WEAK_ATTRIBUTE
+              #pragma weak ${module.el.ux_host.name}_err_callback  = ${module.el.ux_host.name}_err_callback_internal
+              #elif defined(__GNUC__)
+              #define ${module.el.ux_host.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.ux_host.name}_err_callback_internal")))
+              #endif
+              void ${module.el.ux_host.name}_err_callback(void * p_instance, void * p_data) ${module.el.ux_host.name}_err_callback_WEAK_ATTRIBUTE;
+              /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.ux_host.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+               **********************************************************************************************************************/
+              void ${module.el.ux_host.name}_err_callback_internal(void * p_instance, void * p_data);
+              void ${module.el.ux_host.name}_err_callback_internal(void * p_instance, void * p_data)
+              {
+                /** Suppress compiler warning for not using parameters. */
+                SSP_PARAMETER_NOT_USED(p_instance);
+                SSP_PARAMETER_NOT_USED(p_data);
+
+                /** An error has occurred. Please check function arguments for more information. */
+                BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+              }
+        </declarations>
+        <init>
+            /** Register a USB host controller. */
+            UINT status_${module.el.ux_host.name} =  ux_host_stack_hcd_register((UCHAR*)&quot;${module.el.ux_host.requires.sf_el_ux_hcd::module.framework.sf_el_ux_hcd.name}&quot;, ${module.el.ux_host.requires.sf_el_ux_hcd::module.framework.sf_el_ux_hcd.name}_initialize, ${module.el.ux_host.requires.sf_el_ux_hcd::module.framework.sf_el_ux_hcd.hw_address}, UX_SYNERGY_CONTROLLER);
+            if (UX_SUCCESS != status_${module.el.ux_host.name})
+            {
+                ${module.el.ux_host.name}_err_callback(NULL,&amp;status_${module.el.ux_host.name});
+            }
+        </init>
+    </module>
+
+    <module config="config.el.ux_device" display="X-Ware|USBX|Device|Common|USBX Device Configuration" common="1" id="module.el.ux_device" version="1">
+        <requires interface="_rtos" />
+        <requires id="module.el.ux_device.requires.sf_el_ux_dcd" interface="interface.framework.sf_el_ux_dcd" display="Add USBX Port DCD" />
+        <requires id="module.el.ux_device.requires.ux_v2"        interface="interface.el.ux_v2" display="Add USBX on ux" />
+        <provides interface="interface.el.ux_device" />
+
+        <property default="0x045B" display="Vendor ID" id="module.el.ux_device.idVendor">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.idVendor}")  &amp;&amp; (("${module.el.ux_device.idVendor}") &lt;= 0xFFFF)</constraint>
+        </property>
+        <property default="0x0000" display="Product ID" id="module.el.ux_device.idProduct">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.idProduct}")  &amp;&amp; (("${module.el.ux_device.idProduct}") &lt;= 0xFFFF)</constraint>
+        </property>
+        <property default="0x0000" display="Device Release Number" id="module.el.ux_device.bcdDevice">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.bcdDevice}")  &amp;&amp; (("${module.el.ux_device.bcdDevice}") &lt;= 0xFFFF)</constraint>
+        </property>
+        <property default="0x00" display="Index of Manufacturer String Descriptor" id="module.el.ux_device.iManufacturer">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.iManufacturer}") &amp;&amp; (("${module.el.ux_device.iManufacturer}") &gt;= 0) &amp;&amp; (("${module.el.ux_device.iManufacturer}") &lt;= 255)</constraint>
+        </property>
+        <property default="0x00" display="Index of Product String Descriptor" id="module.el.ux_device.iProduct">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.iProduct}") &amp;&amp; (("${module.el.ux_device.iProduct}") &gt;= 0) &amp;&amp; (("${module.el.ux_device.iProduct}") &lt;= 255)</constraint>
+        </property>
+        <property default="0x00" display="Index of Serial Number String Descriptor" id="module.el.ux_device.iSerialNumber">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.iSerialNumber}") &amp;&amp; (("${module.el.ux_device.iSerialNumber}") &gt;= 0) &amp;&amp; (("${module.el.ux_device.iSerialNumber}") &lt;= 255)</constraint>
+        </property>
+        <property default="module.el.ux_device.bDeviceClass.cdc" display="Class Code" id="module.el.ux_device.bDeviceClass">
+            <option display="Device"          id="module.el.ux_device.bDeviceClass.device" value="0x00"/>
+            <option display="Communications(CDC)"  id="module.el.ux_device.bDeviceClass.cdc"    value="0x02"/>
+            <option display="HID"             id="module.el.ux_device.bDeviceClass.hid"    value="0x03"/>
+            <option display="Mass Storage"    id="module.el.ux_device.bDeviceClass.msc"    value="0x08"/>
+            <option display="Miscellaneous"   id="module.el.ux_device.bDeviceClass.misc"   value="0xEF"/>
+            <option display="Vendor Specific" id="module.el.ux_device.bDeviceClass.vendor" value="0xFF"/>
+        </property>
+        <property default="0x00" display="Index of String Descriptor describing this configuration" id="module.el.ux_device.iConfiguration">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.iConfiguration}") &amp;&amp; (("${module.el.ux_device.iConfiguration}") &gt;= 0) &amp;&amp; (("${module.el.ux_device.iConfiguration}") &lt;= 255)</constraint>
+        </property>
+        <property default="0x00" display="Size of USB Descriptor in bytes for this configuration (Modify this value only for Vendor-specific Class, otherwise set zero)" id="module.el.ux_device.wTotalLength">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.wTotalLength}") &amp;&amp; (("${module.el.ux_device.wTotalLength}") &gt;= 0) &amp;&amp; (("${module.el.ux_device.wTotalLength}") &lt;= 255)</constraint>
+        </property>
+        <property default="0x00" display="Number of Interfaces (Modify this value only for Vendor-specific Class, otherwise set zero)" id="module.el.ux_device.bNumInterfaces">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.bNumInterfaces}") &amp;&amp; (("${module.el.ux_device.bNumInterfaces}") &gt;= 0) &amp;&amp; (("${module.el.ux_device.bNumInterfaces}") &lt;= 255)</constraint>
+        </property>
+        <property default="module.el.ux_device.bmAttributes_bit6.enable" display="Self-Powered" id="module.el.ux_device.bmAttributes_bit6">
+            <option display="Enable"  id="module.el.ux_device.bmAttributes_bit6.enable"  value="1"/>
+            <option display="Disable" id="module.el.ux_device.bmAttributes_bit6.disable" value="0"/>
+        </property>
+        <property default="module.el.ux_device.bmAttributes_bit5.disable" display="Remote Wakeup" id="module.el.ux_device.bmAttributes_bit5">
+            <option display="Enable"  id="module.el.ux_device.bmAttributes_bit5.enable"  value="1"/>
+            <option display="Disable" id="module.el.ux_device.bmAttributes_bit5.disable" value="0"/>
+        </property>
+        <property default="50" display="Maximum Power Consumption (in 2mA units)" id="module.el.ux_device.bMaxPower">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.bMaxPower}")  &amp;&amp; (("${module.el.ux_device.bMaxPower}") &lt;= 50)</constraint>
+        </property>
+        <property default="0x0409" display="Supported Language Code" id="module.el.ux_device.language_code">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.language_code}")  &amp;&amp; (("${module.el.ux_device.language_code}") &lt;= 0xFFFF)</constraint>
+        </property>
+        <property default="NULL" display="Name of USBX String Framework" id="module.el.ux_device.string_descriptor.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device.string_descriptor.name}")</constraint>
+        </property>
+        <property default="0" display="Total index number of USB String Descriptors in USBX String Framework" id="module.el.ux_device.string_descriptor.index">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.string_descriptor.index}")</constraint>
+        </property>
+        <property default="NULL" display="Name of USBX Language Framework" id="module.el.ux_device.language_descriptor.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device.language_descriptor.name}")</constraint>
+        </property>
+        <property default="0" display="Number of Languages to support (US English is applied if zero is set)" id="module.el.ux_device.language_descriptor.number">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.ux_device.language_descriptor.number}")</constraint>
+        </property>
+        <header>
+            #include "ux_api.h"
+            #include "ux_dcd_synergy.h"
+
+            /* USBX Device Stack initialization error callback function. User can override the function if needed. */
+            void ux_device_err_callback(void * p_instance, void * p_data);
+        </header>
+        <macros>
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ux_device_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ux_device_err_callback  = ux_device_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ux_device_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("ux_device_err_callback_internal")))
+            #endif
+            void ux_device_err_callback(void * p_instance, void * p_data) ux_device_err_callback_WEAK_ATTRIBUTE;
+            /* Definition for the special linker section for USB */
+            #if defined(__GNUC__)
+            extern uint32_t __usb_dev_descriptor_start_fs;
+            extern uint32_t __usb_descriptor_end_fs;
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+            extern uint32_t __usb_dev_descriptor_start_hs;
+            extern uint32_t __usb_descriptor_end_hs;
+            #endif
+            #endif
+
+            /* Counter to calculate number of Interfaces */
+            static uint8_t  g_usbx_number_of_interface_count  = 0;
+
+            /***********************************************************************************************************************
+             * USB Device Descriptor for FS mode
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char device_framework_full_speed[] BSP_PLACE_IN_SECTION(".usb_device_desc_fs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_device_desc_fs" 1
+            __root static const unsigned char device_framework_full_speed[] BSP_PLACE_IN_SECTION(".usb_device_desc_fs")
+            #endif
+            = {
+                0x12, /* 0 bLength */
+                UX_DEVICE_DESCRIPTOR_ITEM,      /* 1 bDescriptorType */
+                0x00,                           /* 2 bcdUSB BCD(2.0) */
+                0x02,                           /* 3 bcdUSB */
+                ${module.el.ux_device.bDeviceClass},                        /* 4 bDeviceClass    : Device Class */
+                #if (${module.el.ux_device.bDeviceClass} == 0x00) || (${module.el.ux_device.bDeviceClass} == 0x02) || (${module.el.ux_device.bDeviceClass} == 0x03) || (${module.el.ux_device.bDeviceClass} == 0x08)
+                0x00,                           /* 5 bDeviceSubClass : none */
+                0x00,                           /* 6 bDeviceProtocol : none */
+                #elif (${module.el.ux_device.bDeviceClass} == 0xEF)
+                0x02,                           /* 5 bDeviceSubClass : Common Class(0x02) */
+                0x01,                           /* 6 bDeviceProtocol :Interface Association Descriptor(IAD) */
+                #elif (${module.el.ux_device.bDeviceClass} == 0xFF)
+                0x00,                           /* 5 bDeviceSubClass : none */
+                0x00,                           /* 6 bDeviceProtocol : none */
+                #endif
+                0x40,                           /* 7 bMaxPacketSize0 */
+                (uint8_t)(${module.el.ux_device.idVendor}),       /* 8 idVendor */
+                (uint8_t)(${module.el.ux_device.idVendor} >> 8),  /* 9 idVendor */
+                (uint8_t)(${module.el.ux_device.idProduct}),      /* 10 idProduct */
+                (uint8_t)(${module.el.ux_device.idProduct} >> 8), /* 11 idProduct */
+                (uint8_t)(${module.el.ux_device.bcdDevice}),      /* 12 bcdDevice */
+                (uint8_t)(${module.el.ux_device.bcdDevice} >> 8), /* 13 bcdDevice */
+                ${module.el.ux_device.iManufacturer},          /* 14 iManufacturer */
+                ${module.el.ux_device.iProduct},               /* 15 iProduct */
+                ${module.el.ux_device.iSerialNumber},          /* 16 iSerialNumber */
+                0x01,                           /* 17 bNumConfigurations */
+            };
+
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+            /***********************************************************************************************************************
+             * USB Device Descriptor for HS Mode
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char device_framework_high_speed[] BSP_PLACE_IN_SECTION(".usb_device_desc_hs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_device_desc_hs" 1
+            __root static const unsigned char device_framework_high_speed[] BSP_PLACE_IN_SECTION(".usb_device_desc_hs")
+            #endif
+            = {
+                0x12, /* 0 bLength */
+                UX_DEVICE_DESCRIPTOR_ITEM,      /* 1 bDescriptorType */
+                0x00,                           /* 2 bcdUSB BCD(2.0) */
+                0x02,                           /* 3 bcdUSB */
+                ${module.el.ux_device.bDeviceClass},                        /* 4 bDeviceClass    : Device Class */
+                #if (${module.el.ux_device.bDeviceClass} == 0x00) || (${module.el.ux_device.bDeviceClass} == 0x02) || (${module.el.ux_device.bDeviceClass} == 0x03) || (${module.el.ux_device.bDeviceClass} == 0x08)
+                0x00,                           /* 5 bDeviceSubClass : none */
+                0x00,                           /* 6 bDeviceProtocol : none */
+                #elif (${module.el.ux_device.bDeviceClass} == 0xEF) /* Composite device */
+                0x02,                           /* 5 bDeviceSubClass : Common Class(0x02) */
+                0x01,                           /* 6 bDeviceProtocol :Interface Association Descriptor(IAD) */
+                #elif (${module.el.ux_device.bDeviceClass} == 0xFF) /* Vendor specific device */
+                0x00,                           /* 5 bDeviceSubClass : none */
+                0x00,                           /* 6 bDeviceProtocol : none */
+                #endif
+                0x40,                           /* 7 bMaxPacketSize0 */
+                (uint8_t)(${module.el.ux_device.idVendor}),       /* 8 idVendor */
+                (uint8_t)(${module.el.ux_device.idVendor} >> 8),  /* 9 idVendor */
+                (uint8_t)(${module.el.ux_device.idProduct}),      /* 10 idProduct */
+                (uint8_t)(${module.el.ux_device.idProduct} >> 8), /* 11 idProduct */
+                (uint8_t)(${module.el.ux_device.bcdDevice}),      /* 12 bcdDevice */
+                (uint8_t)(${module.el.ux_device.bcdDevice} >> 8), /* 13 bcdDevice */
+                ${module.el.ux_device.iManufacturer},          /* 14 iManufacturer */
+                ${module.el.ux_device.iProduct},               /* 15 iProduct */
+                ${module.el.ux_device.iSerialNumber},          /* 16 iSerialNumber */
+                0x01,                           /* 17 bNumConfigurations */
+                /****************************************************************
+                 * Device qualifier descriptor                                  *
+                 ****************************************************************/
+                0x0a, /* 0 bLength */
+                UX_DEVICE_QUALIFIER_DESCRIPTOR_ITEM,      /* 1 bDescriptorType */
+                0x00,                           /* 2 bcdUSB BCD(2.0) */
+                0x02,                           /* 3 bcdUSB */
+                ${module.el.ux_device.bDeviceClass},                        /* 4 bDeviceClass    : Device Class */
+                #if (${module.el.ux_device.bDeviceClass} == 0x02) || (${module.el.ux_device.bDeviceClass} == 0x03) || (${module.el.ux_device.bDeviceClass} == 0x08)
+                0x00,                           /* 5 bDeviceSubClass : none */
+                0x00,                           /* 6 bDeviceProtocol : none */
+                #elif (${module.el.ux_device.bDeviceClass} == 0xEF)
+                0x02,                           /* 5 bDeviceSubClass : Common Class(0x02) */
+                0x00,                           /* 6 bDeviceProtocol : none */
+                #elif (${module.el.ux_device.bDeviceClass} == 0xFF)
+                0x00,                           /* 5 bDeviceSubClass : none */
+                0x00,                           /* 6 bDeviceProtocol : none */
+                #endif
+                0x40,                           /* 7 bMaxPacketSize0 */
+                0x01,                           /* 8 bNumConfigs : 1 */
+                0x00,                           /* 9 Reserve, fixed to 0 */
+            };
+            #endif
+
+            /***********************************************************************************************************************
+             * Configuration Value Auto-calculation for USB Configuration Descriptor
+             **********************************************************************************************************************/
+            #ifndef USB_IFD_NUM_0
+            #define USB_IFD_NUM_0  (0)
+            #define USB_IFD_SIZE_0 (0)
+            #endif
+            #ifndef USB_IFD_NUM_1
+            #define USB_IFD_NUM_1  (0)
+            #define USB_IFD_SIZE_1 (0)
+            #endif
+            #ifndef USB_IFD_NUM_2
+            #define USB_IFD_NUM_2  (0)
+            #define USB_IFD_SIZE_2 (0)
+            #endif
+            #ifndef USB_IFD_NUM_3
+            #define USB_IFD_NUM_3  (0)
+            #define USB_IFD_SIZE_3 (0)
+            #endif
+            #ifndef USB_IFD_NUM_4
+            #define USB_IFD_NUM_4  (0)
+            #define USB_IFD_SIZE_4 (0)
+            #endif
+            #ifndef USB_IFD_NUM_5
+            #define USB_IFD_NUM_5  (0)
+            #define USB_IFD_SIZE_5 (0)
+            #endif
+            #ifndef USB_IFD_NUM_6
+            #define USB_IFD_NUM_6  (0)
+            #define USB_IFD_SIZE_6 (0)
+            #endif
+            #ifndef USB_IFD_NUM_7
+            #define USB_IFD_NUM_7  (0)
+            #define USB_IFD_SIZE_7 (0)
+            #endif
+            #ifndef USB_IFD_NUM_8
+            #define USB_IFD_NUM_8  (0)
+            #define USB_IFD_SIZE_8 (0)
+            #endif
+            #ifndef USB_IFD_NUM_9
+            #define USB_IFD_NUM_9  (0)
+            #define USB_IFD_SIZE_9 (0)
+            #endif
+
+            #define USB_NUMBER_OF_INTERFACE USB_IFD_NUM_0 + USB_IFD_NUM_1 + USB_IFD_NUM_2 + USB_IFD_NUM_3 + USB_IFD_NUM_4 + USB_IFD_NUM_5 + USB_IFD_NUM_6 + USB_IFD_NUM_7 + USB_IFD_NUM_8 + USB_IFD_NUM_9
+            #define USB_TOTAL_LENGTH        USB_IFD_SIZE_0 + USB_IFD_SIZE_1 + USB_IFD_SIZE_2 + USB_IFD_SIZE_3 + USB_IFD_SIZE_4 + USB_IFD_SIZE_5 + USB_IFD_SIZE_6 + USB_IFD_SIZE_7 + USB_IFD_SIZE_8 + USB_IFD_SIZE_9
+
+            #if (0 != ${module.el.ux_device.bNumInterfaces})
+            #define USB_CFG_DESCRIPTOR_bNumInterfaces     (${module.el.ux_device.bNumInterfaces})
+            #else
+            #define USB_CFG_DESCRIPTOR_bNumInterfaces     (USB_NUMBER_OF_INTERFACE)
+            #endif
+            #if (0 != ${module.el.ux_device.wTotalLength})
+            #define USB_CFG_DESCRIPTOR_wTotalLength       (${module.el.ux_device.wTotalLength})
+            #else
+            #define USB_CFG_DESCRIPTOR_wTotalLength       (0x09 + USB_TOTAL_LENGTH)
+            #endif
+
+            /***********************************************************************************************************************
+             * Consolidated USB Device Descriptor Framework on RAM for IAR build
+             **********************************************************************************************************************/
+            #ifdef __ICCARM__
+            /* Memory area to complete USB device Descriptor Framework. */
+            static uint8_t device_framework_full_speed_ram[0x12 + USB_CFG_DESCRIPTOR_wTotalLength];
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+            static uint8_t device_framework_high_speed_ram[0x12 + 0x0a + USB_CFG_DESCRIPTOR_wTotalLength];
+            #endif
+            #endif
+            
+            /***********************************************************************************************************************
+             * USB Configuration Descriptor for FS mode
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char ux_cfg_descriptor_full_speed[] BSP_PLACE_IN_SECTION(".usb_config_desc_fs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_config_desc_fs" 1
+            __root static const unsigned char ux_cfg_descriptor_full_speed[] BSP_PLACE_IN_SECTION(".usb_config_desc_fs")
+            #endif
+            = {
+                0x09, /* 0 bLength */
+                UX_CONFIGURATION_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                (uint8_t)(USB_CFG_DESCRIPTOR_wTotalLength),      /* 2 wTotalLength : This will be calculated at run-time. */
+                (uint8_t)(USB_CFG_DESCRIPTOR_wTotalLength >> 8), /* 3 wTotalLength : This will be calculated at run-time. */
+                (uint8_t)(USB_CFG_DESCRIPTOR_bNumInterfaces),    /* 4 bNumInterfaces */
+                0x01, /* 5 bConfigurationValue : Fixed to 1 since only one configuration is supported. */
+                ${module.el.ux_device.iConfiguration},        /* 6 iConfiguration */
+                0x80 | (${module.el.ux_device.bmAttributes_bit6} &lt;&lt; 6) | (${module.el.ux_device.bmAttributes_bit5} &lt;&lt; 5), /* 7 bmAttributes */
+                ${module.el.ux_device.bMaxPower}, /* 8 bMaxPower */
+            };
+
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+            /***********************************************************************************************************************
+             * USB Configuration Descriptor for HS mode
+             **********************************************************************************************************************/
+            #if defined(__GNUC__)
+            static volatile const unsigned char ux_cfg_descriptor_high_speed[] BSP_PLACE_IN_SECTION(".usb_config_desc_hs") BSP_ALIGN_VARIABLE(1)
+            #else /* __ICCARM__ */
+            #pragma section = ".usb_config_desc_hs" 1
+            __root static const unsigned char ux_cfg_descriptor_high_speed[] BSP_PLACE_IN_SECTION(".usb_config_desc_hs")
+            #endif
+            = {
+                0x09, /* 0 bLength */
+                UX_CONFIGURATION_DESCRIPTOR_ITEM, /* 1 bDescriptorType */
+                (uint8_t)(USB_CFG_DESCRIPTOR_wTotalLength),      /* 2 wTotalLength : This will be calculated at run-time. */
+                (uint8_t)(USB_CFG_DESCRIPTOR_wTotalLength >> 8), /* 3 wTotalLength : This will be calculated at run-time. */
+                (uint8_t)(USB_CFG_DESCRIPTOR_bNumInterfaces),    /* 4 bNumInterfaces */
+                0x01, /* 5 bConfigurationValue : Fixed to 1 since only one configuration is supported. */
+                0x00, /* 6 iConfiguration */
+                0x80 | (${module.el.ux_device.bmAttributes_bit6} &lt;&lt; 6) | (${module.el.ux_device.bmAttributes_bit5} &lt;&lt; 5), /* 7 bmAttributes */
+                ${module.el.ux_device.bMaxPower}, /* 8 bMaxPower */
+            };
+            #endif
+
+            /***********************************************************************************************************************
+             * USB Language Framework (Default setting for US English)
+             **********************************************************************************************************************/
+            #if(0 == ${module.el.ux_device.language_descriptor.number}) /* Create USB Language Framework with default setting if not defined by user. */
+            static volatile const UCHAR language_id_framework_default[] =
+            {
+                (uint8_t)(0x0409),     /* Supported Language Code */
+                (uint8_t)(0x0409 >> 8) /* US English as the default */
+            }; 
+            #endif
+
+            /***********************************************************************************************************************
+             * Function to get size of USB String Descriptor
+             **********************************************************************************************************************/
+            #if (${module.el.ux_device.string_descriptor.index})
+            extern const UCHAR ${module.el.ux_device.string_descriptor.name}[];
+            static ULONG ux_device_string_descriptor_size_get(void)
+            {
+                ULONG  size = 0;
+                UCHAR   * ptr = (UCHAR *)${module.el.ux_device.string_descriptor.name};
+                if(NULL != ptr)
+                {
+                    for(INT i = 0; i &lt; ${module.el.ux_device.string_descriptor.index}; i++)
+                    {
+                        ptr = ptr + 3;      /* bLength at byte offset 3 */
+                        /* Counts bLength + Language code(2bytes) + bLength(1byte) */
+                        size = size + *ptr + 4;
+                        ptr = ptr + (*ptr) + 1;
+                    }
+                }
+                return size;
+            }
+            #endif
+
+            #if (${module.el.ux_device.language_descriptor.number})
+            extern const UCHAR ${module.el.ux_device.language_descriptor.name}[];
+            #endif
+            /*******************************************************************************************************************//**
+              * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+              *             with the prototype below.
+              *             - void ux_device_err_callback(void * p_instance, void * p_data)
+              *
+              * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+              **********************************************************************************************************************/
+             void ux_device_err_callback_internal(void * p_instance, void * p_data);
+             void ux_device_err_callback_internal(void * p_instance, void * p_data)
+             {
+               /** Suppress compiler warning for not using parameters. */
+               SSP_PARAMETER_NOT_USED(p_instance);
+               SSP_PARAMETER_NOT_USED(p_data);
+
+               /** An error has occurred. Please check function arguments for more information. */
+               BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+             }
+        </declarations>
+        <init>
+            {
+            UINT status_ux_device_init;
+
+            /** Calculate the size of USBX String Framework. */
+            ULONG string_framework_size;
+            UCHAR * p_string_framework;
+            
+            #if(${module.el.ux_device.string_descriptor.index}) /* Check if the number of index in USBX String Framework is greater than zero. */
+            {
+                p_string_framework    = (UCHAR *)${module.el.ux_device.string_descriptor.name};
+                string_framework_size = ux_device_string_descriptor_size_get();
+            }
+            #else
+            {
+                p_string_framework    = NULL;
+                string_framework_size = 0;
+            }
+            #endif
+
+            /** Calculate the size of USB Language Framework. */
+            ULONG language_framework_size;
+            UCHAR * p_language_framework;
+
+            #if(${module.el.ux_device.language_descriptor.number}) /* Check if the number of index in USB Language Framework is greater than zero. */
+            {
+                p_language_framework  = (UCHAR *)${module.el.ux_device.language_descriptor.name};
+                language_framework_size = ${module.el.ux_device.language_descriptor.number} * 2;
+            }
+            #else
+            {
+                p_language_framework  = (UCHAR *)language_id_framework_default;
+                language_framework_size = 2;
+            }
+            #endif
+
+            /** Initialize the USB Device stack. */
+            #ifdef __GNUC__
+            status_ux_device_init = ux_device_stack_initialize(
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+                                                 (UCHAR *)device_framework_high_speed, ((uint32_t)&amp;__usb_descriptor_end_hs - (uint32_t)&amp;__usb_dev_descriptor_start_hs),
+            #else /* If USB DCD runs in FS mode, USB Device Descriptor for HS mode is not required. */
+                                                 NULL, 0,
+            #endif
+                                                 (UCHAR *)device_framework_full_speed, ((uint32_t)&amp;__usb_descriptor_end_fs - (uint32_t)&amp;__usb_dev_descriptor_start_fs),
+                                                 p_string_framework, string_framework_size,
+                                                 p_language_framework, language_framework_size, UX_NULL);
+            #else /* __ICCARM__ */
+
+            uint8_t * p_device_framework;
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+            p_device_framework = (uint8_t *)device_framework_high_speed_ram;
+            memcpy (p_device_framework, device_framework_high_speed, sizeof(device_framework_high_speed));
+            p_device_framework = p_device_framework + sizeof(device_framework_high_speed);
+            memcpy (p_device_framework, ux_cfg_descriptor_high_speed, sizeof(ux_cfg_descriptor_high_speed));
+            p_device_framework = p_device_framework + sizeof(ux_cfg_descriptor_high_speed);
+            memcpy (p_device_framework, (uint8_t *)__section_begin(".usb_interface_desc_hs"), USB_TOTAL_LENGTH);
+            #endif
+
+            /* Creates Device Descriptor Frameworks copying Descriptors from ROM. */
+            p_device_framework = (uint8_t *)device_framework_full_speed_ram;
+            memcpy (p_device_framework, device_framework_full_speed, sizeof(device_framework_full_speed));
+            p_device_framework = p_device_framework + sizeof(device_framework_full_speed);
+            /* Copy Configuration Descriptor */
+            memcpy (p_device_framework, ux_cfg_descriptor_full_speed, sizeof(ux_cfg_descriptor_full_speed));
+            p_device_framework = p_device_framework + sizeof(ux_cfg_descriptor_full_speed);
+            /* Copy Interface Descriptors */
+            memcpy (p_device_framework, (uint8_t *)__section_begin(".usb_interface_desc_fs"), USB_TOTAL_LENGTH);
+
+            status_ux_device_init = ux_device_stack_initialize(
+            #if defined(UX_DCD_SYNERY_USE_USBHS)
+                                                 (UCHAR *)device_framework_high_speed_ram, (0x12 + 0x0a + USB_CFG_DESCRIPTOR_wTotalLength),
+            #else /* If USB DCD runs in FS mode, USB Device Descriptor for HS mode is not required. */
+                                                 NULL, 0,
+            #endif
+                                                 (UCHAR *)device_framework_full_speed_ram, (0x12 + USB_CFG_DESCRIPTOR_wTotalLength),
+                                                 p_string_framework, string_framework_size,
+                                                 p_language_framework, language_framework_size, UX_NULL);
+            #endif
+            if (UX_SUCCESS != status_ux_device_init)
+            {
+                ux_device_err_callback(NULL,&amp;status_ux_device_init);
+            }
+            }
+        </init>
+    </module>
+
+</synergyModuleDescription>

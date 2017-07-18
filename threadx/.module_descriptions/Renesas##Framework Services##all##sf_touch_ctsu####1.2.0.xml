@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_touch_ctsu" path="ssp_cfg/framework/sf_touch_ctsu_cfg.h" version="0">
+        <property default="config.framework.sf_touch_ctsu.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_touch_ctsu.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_touch_ctsu.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_touch_ctsu.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_touch_ctsu.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>
+		#define SF_TOUCH_CTSU_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_touch_ctsu.param_checking_enable}
+        #define SF_TOUCH_CTSU_CFG_MAX_WIDGET_TYPES    (3)
+		</content>
+    </config>
+
+    <module config="config.framework.sf_touch_ctsu" display="Framework|Input|${module.framework.sf_touch_ctsu.name} Cap Touch Framework on sf_touch_ctsu" id="module.framework.sf_touch_ctsu" common="100" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.framework.sf_touch_ctsu.${module.framework.sf_touch_ctsu.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_touch_ctsu.requires.ctsu" interface="interface.driver.ctsu" display="Add Capacitive Touch Driver" />
+        <provides interface="interface.framework.sf_touch_ctsu" />
+		<provides interface="interface.framework.sf_touch_ctsu.${module.framework.sf_touch_ctsu.name}" />
+		<property default="g_sf_touch_ctsu${_instance}" display="Name" id="module.framework.sf_touch_ctsu.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_ctsu.name}")</constraint>
+        </property>
+		<property default="3" display="Thread Priority" id="module.framework.sf_touch_ctsu.priority">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.framework.sf_touch_ctsu.priority}")  &amp;&amp; ("${module.framework.sf_touch_ctsu.priority}" &gt;= 0)</constraint>
+        </property>
+		<property default="50" display="Update Hz" id="module.framework.sf_touch_ctsu.update_hz">
+            <constraint display="Value must be an integer greater than 0">testInteger("${module.framework.sf_touch_ctsu.update_hz}")  &amp;&amp; ("${module.framework.sf_touch_ctsu.update_hz}" &gt; 0)</constraint>
+        </property>
+       <property default="NULL" display="Callback" id="module.framework.sf_touch_ctsu.p_callback"  >
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_ctsu.p_callback}")</constraint>
+        </property>
+        <header>
+
+        /** SF Touch CTSU instance */
+        extern sf_touch_ctsu_instance_t ${module.framework.sf_touch_ctsu.name};
+        #ifndef ${module.framework.sf_touch_ctsu.p_callback}
+        /** Declaration of user callback function. This function MUST be defined in the user application if callback is not NULL */
+        void ${module.framework.sf_touch_ctsu.p_callback}(sf_touch_ctsu_callback_args_t * p_args);
+        #endif
+        </header>
+        <includes>
+		#include &quot;sf_touch_ctsu.h&quot;
+		</includes>
+        <declarations>
+
+		sf_touch_ctsu_instance_ctrl_t ${module.framework.sf_touch_ctsu.name}_ctrl;
+		 sf_touch_ctsu_cfg_t ${module.framework.sf_touch_ctsu.name}_cfg =
+		{
+			.priority            = ${module.framework.sf_touch_ctsu.priority},
+			.update_hz           = ${module.framework.sf_touch_ctsu.update_hz},
+            .p_callback          = ${module.framework.sf_touch_ctsu.p_callback},
+			.p_ctsu_instance     = &amp;${module.framework.sf_touch_ctsu.requires.ctsu::module.driver.ctsu.name},
+		};
+
+         sf_touch_ctsu_instance_t ${module.framework.sf_touch_ctsu.name} =
+        {
+            .p_ctrl = &amp;${module.framework.sf_touch_ctsu.name}_ctrl,
+            .p_cfg = &amp;${module.framework.sf_touch_ctsu.name}_cfg,
+            .p_api = &amp;g_sf_touch_ctsu_on_sf_touch_ctsu,
+        };
+		</declarations>
+        <init>
+		<!-- ssp_err_t ssp_err_${module.framework.sf_touch_ctsu.name}; -->
+		<!-- ssp_err_${module.framework.sf_touch_ctsu.name} = ${module.framework.sf_touch_ctsu.name}.p_api->open(${module.framework.sf_touch_ctsu.name}.p_ctrl, ${module.framework.sf_touch_ctsu.name}.p_cfg); -->
+        <!-- if (SSP_SUCCESS != ssp_err_${module.framework.sf_touch_ctsu.name}) -->
+        <!-- { -->
+            <!-- BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0); -->
+        <!-- } -->
+        </init>
+    </module>
+</synergyModuleDescription>

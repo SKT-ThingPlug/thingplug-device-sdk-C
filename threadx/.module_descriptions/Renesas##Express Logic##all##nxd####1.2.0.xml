@@ -1,0 +1,651 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <config id="config.el.nxd" path="ssp_cfg/framework/el/nx_user.h" version="0">
+        <content>
+            #if (${interface.el.nxd_src})
+            #include "nxd_src_user.h"
+            #endif
+            #if (${interface.el.nxd_auto_ip})
+            #include "nxd_auto_ip_cfg.h"
+            #endif
+            #if (${interface.el.nxd_dhcp_common})
+            #include "nxd_dhcp_common_cfg.h"
+            #endif
+            #if (${interface.el.nxd_dhcp_client})
+            #include "nxd_dhcp_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_dhcp_server})
+            #include "nxd_dhcp_server_cfg.h"
+            #endif
+            #if (${interface.el.nxd_dhcpv6_common})
+            #include "nxd_dhcpv6_common_cfg.h"
+            #endif
+            #if (${interface.el.nxd_dhcpv6_client})
+            #include "nxd_dhcpv6_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_dhcpv6_server})
+            #include "nxd_dhcpv6_server_cfg.h"
+            #endif
+            #if (${interface.el.nxd_dns_client})
+            #include "nxd_dns_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_ftp_common})
+            #include "nxd_ftp_common_cfg.h"
+            #endif
+            #if (${interface.el.nxd_ftp_client})
+            #include "nxd_ftp_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_ftp_server})
+            #include "nxd_ftp_server_cfg.h"
+            #endif
+            #if (${interface.el.nxd_http_common})
+            #include "nxd_http_common_cfg.h"
+            #endif
+            #if (${interface.el.nxd_http_client})
+            #include "nxd_http_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_http_server})
+            #include "nxd_http_server_cfg.h"
+            #endif
+            #if (${interface.el.nxd_pop3_client})
+            #include "nxd_pop3_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_smtp_client})
+            #include "nxd_smtp_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_sntp_client})
+            #include "nxd_sntp_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_telnet_common})
+            #include "nxd_telnet_common_cfg.h"
+            #endif
+            #if (${interface.el.nxd_telnet_client})
+            #include "nxd_telnet_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_telnet_server})
+            #include "nxd_telnet_server_cfg.h"
+            #endif
+            #if (${interface.el.nxd_tftp_common})
+            #include "nxd_tftp_common_cfg.h"
+            #endif
+            #if (${interface.el.nxd_tftp_client})
+            #include "nxd_tftp_client_cfg.h"
+            #endif
+            #if (${interface.el.nxd_tftp_server})
+            #include "nxd_tftp_server_cfg.h"
+            #endif
+        </content>
+    </config>
+    <module config="config.el.nxd" display="X-Ware|NetX Duo|NetX Duo Common on nxd" id="module.el.nxd_common" common="1" version="1">
+        <constraint display="NetX and NetX Duo cannot be used at the same time">
+            !testExists("${interface.el.nx_common}")
+        </constraint>         
+        <requires interface="_rtos" />
+        <requires id="module.el.nx.ip.requires.nxd_src" interface="interface.el.nxd_src" display="Add NetX Duo Source [Optional]" find="false"/>
+        <provides interface="interface.el.nxd_common" />
+        <includes>
+            #include "nx_api.h"
+        </includes>
+        <init>
+            /** Initialize the NetX Duo system. */
+            nx_system_initialize();
+        </init>
+    </module>
+    <module config="" display="X-Ware|NetX Duo|${module.el.nx.ip.name} NetX Duo IP Instance" id="module.el.nxd.ip" common="100" version="1">
+        <constraint display="IP instances must have unique names">
+            "${interface.el.nx.ip.${module.el.nx.ip.name}}" === "1"
+        </constraint>
+        <constraint display="ARP cache size must be greater than 0 if ARP is enabled">
+            ("${module.el.nx.ip.arp}" == "module.el.nx.ip.arp.disable") || ("${module.el.nx.ip.arp_cache_size}" &gt; 0)
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx.ip.requires.nxd_common" interface="interface.el.nxd_common" display="Add NetX Duo Common" />
+        <requires id="module.el.nx.ip.requires.nxd.packet_pool" interface="interface.el.nxd.packet_pool" display="Add NetX Duo Packet Pool" />
+        <requires id="module.el.nx.ip.requires.sf_el_nx" interface="interface.framework.sf_el_nx" display="Add NetX Duo Network Driver" />
+
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx.ip" />
+        <provides interface="interface.el.nx.ip.${module.el.nx.ip.name}" />
+        <!-- NetX Duo only -->
+        <provides interface="interface.el.nxd.ip" />
+        <provides interface="interface.el.nxd.ip.${module.el.nx.ip.name}" />
+
+        <property default="g_ip${_instance}" display="Name" id="module.el.nx.ip.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx.ip.name}")</constraint>
+        </property>
+        <property default="192,168,0,2" display="IPv4 Address (use commas for separation)" id="module.el.nx.ip.address">
+            <constraint display="Must be valid IP address separated by commas">"${module.el.nx.ip.address}".split(",").length == 4</constraint>
+        </property>
+        <property default="255,255,255,0" display="Subnet Mask (use commas for separation)" id="module.el.nx.ip.subnet_mask">
+            <constraint display="Must be valid IP address separated by commas">"${module.el.nx.ip.subnlet_mask}".split(",").length == 4</constraint>
+        </property>
+        <property default="0x2001,0x0,0x0,0x0,0x0,0x0,0x0,0x1" display="IPv6 Global Address (use commas for separation)" id="module.el.nx.ipv6.address_global">
+            <constraint display="Must be valid IPv6 address separated by commas">"${module.el.nx.ipv6.address_global}".split(",").length == 8</constraint>
+        </property>
+        <property default="0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0" display="IPv6 Link Local Address (use commas for separation , All zeros means use MAC address)" id="module.el.nx.ipv6.address_local">
+            <constraint display="Must be valid IPv6 address separated by commas">"${module.el.nx.ipv6.address_local}".split(",").length == 8</constraint>
+        </property>        
+        <property default="2048" display="IP Helper Thread Stack Size (bytes)" id="module.el.nx.ip.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">testInteger("${module.el.nx.ip.stack_size}")  &amp;&amp; (("${module.el.nx.ip.stack_size}" % 8) == 0)</constraint>
+        </property>
+        <property default="3" display="IP Helper Thread Priority" id="module.el.nx.ip.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${module.el.nx.ip.priority}")  &amp;&amp; ("${module.el.nx.ip.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="module.el.nx.ip.arp.enable" display="ARP" id="module.el.nx.ip.arp">
+            <option display="Enable"  id="module.el.nx.ip.arp.enable"  value="1"/>
+            <option display="Disable" id="module.el.nx.ip.arp.disable" value="SYNERGY_NOT_DEFINED"/>
+        </property>
+        <property default="512" display="ARP Cache Size (bytes)" id="module.el.nx.ip.arp_cache_size">
+            <constraint display="Value must be a non-negative integer and divisible by 4">testInteger("${module.el.nx.ip.arp_cache_size}")  &amp;&amp; (("${module.el.nx.ip.arp_cache_size}" % 4) == 0)</constraint>
+        </property>
+        <property default="module.el.nx.ip.rarp.disable" display="Reverse ARP" id="module.el.nx.ip.rarp">
+            <option display="Enable"  id="module.el.nx.ip.rarp.enable"  value="1"/>
+            <option display="Disable" id="module.el.nx.ip.rarp.disable" value="SYNERGY_NOT_DEFINED"/>
+        </property>
+        <property default="module.el.nx.ip.tcp.enable" display="TCP" id="module.el.nx.ip.tcp">
+            <option display="Enable"  id="module.el.nx.ip.tcp.enable"  value="1"/>
+            <option display="Disable" id="module.el.nx.ip.tcp.disable" value="SYNERGY_NOT_DEFINED"/>
+        </property>
+        <property default="module.el.nx.ip.udp.enable" display="UDP" id="module.el.nx.ip.udp">
+            <option display="Enable"  id="module.el.nx.ip.udp.enable"  value="1"/>
+            <option display="Disable" id="module.el.nx.ip.udp.disable" value="SYNERGY_NOT_DEFINED"/>
+        </property>
+        <property default="module.el.nx.ip.icmp.enable" display="ICMP" id="module.el.nx.ip.icmp">
+            <option display="Enable"  id="module.el.nx.ip.icmp.enable"  value="1"/>
+            <option display="Disable" id="module.el.nx.ip.icmp.disable" value="SYNERGY_NOT_DEFINED"/>
+        </property>
+        <property default="module.el.nx.ip.igmp.enable" display="IGMP" id="module.el.nx.ip.igmp">
+            <option display="Enable"  id="module.el.nx.ip.igmp.enable"  value="1"/>
+            <option display="Disable" id="module.el.nx.ip.igmp.disable" value="SYNERGY_NOT_DEFINED"/>
+        </property>
+        <property default="module.el.nx.ip.fragmentation.disable" display="IP fragmentation" id="module.el.nx.ip.fragmentation">
+            <option display="Enable"  id="module.el.nx.ip.fragmentation.enable"  value="1"/>
+            <option display="Disable" id="module.el.nx.ip.fragmentation.disable" value="SYNERGY_NOT_DEFINED"/>
+        </property>        
+        <header>
+            extern NX_IP ${module.el.nx.ip.name};
+            void ${module.el.nx.ip.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+        </includes>
+        <macros>
+            #ifndef NX_DISABLE_IPV6
+            #ifndef FILL_NXD_IPV6_ADDRESS
+            #define FILL_NXD_IPV6_ADDRESS(ipv6,f0,f1,f2,f3,f4,f5,f6,f7) do { \
+                                                                       ipv6.nxd_ip_address.v6[0] = (((uint32_t)f0 &lt;&lt; 16) &amp; 0xFFFF0000) | ((uint32_t)f1 &amp; 0x0000FFFF);\
+                                                                       ipv6.nxd_ip_address.v6[1] = (((uint32_t)f2 &lt;&lt; 16) &amp; 0xFFFF0000) | ((uint32_t)f3 &amp; 0x0000FFFF);\
+                                                                       ipv6.nxd_ip_address.v6[2] = (((uint32_t)f4 &lt;&lt; 16) &amp; 0xFFFF0000) | ((uint32_t)f5 &amp; 0x0000FFFF);\
+                                                                       ipv6.nxd_ip_address.v6[3] = (((uint32_t)f6 &lt;&lt; 16) &amp; 0xFFFF0000) | ((uint32_t)f7 &amp; 0x0000FFFF);\
+                                                                       ipv6.nxd_ip_version       = NX_IP_VERSION_V6;\
+                                                                   } while(0);
+            #endif /* FILL_NXD_IPV6_ADDRESS */
+            #endif
+        </macros>
+        <declarations>
+            NX_IP           ${module.el.nx.ip.name};
+            #ifndef NX_DISABLE_IPV6
+            UINT            ${module.el.nx.ip.name}_interface_index = 0;
+            UINT            ${module.el.nx.ip.name}_address_index;
+            NXD_ADDRESS     ${module.el.nx.ip.name}_global_ipv6_address;
+            NXD_ADDRESS     ${module.el.nx.ip.name}_local_ipv6_address;
+            #endif
+            uint8_t         ${module.el.nx.ip.name}_stack_memory[${module.el.nx.ip.stack_size}];
+            uint8_t         ${module.el.nx.ip.name}_arp_cache_memory[${module.el.nx.ip.arp_cache_size}];
+            ULONG           ${module.el.nx.ip.name}_actual_status;
+            #if defined(__ICCARM__)
+            #define ${module.el.nx.ip.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx.ip.name}_err_callback  = ${module.el.nx.ip.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx.ip.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx.ip.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx.ip.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx.ip.name}_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.nx.ip.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx.ip.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx.ip.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }            
+        </declarations>
+        <init>
+            UINT ${module.el.nx.ip.name}_err;
+            #ifndef NX_DISABLE_IPV6
+            FILL_NXD_IPV6_ADDRESS(${module.el.nx.ip.name}_global_ipv6_address,${module.el.nx.ipv6.address_global});
+            FILL_NXD_IPV6_ADDRESS(${module.el.nx.ip.name}_local_ipv6_address,${module.el.nx.ipv6.address_local});
+            
+            #endif
+            /* Create an IP instance. */
+            ${module.el.nx.ip.name}_err = nx_ip_create(&amp;${module.el.nx.ip.name},
+                                                       "${module.el.nx.ip.name} IP Instance",
+                                                       IP_ADDRESS(${module.el.nx.ip.address}),
+                                                       IP_ADDRESS(${module.el.nx.ip.subnet_mask}),
+                                                       &amp;${module.el.nx.ip.requires.nxd.packet_pool::module.el.nx.packet_pool.name},
+                                                       ${module.el.nx.ip.requires.sf_el_nx::module.framework.sf_el_nx.name},
+                                                       &amp;${module.el.nx.ip.name}_stack_memory[0],
+                                                       ${module.el.nx.ip.stack_size},
+                                                       ${module.el.nx.ip.priority});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            #define SYNERGY_NOT_DEFINED     (0xFFFFFFFF)
+            #if (SYNERGY_NOT_DEFINED != ${module.el.nx.ip.arp})
+            ${module.el.nx.ip.name}_err = nx_arp_enable(&amp;${module.el.nx.ip.name}, &amp;${module.el.nx.ip.name}_arp_cache_memory[0], ${module.el.nx.ip.arp_cache_size});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            #endif
+            #if (SYNERGY_NOT_DEFINED != ${module.el.nx.ip.rarp})
+            ${module.el.nx.ip.name}_err = nx_rarp_enable(&amp;${module.el.nx.ip.name});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            #endif
+            #if (SYNERGY_NOT_DEFINED != ${module.el.nx.ip.tcp})
+            ${module.el.nx.ip.name}_err = nx_tcp_enable(&amp;${module.el.nx.ip.name});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            #endif
+            #if (SYNERGY_NOT_DEFINED != ${module.el.nx.ip.udp})
+            ${module.el.nx.ip.name}_err = nx_udp_enable(&amp;${module.el.nx.ip.name});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            #endif
+            #if (SYNERGY_NOT_DEFINED != ${module.el.nx.ip.icmp})
+            ${module.el.nx.ip.name}_err = nx_icmp_enable(&amp;${module.el.nx.ip.name});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            #endif
+            #if (SYNERGY_NOT_DEFINED != ${module.el.nx.ip.igmp})
+            ${module.el.nx.ip.name}_err = nx_igmp_enable(&amp;${module.el.nx.ip.name});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            #endif
+            #if (SYNERGY_NOT_DEFINED != ${module.el.nx.ip.fragmentation})
+            ${module.el.nx.ip.name}_err = nx_ip_fragment_enable(&amp;${module.el.nx.ip.name});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }                        
+            #endif            
+            #undef SYNERGY_NOT_DEFINED
+            
+            #ifndef NX_DISABLE_IPV6
+            /** Here's where IPv6 is enabled. */
+            ${module.el.nx.ip.name}_err = nxd_ipv6_enable(&amp;${module.el.nx.ip.name});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            ${module.el.nx.ip.name}_err = nxd_icmp_enable(&amp;${module.el.nx.ip.name});
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            /* Wait for link to be initialized so MAC address is valid. */
+            /** Wait for init to finish. */
+            ${module.el.nx.ip.name}_err = nx_ip_interface_status_check(&amp;${module.el.nx.ip.name}, 0, NX_IP_INITIALIZE_DONE, &amp;${module.el.nx.ip.name}_actual_status, NX_WAIT_FOREVER);
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            /** Setting link local address */
+            if ( 0x0 == ( ${module.el.nx.ip.name}_local_ipv6_address.nxd_ip_address.v6[0] | 
+                          ${module.el.nx.ip.name}_local_ipv6_address.nxd_ip_address.v6[1] | 
+                          ${module.el.nx.ip.name}_local_ipv6_address.nxd_ip_address.v6[2] |
+                          ${module.el.nx.ip.name}_local_ipv6_address.nxd_ip_address.v6[3] ))
+            {     
+                ${module.el.nx.ip.name}_err = nxd_ipv6_address_set(&amp;${module.el.nx.ip.name}, ${module.el.nx.ip.name}_interface_index, NX_NULL, 10,NX_NULL);
+            }
+            else
+            {
+                ${module.el.nx.ip.name}_err = nxd_ipv6_address_set(&amp;${module.el.nx.ip.name}, ${module.el.nx.ip.name}_interface_index, &amp;${module.el.nx.ip.name}_local_ipv6_address, 10, &amp;${module.el.nx.ip.name}_address_index);
+            }
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            if ( 0x0 != ( ${module.el.nx.ip.name}_global_ipv6_address.nxd_ip_address.v6[0] |
+                          ${module.el.nx.ip.name}_global_ipv6_address.nxd_ip_address.v6[1] |
+                          ${module.el.nx.ip.name}_global_ipv6_address.nxd_ip_address.v6[2] |
+                          ${module.el.nx.ip.name}_global_ipv6_address.nxd_ip_address.v6[3] ))
+            {
+                ${module.el.nx.ip.name}_err = nxd_ipv6_address_set(&amp;${module.el.nx.ip.name}, ${module.el.nx.ip.name}_interface_index, &amp;${module.el.nx.ip.name}_global_ipv6_address, 64, &amp;${module.el.nx.ip.name}_address_index);
+            }
+            if (NX_SUCCESS != ${module.el.nx.ip.name}_err)
+            {
+                ${module.el.nx.ip.name}_err_callback((void *)&amp;${module.el.nx.ip.name},&amp;${module.el.nx.ip.name}_err);
+            }
+            #endif
+        </init>
+    </module>
+    <module config="" display="X-Ware|NetX Duo|${module.el.nx.packet_pool.name} NetX Duo Packet Pool Instance" id="module.el.nxd.packet_pool" common="100" version="1">
+        <constraint display="IP instances must have unique names">
+            "${interface.el.nx.packet_pool.${module.el.nx.packet_pool.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.el.nx.packet_pool.requires.nxd_common" interface="interface.el.nxd_common" display="Add NetX Duo Common" />
+        <!-- NetX and NetX Duo -->
+        <provides interface="interface.el.nx.packet_pool" />
+        <provides interface="interface.el.nx.packet_pool.${module.el.nx.packet_pool.name}" />
+        <!-- NetX Duo Only -->
+        <provides interface="interface.el.nxd.packet_pool" />
+        <provides interface="interface.el.nxd.packet_pool.${module.el.nx.packet_pool.name}" />
+        <property default="g_packet_pool${_instance}" display="Name" id="module.el.nx.packet_pool.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.nx.packet_pool.name}")</constraint>
+        </property>
+        <property default="640" display="Packet Size (bytes)" id="module.el.nx.packet_pool.packet_size">
+            <constraint display="Value must be a non-negative integer and divisible by 4">testInteger("${module.el.nx.packet_pool.packet_size}")  &amp;&amp; (("${module.el.nx.packet_pool.packet_size}" % 4) == 0) &amp;&amp; ("${module.el.nx.packet_pool.packet_size}" &gt; 0)</constraint>
+        </property>
+        <property default="16" display="Number of Packets in Pool" id="module.el.nx.packet_pool.number_of_packets">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.el.nx.packet_pool.number_of_packets}") &amp;&amp; ("${module.el.nx.packet_pool.number_of_packets}" &gt; 0)</constraint>
+        </property>
+        <header>
+            extern NX_PACKET_POOL ${module.el.nx.packet_pool.name};
+            void ${module.el.nx.packet_pool.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            NX_PACKET_POOL  ${module.el.nx.packet_pool.name};
+            uint8_t         ${module.el.nx.packet_pool.name}_pool_memory[(${module.el.nx.packet_pool.number_of_packets} * ${module.el.nx.packet_pool.packet_size})];
+            #if defined(__ICCARM__)
+            #define ${module.el.nx.packet_pool.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.nx.packet_pool.name}_err_callback  = ${module.el.nx.packet_pool.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.nx.packet_pool.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.nx.packet_pool.name}_err_callback_internal")))
+            #endif
+            void ${module.el.nx.packet_pool.name}_err_callback(void * p_instance, void * p_data) ${module.el.nx.packet_pool.name}_err_callback_WEAK_ATTRIBUTE;
+            /*******************************************************************************************************************//**
+               * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+               *             with the prototype below.
+               *             - void ${module.el.nx.packet_pool.name}_err_callback(void * p_instance, void * p_data)
+               *
+               * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.nx.packet_pool.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.nx.packet_pool.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            UINT ${module.el.nx.packet_pool.name}_err;
+            /* Create Client packet pool. */
+            ${module.el.nx.packet_pool.name}_err = nx_packet_pool_create(&amp;${module.el.nx.packet_pool.name}, "${module.el.nx.packet_pool.name} Packet Pool", ${module.el.nx.packet_pool.packet_size}, &amp;${module.el.nx.packet_pool.name}_pool_memory[0], (${module.el.nx.packet_pool.number_of_packets} * ${module.el.nx.packet_pool.packet_size}));
+            if (NX_SUCCESS != ${module.el.nx.packet_pool.name}_err)
+            {
+                ${module.el.nx.packet_pool.name}_err_callback((void *)&amp;${module.el.nx.packet_pool.name},&amp;${module.el.nx.packet_pool.name}_err);
+            }
+        </init>
+    </module>
+    <config id="config.el.nxd_dhcp_common" path="ssp_cfg/framework/el/nxd_dhcp_common_cfg.h" version="0">
+        <property default="config.el.nxd_dhcp_common.tos.normal" display="Type of Service for UDP requests" id="config.el.nxd_dhcp_common.tos">
+            <option display="Normal" id="config.el.nxd_dhcp_common.tos.normal" value="NX_IP_NORMAL"/>
+            <option display="Minimum delay" id="config.el.nxd_dhcp_common.tos.min_delay" value="NX_IP_MIN_DELAY"/>
+            <option display="Maximum data" id="config.el.nxd_dhcp_common.tos.max_data" value="NX_IP_MAX_DATA"/>
+            <option display="Maximum reliability" id="config.el.nxd_dhcp_common.tos.max_reliable" value="NX_IP_MAX_RELIABLE"/>
+            <option display="Minimum cost" id="config.el.nxd_dhcp_common.tos.min_cost" value="NX_IP_MIN_COST"/>
+        </property>
+        <property default="config.el.nxd_dhcp_common.fragment_option.dont_fragment" display="Fragmentation option" id="config.el.nxd_dhcp_common.fragment_option">
+            <option display="Don't fragment" id="config.el.nxd_dhcp_common.fragment_option.dont_fragment" value="NX_DONT_FRAGMENT"/>
+            <option display="Fragment okay" id="config.el.nxd_dhcp_common.fragment_option.fragment_okay" value="NX_FRAGMENT_OKAY"/>
+        </property>
+        <property default="128" display="Time to live" id="config.el.nxd_dhcp_common.time_to_live">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_common.time_to_live}")  &amp;&amp; ("${config.el.nxd_dhcp_common.time_to_live}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="5" display="Packet Queue depth" id="config.el.nxd_dhcp_common.queue_depth">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcp_common.queue_depth}")  &amp;&amp; ("${config.el.nxd_dhcp_common.queue_depth}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_DHCP_TYPE_OF_SERVICE                    (${config.el.nxd_dhcp_common.tos})
+            #define NX_DHCP_FRAGMENT_OPTION                    (${config.el.nxd_dhcp_common.fragment_option})
+            #define NX_DHCP_TIME_TO_LIVE                       (${config.el.nxd_dhcp_common.time_to_live})
+            #define NX_DHCP_QUEUE_DEPTH                        (${config.el.nxd_dhcp_common.queue_depth})
+        </content>
+    </config>
+    <module  config="config.el.nxd_dhcp_common" display="X-Ware|NetX Duo|Protocols|NetX Duo DHCP IPv4 Common" id="module.el.nxd_dhcp_common" common="1" version="1">
+        <requires interface="_rtos" />
+        <provides interface="interface.el.nxd_dhcp_common" />
+    </module>
+    <config id="config.el.nxd_dhcpv6_common" path="ssp_cfg/framework/el/nxd_dhcpv6_common_cfg.h" version="0">
+        <property default="config.el.nxd_dhcpv6_common.tos.normal" display="Type of Service for UDP requests" id="config.el.nxd_dhcpv6_common.tos">
+            <option display="Normal" id="config.el.nxd_dhcpv6_common.tos.normal" value="NX_IP_NORMAL"/>
+            <option display="Minimum delay" id="config.el.nxd_dhcpv6_common.tos.min_delay" value="NX_IP_MIN_DELAY"/>
+            <option display="Maximum data" id="config.el.nxd_dhcpv6_common.tos.max_data" value="NX_IP_MAX_DATA"/>
+            <option display="Maximum reliability" id="config.el.nxd_dhcpv6_common.tos.max_reliable" value="NX_IP_MAX_RELIABLE"/>
+            <option display="Minimum cost" id="config.el.nxd_dhcpv6_common.tos.min_cost" value="NX_IP_MIN_COST"/>
+        </property>
+        <property default="128" display="Time to live" id="config.el.nxd_dhcpv6_common.time_to_live">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_common.time_to_live}")  &amp;&amp; ("${config.el.nxd_dhcpv6_common.time_to_live}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="5" display="Packet Queue depth" id="config.el.nxd_dhcpv6_common.queue_depth">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_common.queue_depth}")  &amp;&amp; ("${config.el.nxd_dhcpv6_common.queue_depth}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="3" display="packet allocation timeout (seconds)" id="config.el.nxd_dhcpv6_common.packet_time_out">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_common.packet_time_out}")  &amp;&amp; ("${config.el.nxd_dhcpv6_common.packet_time_out}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="3" display="Interval for active session time update (seconds)" id="config.el.nxd_dhcpv6_common.session_timer_interval">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_dhcpv6_common.session_timer_interval}")  &amp;&amp; ("${config.el.nxd_dhcpv6_common.session_timer_interval}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_DHCPV6_TYPE_OF_SERVICE                    (${config.el.nxd_dhcpv6_common.tos})
+            #define NX_DHCPV6_TIME_TO_LIVE                       (${config.el.nxd_dhcpv6_common.time_to_live})
+            #define NX_DHCPV6_QUEUE_DEPTH                        (${config.el.nxd_dhcpv6_common.queue_depth})
+            #define NX_DHCPV6_PACKET_TIME_OUT                    (${config.el.nxd_dhcpv6_common.packet_time_out}* NX_IP_PERIODIC_RATE)
+            #define NX_DHCPV6_SESSION_TIMER_INTERVAL             (${config.el.nxd_dhcpv6_common.session_timer_interval})
+        </content>
+    </config>
+    <module  config="config.el.nxd_dhcpv6_common" display="X-Ware|NetX Duo|Protocols|NetX Duo DHCP IPv6 Common" id="module.el.nxd_dhcpv6_common" common="1" version="1">
+        <requires interface="_rtos" />
+        <provides interface="interface.el.nxd_dhcpv6_common" />
+    </module>
+    <config id="config.el.nxd_http_common" path="ssp_cfg/framework/el/nxd_http_common_cfg.h" version="0">
+        <property default="config.el.nxd_http_common.tos.normal" display="Type of Service" id="config.el.nxd_http_common.tos">
+            <option display="Normal" id="config.el.nxd_http_common.tos.normal" value="NX_IP_NORMAL"/>
+            <option display="Minimum delay" id="config.el.nxd_http_common.tos.min_delay" value="NX_IP_MIN_DELAY"/>
+            <option display="Maximum data" id="config.el.nxd_http_common.tos.max_data" value="NX_IP_MAX_DATA"/>
+            <option display="Maximum reliability" id="config.el.nxd_http_common.tos.max_reliable" value="NX_IP_MAX_RELIABLE"/>
+            <option display="Minimum cost" id="config.el.nxd_http_common.tos.min_cost" value="NX_IP_MIN_COST"/>
+        </property>
+        <property default="config.el.nxd_http_common.fragment_option.dont_fragment" display="Fragmentation option" id="config.el.nxd_http_common.fragment_option">
+            <option display="Don't fragment" id="config.el.nxd_http_common.fragment_option.dont_fragment" value="NX_DONT_FRAGMENT"/>
+            <option display="Fragment okay" id="config.el.nxd_http_common.fragment_option.fragment_okay" value="NX_FRAGMENT_OKAY"/>
+        </property>
+        <property default="128" display="Time to live" id="config.el.nxd_http_common.time_to_live">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_http_common.time_to_live}")  &amp;&amp; ("${config.el.nxd_http_common.time_to_live}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nxd_http_common.digest.disable" display="MD5 Support" id="config.el.nxd_http_common.digest">
+            <option display="Disable" id="config.el.nxd_http_common.digest.disable" value="0"/>
+            <option display="Enable" id="config.el.nxd_http_common.digest.enable" value="1"/>
+        </property>
+        <property default="40" display="Maximum resource name length (bytes)" id="config.el.nxd_http_common.max_resource">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_http_common.max_resource}")  &amp;&amp; ("${config.el.nxd_http_common.max_resource}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Maximum password length (bytes)" id="config.el.nxd_http_common.max_password">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_http_common.max_password}")  &amp;&amp; ("${config.el.nxd_http_common.max_password}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="20" display="Maximum username length (bytes)" id="config.el.nxd_http_common.max_name">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_http_common.max_name}")  &amp;&amp; ("${config.el.nxd_http_common.max_name}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #if (${config.el.nxd_http_common.digest})
+            #define NX_HTTP_DIGEST_ENABLE
+            #endif
+            #define NX_HTTP_FRAGMENT_OPTION                     ${config.el.nxd_http_common.fragment_option}
+            #define NX_HTTP_TIME_TO_LIVE                        ${config.el.nxd_http_common.time_to_live}
+            #define NX_HTTP_TYPE_OF_SERVICE                     ${config.el.nxd_http_common.tos}
+            #define NX_HTTP_MAX_RESOURCE                        ${config.el.nxd_http_common.max_resource}
+            #define NX_HTTP_MAX_NAME                            ${config.el.nxd_http_common.max_name}
+            #define NX_HTTP_MAX_PASSWORD                        ${config.el.nxd_http_common.max_password}
+        </content>
+    </config>
+    <module  config="config.el.nxd_http_common" display="X-Ware|NetX Duo|Protocols|NetX Duo HTTP Common" id="module.el.nxd_http_common" common="1" version="1">
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_http_common.requires.nxd_md5" interface="interface.el.nxd_md5" display="Add NetX Duo MD5" />
+        <provides interface="interface.el.nxd_http_common" />
+    </module>
+    <config id="config.el.nxd_ftp_common" path="ssp_cfg/framework/el/nxd_ftp_common_cfg.h" version="0">
+        <property default="config.el.nxd_ftp_common.filex.enable" display="FileX support" id="config.el.nxd_ftp_common.filex">
+            <option display="Disable" id="config.el.nxd_ftp_common.filex.disable" value="0"/>
+            <option display="Enable" id="config.el.nxd_ftp_common.filex.enable" value="1"/>
+        </property>
+        <property default="config.el.nxd_ftp_common.control_tos.normal" display="Control Type of Service" id="config.el.nxd_ftp_common.control_tos">
+            <option display="Normal" id="config.el.nxd_ftp_common.control_tos.normal" value="NX_IP_NORMAL"/>
+            <option display="Minimum delay" id="config.el.nxd_ftp_common.control_tos.min_delay" value="NX_IP_MIN_DELAY"/>
+            <option display="Maximum data" id="config.el.nxd_ftp_common.control_tos.max_data" value="NX_IP_MAX_DATA"/>
+            <option display="Maximum reliability" id="config.el.nxd_ftp_common.control_tos.max_reliable" value="NX_IP_MAX_RELIABLE"/>
+            <option display="Minimum cost" id="config.el.nxd_ftp_common.control_tos.min_cost" value="NX_IP_MIN_COST"/>
+        </property>
+        <property default="config.el.nxd_ftp_common.data_tos.normal" display="Data Type of Service" id="config.el.nxd_ftp_common.data_tos">
+            <option display="Normal" id="config.el.nxd_ftp_common.data_tos.normal" value="NX_IP_NORMAL"/>
+            <option display="Minimum delay" id="config.el.nxd_ftp_common.data_tos.min_delay" value="NX_IP_MIN_DELAY"/>
+            <option display="Maximum data" id="config.el.nxd_ftp_common.data_tos.max_data" value="NX_IP_MAX_DATA"/>
+            <option display="Maximum reliability" id="config.el.nxd_ftp_common.data_tos.max_reliable" value="NX_IP_MAX_RELIABLE"/>
+            <option display="Minimum cost" id="config.el.nxd_ftp_common.data_tos.min_cost" value="NX_IP_MIN_COST"/>
+        </property>
+        <property default="config.el.nxd_ftp_common.fragment_option.dont_fragment" display="Fragmentation option" id="config.el.nxd_ftp_common.fragment_option">
+            <option display="Don't fragment" id="config.el.nxd_ftp_common.fragment_option.dont_fragment" value="NX_DONT_FRAGMENT"/>
+            <option display="Fragment okay" id="config.el.nxd_ftp_common.fragment_option.fragment_okay" value="NX_FRAGMENT_OKAY"/>
+        </property>
+        <property default="128" display="Time to live" id="config.el.nxd_ftp_common.time_to_live">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_ftp_common.time_to_live}")  &amp;&amp; ("${config.el.nxd_ftp_common.time_to_live}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="60" display="Duration between client inactivity check (seconds)" id="config.el.nxd_ftp_common.timeout_period">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_ftp_common.timeout_period}")  &amp;&amp; ("${config.el.nxd_ftp_common.timeout_period}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #if (!${config.el.nxd_ftp_common.filex})
+            #define  NX_FTP_NO_FILEX
+            #endif
+            #define  NX_FTP_CONTROL_TOS                        ${config.el.nxd_ftp_common.control_tos}
+            #define  NX_FTP_DATA_TOS                           ${config.el.nxd_ftp_common.data_tos}
+            #define  NX_FTP_FRAGMENT_OPTION                    ${config.el.nxd_ftp_common.fragment_option}
+            #define  NX_FTP_TIME_TO_LIVE                       ${config.el.nxd_ftp_common.time_to_live}
+            #define  NX_FTP_TIMEOUT_PERIOD                     (${config.el.nxd_ftp_common.timeout_period} * NX_IP_PERIODIC_RATE)
+        </content>
+    </config>
+    <module  config="config.el.nxd_ftp_common" display="X-Ware|NetX Duo|Protocols|NetX Duo FTP Common" id="module.el.nxd_ftp_common" common="1" version="1">
+        <requires interface="_rtos" />
+        <provides interface="interface.el.nxd_ftp_common" />
+    </module>
+    <config id="config.el.nxd_tftp_common" path="ssp_cfg/framework/el/nxd_tftp_common_cfg.h" version="0">
+        <property default="64" display="Maximum error string length (bytes)" id="config.el.nxd_tftp_common.error_string_max">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_tftp_common.error_string_max}")  &amp;&amp; ("${config.el.nxd_tftp_common.error_string_max}" &gt;= 0)
+            </constraint>
+        </property>
+         <property default="128" display="Time to live" id="config.el.nxd_tftp_common.time_to_live">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_tftp_common.time_to_live}")  &amp;&amp; ("${config.el.nxd_tftp_common.time_to_live}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="config.el.nxd_tftp_common.tos.normal" display="Type of Service for UDP requests" id="config.el.nxd_tftp_common.tos">
+            <option display="Normal" id="config.el.nxd_tftp_common.tos.normal" value="NX_IP_NORMAL"/>
+            <option display="Minimum delay" id="config.el.nxd_tftp_common.tos.min_delay" value="NX_IP_MIN_DELAY"/>
+            <option display="Maximum data" id="config.el.nxd_tftp_common.tos.max_data" value="NX_IP_MAX_DATA"/>
+            <option display="Maximum reliability" id="config.el.nxd_tftp_common.tos.max_reliable" value="NX_IP_MAX_RELIABLE"/>
+            <option display="Minimum cost" id="config.el.nxd_tftp_common.tos.min_cost" value="NX_IP_MIN_COST"/>
+        </property>
+        <property default="config.el.nxd_tftp_common.fragment_option.dont_fragment" display="Fragmentation option" id="config.el.nxd_tftp_common.fragment_option">
+            <option display="Don't fragment" id="config.el.nxd_tftp_common.fragment_option.dont_fragment" value="NX_DONT_FRAGMENT"/>
+            <option display="Fragment okay" id="config.el.nxd_tftp_common.fragment_option.fragment_okay" value="NX_FRAGMENT_OKAY"/>
+        </property>
+        <content>
+            #define NX_TFTP_ERROR_STRING_MAX                    (${config.el.nxd_tftp_common.error_string_max})
+            #define NX_TFTP_TIME_TO_LIVE                        ${config.el.nxd_tftp_common.time_to_live}
+            #define NX_TFTP_FRAGMENT_OPTION                     ${config.el.nxd_tftp_common.fragment_option}
+            #define NX_TFTP_TYPE_OF_SERVICE                     (${config.el.nxd_tftp_common.tos})
+        </content>
+    </config>
+    <module config="config.el.nxd_tftp_common" display="X-Ware|NetX Duo|Protocols|NetX Duo TFTP Common" id="module.el.nxd_tftp_common" common="1" version="1">
+        <requires interface="_rtos" />
+        <provides interface="interface.el.nxd_tftp_common" />
+    </module>
+    <config id="config.el.nxd_telnet_common" path="ssp_cfg/framework/el/nxd_telnet_common_cfg.h" version="0">
+        <property default="config.el.nxd_telnet_common.control_tos.normal" display="Type of service for TCP requests" id="config.el.nxd_telnet_common.control_tos">
+            <option display="Normal" id="config.el.nxd_telnet_common.control_tos.normal" value="NX_IP_NORMAL"/>
+            <option display="Minimum delay" id="config.el.nxd_telnet_common.control_tos.min_delay" value="NX_IP_MIN_DELAY"/>
+            <option display="Maximum data" id="config.el.nxd_telnet_common.control_tos.max_data" value="NX_IP_MAX_DATA"/>
+            <option display="Maximum reliability" id="config.el.nxd_telnet_common.control_tos.max_reliable" value="NX_IP_MAX_RELIABLE"/>
+            <option display="Minimum cost" id="config.el.nxd_telnet_common.control_tos.min_cost" value="NX_IP_MIN_COST"/>
+        </property>
+        <property default="config.el.nxd_telnet_common.fragment_option.dont_fragment" display="Fragmentation option" id="config.el.nxd_telnet_common.fragment_option">
+            <option display="Don't fragment" id="config.el.nxd_telnet_common.fragment_option.dont_fragment" value="NX_DONT_FRAGMENT"/>
+            <option display="Fragment okay" id="config.el.nxd_telnet_common.fragment_option.fragment_okay" value="NX_FRAGMENT_OKAY"/>
+        </property>
+        <property default="23" display="Server TCP port number" id="config.el.nxd_telnet_common.telnet_server_port">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_telnet_common.telnet_server_port}")  &amp;&amp; ("${config.el.nxd_telnet_common.telnet_server_port}" &gt;= 0)
+            </constraint>
+        </property>
+        <property default="128" display="Time to live" id="config.el.nxd_telnet_common.time_to_live">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${config.el.nxd_telnet_common.time_to_live}")  &amp;&amp; ("${config.el.nxd_telnet_common.time_to_live}" &gt;= 0)
+            </constraint>
+        </property>
+        <content>
+            #define NX_TELNET_TOS                                (${config.el.nxd_telnet_common.control_tos})
+            #define NX_TELNET_FRAGMENT_OPTION                    (${config.el.nxd_telnet_common.fragment_option})
+            #define NX_TELNET_SERVER_PORT                        (${config.el.nxd_telnet_common.telnet_server_port})
+            #define NX_TELNET_TIME_TO_LIVE                       (${config.el.nxd_telnet_common.time_to_live})
+        </content>
+    </config>
+    <module config="config.el.nxd_telnet_common" display="X-Ware|NetX Duo|Protocols|NetX Duo Telnet Common" id="module.el.nxd_telnet_common" common="1" version="1">
+        <requires interface="_rtos" />
+        <provides interface="interface.el.nxd_telnet_common" />
+    </module>
+</synergyModuleDescription>

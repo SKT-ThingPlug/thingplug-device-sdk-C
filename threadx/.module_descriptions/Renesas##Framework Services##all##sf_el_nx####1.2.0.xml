@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.framework.sf_el_nx" path="ssp_cfg/framework/sf_el_nx_cfg.h" version="0">
+        <property default="config.framework.sf_el_nx.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_el_nx.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_el_nx.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_el_nx.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="IOPORT_PORT_09_PIN_03" display="Channel 0 Phy Reset Pin" id="config.framework.sf_el_nx.pin0">
+            <constraint display="Name must be a valid C symbol">testSymbol("${config.framework.sf_el_nx.pin0}")</constraint>
+        </property>
+        <property default="0x00002E09" display="Channel 0 MAC Address High Bits" id="config.framework.sf_el_nx.mach0">
+            <constraint display="Value must be an integer greater than 0">testInteger("${config.framework.sf_el_nx.mach0}")  &amp;&amp; ("${config.framework.sf_el_nx.mach0}" &gt; 0)</constraint>
+        </property>
+        <property default="0x0A0076C7" display="Channel 0 MAC Address Low Bits" id="config.framework.sf_el_nx.macl0">
+            <constraint display="Value must be an integer greater than 0">testInteger("${config.framework.sf_el_nx.macl0}")  &amp;&amp; ("${config.framework.sf_el_nx.macl0}" &gt; 0)</constraint>
+        </property>
+        <property default="IOPORT_PORT_07_PIN_06" display="Channel 1 Phy Reset Pin" id="config.framework.sf_el_nx.pin1">
+            <constraint display="Name must be a valid C symbol">testSymbol("${config.framework.sf_el_nx.pin1}")</constraint>
+        </property>
+        <property default="0x00002E09" display="Channel 1 MAC Address High Bits" id="config.framework.sf_el_nx.mach1">
+            <constraint display="Value must be an integer greater than 0">testInteger("${config.framework.sf_el_nx.mach1}")  &amp;&amp; ("${config.framework.sf_el_nx.mach1}" &gt; 0)</constraint>
+        </property>
+        <property default="0x0A0076C8" display="Channel 1 MAC Address Low Bits" id="config.framework.sf_el_nx.macl1">
+            <constraint display="Value must be an integer greater than 0">testInteger("${config.framework.sf_el_nx.macl1}")  &amp;&amp; ("${config.framework.sf_el_nx.macl1}" &gt; 0)</constraint>
+        </property>
+        <property default="8" display="Number of Receive Buffer Descriptors" id="config.framework.sf_el_nx.num_rx_desc">
+            <constraint display="Value must be an integer greater than 0">testInteger("${config.framework.sf_el_nx.num_rx_desc}")  &amp;&amp; ("${config.framework.sf_el_nx.num_rx_desc}" &gt; 0)</constraint>
+        </property>
+        <property default="32" display="Number of Transmit Buffer Descriptors" id="config.framework.sf_el_nx.num_tx_desc">
+            <constraint display="Value must be an integer greater than 0">testInteger("${config.framework.sf_el_nx.num_tx_desc}")  &amp;&amp; ("${config.framework.sf_el_nx.num_tx_desc}" &gt; 0)</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Ethernet Interrupt Priority" id="config.framework.sf_el_nx.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <content>
+#define SF_EL_NX_COMMS_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_el_nx.param_checking_enable}
+/** Specify MAC address. */
+#define SF_EL_NX_CFG_ENET0_MAC_H ${config.framework.sf_el_nx.mach0}
+#define SF_EL_NX_CFG_ENET0_MAC_L ${config.framework.sf_el_nx.macl0}
+#define SF_EL_NX_CFG_ENET1_MAC_H ${config.framework.sf_el_nx.mach1}
+#define SF_EL_NX_CFG_ENET1_MAC_L ${config.framework.sf_el_nx.macl1}
+/** Specify reset pin. */
+#define SF_EL_NX_CFG_ENET0_RESET_PIN ${config.framework.sf_el_nx.pin0}
+#define SF_EL_NX_CFG_ENET1_RESET_PIN ${config.framework.sf_el_nx.pin1}
+/** Specify number of descriptors. */
+#define NUM_RX_DESC               (${config.framework.sf_el_nx.num_rx_desc})
+#define NUM_TX_DESC               (${config.framework.sf_el_nx.num_tx_desc})
+#define SF_EL_NX_CFG_IRQ_IPL      (${config.framework.sf_el_nx.irq_ipl})
+        </content>
+    </config>
+    <module config="config.framework.sf_el_nx" display="Framework|Networking|${module.framework.sf_el_nx.name} NetX Port ETHER on sf_el_nx" common="100" id="module.framework.sf_el_nx" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_nx.${module.framework.sf_el_nx.name}}" === "1"
+        </constraint>
+        <constraint display="Requires Ethernet Interrupt (EDMAC${module.framework.sf_el_nx.channel} EINT) enabled">
+            "${config.framework.sf_el_nx.irq_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <requires interface="_rtos" />
+        <provides interface="interface.framework.sf_el_nx" />
+        <provides interface="interface.framework.sf_el_nx_on_sf_el_nx" />
+        <provides interface="interface.framework.sf_el_nx.${module.framework.sf_el_nx.name}" />
+        <property default="g_sf_el_nx" display="Name" id="module.framework.sf_el_nx.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_nx.name}")</constraint>
+        </property>
+        <property default="0" display="Channel" id="module.framework.sf_el_nx.channel">
+            <constraint display="Value must be an integer between 0 and 1">testInteger("${module.framework.sf_el_nx.channel}")  &amp;&amp; ("${module.framework.sf_el_nx.channel}" &gt;= 0) &amp;&amp; ("${module.framework.sf_el_nx.channel}" &lt;= 1)</constraint>
+        </property>
+        <property default="NULL" display="Callback" id="module.framework.sf_el_nx.callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_nx.callback}") </constraint>
+        </property>
+        <header>
+#ifndef NX_INCLUDE
+#define NX_INCLUDE
+#include "nx_api.h"
+#include "sf_el_nx_cfg.h"
+#include "../src/framework/sf_el_nx/nx_renesas_synergy.h"
+#endif
+
+VOID  nx_ether_driver_wrapper${module.framework.sf_el_nx.channel}(NX_IP_DRIVER *driver_req_ptr);
+extern VOID  (* ${module.framework.sf_el_nx.name})(NX_IP_DRIVER * driver_req_ptr);
+        </header>
+        <declarations>
+#if SF_EL_NX_CFG_IRQ_IPL != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.framework.sf_el_nx.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_EDMAC${module.framework.sf_el_nx.channel})
+SSP_VECTOR_DEFINE_CHAN(edmac_eint_isr, EDMAC, EINT, ${module.framework.sf_el_nx.channel});
+#endif
+#endif
+
+#ifndef ${module.framework.sf_el_nx.callback}                                                                                                                                            
+void ${module.framework.sf_el_nx.callback}(nx_mac_address_t *p_mac_config);
+#endif
+
+extern void nx_ether_driver_support_mac_config_eth${module.framework.sf_el_nx.channel}(NX_IP_DRIVER *driver_req_ptr,void (*p_callback)(nx_mac_address_t *));
+/*******************************************************************************************************************//**
+ * The definition of wrapper interface for NETX Synergy  Driver to support runtime
+ * MAC configuration.
+ **********************************************************************************************************************/
+void  nx_ether_driver_wrapper${module.framework.sf_el_nx.channel}(NX_IP_DRIVER *driver_req_ptr)
+{
+    nx_ether_driver_support_mac_config_eth${module.framework.sf_el_nx.channel}(driver_req_ptr,${module.framework.sf_el_nx.callback});
+}
+
+/** Prototype for the driver entry function in sf_el_nx. */
+VOID  nx_ether_driver_eth${module.framework.sf_el_nx.channel} (NX_IP_DRIVER *driver_req_ptr);
+/** Make user given name point to correct driver entry point. */
+VOID  (* ${module.framework.sf_el_nx.name})(NX_IP_DRIVER * driver_req_ptr) = nx_ether_driver_wrapper${module.framework.sf_el_nx.channel};
+        </declarations>
+    </module>
+</synergyModuleDescription>

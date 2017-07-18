@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.riic_slave" path="ssp_cfg/driver/r_riic_slave_cfg.h" version="0">
+		<property default="config.driver.riic_slave.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.riic_slave.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.riic_slave.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.riic_slave.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.riic_slave.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<content>#define RIIC_SLAVE_CFG_PARAM_CHECKING_ENABLE ${config.driver.riic_slave.param_checking_enable}
+</content>
+	</config>
+	<module config="config.driver.riic_slave" display="Driver|Connectivity|${module.driver.i2c.name} I2C Slave Driver on r_riic_slave" id="module.driver.i2c_on_riic_slave" version="1">
+        <constraint display="Requires IIC Receive Interrupt (RXI) enabled">
+            "${module.driver.i2c.rxi_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires IIC Transmit Interrupt (TXI) enabled">
+            "${module.driver.i2c.txi_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires IIC Transmit Error/Event Interrupt (ERI) enabled">
+            "${module.driver.i2c.eri_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.i2c.${module.driver.i2c.name}}" === "1"
+        </constraint>
+        <provides interface="interface.driver.i2c_on_iic" />
+        <provides interface="interface.driver.i2c.${module.driver.i2c.name}" />
+        <property default="g_i2c${_instance}" display="Name" id="module.driver.i2c.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.i2c.name}")</constraint>
+        </property>
+		<property default="0" display="Channel" id="module.driver.i2c.channel">
+			<constraint display="Value must be a non-negative integer">testInteger("${module.driver.i2c.channel}")  &amp;&amp; ("${module.driver.i2c.channel}" &gt;= 0)</constraint>
+        </property>
+        <property default="module.driver.i2c.rate.rate_standard" display="Rate" id="module.driver.i2c.rate">
+			<option display="Standard" id="module.driver.i2c.rate.rate_standard" value="I2C_RATE_STANDARD"/>
+			<option display="Fast-mode" id="module.driver.i2c.rate.rate_fast" value="I2C_RATE_FAST"/>
+			<option display="Fast-mode plus" id="module.driver.i2c.rate.rate_fastplus" value="I2C_RATE_FASTPLUS"/>
+        </property>
+		<property default="0x00" display="Slave Address" id="module.driver.i2c.slave">
+			<constraint display="Value must be non-negative">testInteger("${module.driver.i2c.slave}")  &amp;&amp; ("${module.driver.i2c.slave}" &gt;= 0)</constraint>
+           </property>
+		<property default="module.driver.i2c.addr_mode.addr_mode_7bit" display="Address Mode" id="module.driver.i2c.addr_mode">
+			<option display="7-Bit" id="module.driver.i2c.addr_mode.addr_mode_7bit" value="I2C_ADDR_MODE_7BIT"/>
+			<option display="10-Bit" id="module.driver.i2c.addr_mode.addr_mode_10bit" value="I2C_ADDR_MODE_10BIT"/>
+		</property>
+        <property default="NULL" display="Callback" id="module.driver.i2c.p_callback">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.i2c.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Receive Interrupt Priority" id="module.driver.i2c.rxi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Transmit Interrupt Priority" id="module.driver.i2c.txi_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <property default="board.icu.common.irq.priority2" display="Error Interrupt Priority" id="module.driver.i2c.eri_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+        </property>
+        <header>
+		extern const i2c_cfg_t ${module.driver.i2c.name}_cfg;
+            /** I2C on RIIC Instance. */
+			extern const i2c_slave_instance_t ${module.driver.i2c.name};
+#ifndef ${module.driver.i2c.p_callback}
+void ${module.driver.i2c.p_callback}(i2c_callback_args_t * p_args);
+#endif
+        </header>
+		<includes>#include &quot;r_riic_slave.h&quot;
+#include &quot;r_i2c_api.h&quot;</includes>
+		<declarations>
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.i2c.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_IIC${module.driver.i2c.channel})
+SSP_VECTOR_DEFINE_CHAN(iic_slave_rxi_isr, IIC, RXI, ${module.driver.i2c.channel});
+#endif
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.i2c.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_IIC${module.driver.i2c.channel})
+SSP_VECTOR_DEFINE_CHAN(iic_slave_txi_isr, IIC, TXI, ${module.driver.i2c.channel});
+#endif
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.i2c.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_IIC${module.driver.i2c.channel})
+SSP_VECTOR_DEFINE_CHAN(iic_slave_eri_isr, IIC, ERI, ${module.driver.i2c.channel});
+#endif
+riic_slave_instance_ctrl_t ${module.driver.i2c.name}_ctrl;
+const i2c_cfg_t ${module.driver.i2c.name}_cfg =
+{
+    .channel             = ${module.driver.i2c.channel},
+    .rate                = ${module.driver.i2c.rate},
+    .slave               = ${module.driver.i2c.slave},
+    .addr_mode           = ${module.driver.i2c.addr_mode},
+    .p_callback          = ${module.driver.i2c.p_callback},
+    .p_context           = (void *)&amp;${module.driver.i2c.name},
+    .rxi_ipl             = ${module.driver.i2c.rxi_ipl},
+    .txi_ipl             = ${module.driver.i2c.txi_ipl},
+    .eri_ipl             = ${module.driver.i2c.eri_ipl},
+};
+/* Instance structure to use this module. */
+const i2c_slave_instance_t ${module.driver.i2c.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.i2c.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.i2c.name}_cfg,
+    .p_api         = &amp;g_i2c_slave_on_riic
+};
+
+</declarations>
+	</module>
+</synergyModuleDescription>

@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.driver.icu" path="ssp_cfg/driver/r_icu_cfg.h" version="0">
+        <property default="config.driver.icu.param_checking_enable.bsp" display="Parameter Checking" id="config.driver.icu.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.icu.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.driver.icu.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.driver.icu.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define ICU_CFG_PARAM_CHECKING_ENABLE ${config.driver.icu.param_checking_enable}
+</content>
+    </config>
+    <module config="config.driver.icu" display="Driver|Input|${module.driver.external_irq.name} External IRQ Driver on r_icu" id="module.driver.external_irq_on_icu" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.driver.external_irq.${module.driver.external_irq.name}}" === "1"
+        </constraint>
+        <constraint display="Requires IRQ enabled">
+            "${module.driver.external_irq.irq_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <provides interface="interface.driver.external_irq" />
+        <provides interface="interface.driver.external_irq_on_icu" />
+        <provides interface="interface.driver.external_irq.${module.driver.external_irq.name}" />
+        <provides interface="interface.driver.icu.${module.driver.external_irq.name}" />
+        <property default="g_external_irq${_instance}" display="Name" id="module.driver.external_irq.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.external_irq.name}")</constraint>
+        </property>
+        <property default="0" display="Channel" id="module.driver.external_irq.channel">
+            <constraint display="Value must be an integer between 0 and 15">testInteger("${module.driver.external_irq.channel}")  &amp;&amp; ("${module.driver.external_irq.channel}" &gt;= 0) &amp;&amp; ("${module.driver.external_irq.channel}" &lt;= 15)</constraint>
+           </property>
+        <property default="module.driver.external_irq.trigger.trig_rising" display="Trigger" id="module.driver.external_irq.trigger">
+            <option display="Falling" id="module.driver.external_irq.trigger.trig_falling" value="EXTERNAL_IRQ_TRIG_FALLING"/>
+            <option display="Rising" id="module.driver.external_irq.trigger.trig_rising" value="EXTERNAL_IRQ_TRIG_RISING"/>
+            <option display="Both Edges" id="module.driver.external_irq.trigger.trig_both_edge" value="EXTERNAL_IRQ_TRIG_BOTH_EDGE"/>
+            <option display="Low Level" id="module.driver.external_irq.trigger.trig_lowlev" value="EXTERNAL_IRQ_TRIG_LEVEL_LOW"/>
+        </property>
+        <property default="module.driver.external_irq.filter_enable.false" display="Digital Filtering" id="module.driver.external_irq.filter_enable">
+            <option display="Enabled" id="module.driver.external_irq.filter_enable.true" value="true"/>
+            <option display="Disabled" id="module.driver.external_irq.filter_enable.false" value="false"/>
+        </property>
+        <property default="module.driver.external_irq.pclk_div.pclk_div_by_64" display="Digital Filtering Sample Clock (Only valid when Digital Filtering is Enabled)" id="module.driver.external_irq.pclk_div">
+            <option display="PCLK / 1" id="module.driver.external_irq.pclk_div.pclk_div_by_1" value="EXTERNAL_IRQ_PCLK_DIV_BY_1"/>
+            <option display="PCLK / 8" id="module.driver.external_irq.pclk_div.pclk_div_by_8" value="EXTERNAL_IRQ_PCLK_DIV_BY_8"/>
+            <option display="PCLK / 32" id="module.driver.external_irq.pclk_div.pclk_div_by_32" value="EXTERNAL_IRQ_PCLK_DIV_BY_32"/>
+            <option display="PCLK / 64" id="module.driver.external_irq.pclk_div.pclk_div_by_64" value="EXTERNAL_IRQ_PCLK_DIV_BY_64"/>
+        </property>
+        <property default="module.driver.external_irq.interrupt_enable.true" display="Interrupt enabled after initialization" id="module.driver.external_irq.interrupt_enable">
+            <option display="True" id="module.driver.external_irq.interrupt_enable.true" value="true"/>
+            <option display="False" id="module.driver.external_irq.interrupt_enable.false" value="false"/>
+        </property>
+        <property default="NULL" display="Callback" id="module.driver.external_irq.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.external_irq.p_callback}")</constraint>
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Interrupt Priority" id="module.driver.external_irq.irq_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <header>
+            /* External IRQ on ICU Instance. */
+            extern const external_irq_instance_t ${module.driver.external_irq.name};
+#ifndef ${module.driver.external_irq.p_callback}
+void ${module.driver.external_irq.p_callback}(external_irq_callback_args_t * p_args);
+#endif
+        </header>
+        <includes>#include &quot;r_icu.h&quot;
+#include &quot;r_external_irq_api.h&quot;</includes>
+        <declarations>
+#if ${module.driver.external_irq.irq_ipl} != BSP_IRQ_DISABLED
+#if !defined(SSP_SUPPRESS_ISR_${module.driver.external_irq.name}) &amp;&amp; !defined(SSP_SUPPRESS_ISR_ICU${module.driver.external_irq.channel})
+SSP_VECTOR_DEFINE(icu_irq_isr, ICU, IRQ${module.driver.external_irq.channel});
+#endif
+#endif
+static icu_instance_ctrl_t ${module.driver.external_irq.name}_ctrl;
+static const external_irq_cfg_t ${module.driver.external_irq.name}_cfg =
+{
+    .channel             = ${module.driver.external_irq.channel},
+    .trigger             = ${module.driver.external_irq.trigger},
+    .filter_enable       = ${module.driver.external_irq.filter_enable},
+    .pclk_div            = ${module.driver.external_irq.pclk_div},
+    .autostart           = ${module.driver.external_irq.interrupt_enable},
+    .p_callback          = ${module.driver.external_irq.p_callback},
+    .p_context           = &amp;${module.driver.external_irq.name},
+    .p_extend            = NULL,
+    .irq_ipl             = ${module.driver.external_irq.irq_ipl},
+};
+/* Instance structure to use this module. */
+const external_irq_instance_t ${module.driver.external_irq.name} = 
+{
+    .p_ctrl        = &amp;${module.driver.external_irq.name}_ctrl,
+    .p_cfg         = &amp;${module.driver.external_irq.name}_cfg,
+    .p_api         = &amp;g_external_irq_on_icu
+};
+</declarations>
+    </module>
+</synergyModuleDescription>
