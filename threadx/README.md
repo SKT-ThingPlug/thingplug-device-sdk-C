@@ -20,6 +20,7 @@
 	+ Debug ( elf 파일 및 컴파일 결과물 )
 	+ script ( ld 파일 )
 	+ src (FreeRTOS 및 WIZnet driver configuration headers)
+		+ Configuration.h ( ThingPlug 설정 파일 )
 		+ mbedtls ( tls library )
 		+ MQTT ( mqtt library )
 		+ oneM2M ( oneM2M library )
@@ -43,8 +44,9 @@
 5. e2studio의 추가된 프로젝트에서 configuration.xml을 클릭한다.
 6. Generate Project Content를 클릭한다.
 ![threadx_import3.png](images/threadx_import3.png)
-7. Project->Build Project를 선택하여 Build를 실행한다.
-8. Run->Debug Configurations 클릭하고 새창에서 Renesas GDB Hardware Debugging을 더블클릭하여 신규 Debug Configuration을 생성한다.
+7. Configuration.h 설정파일을 ThingPlug 계정 및 기기 정보에 맞춰 수정한다.
+8. Project->Build Project를 선택하여 Build를 실행한다.
+9. Run->Debug Configurations 클릭하고 새창에서 Renesas GDB Hardware Debugging을 더블클릭하여 신규 Debug Configuration을 생성한다.
 ![threadx_import4.png](images/threadx_import4.png)
-9. C/C++ Application: 항목에 Build 완료된 threadx.elf 파일을 지정한다.
-10. Run->Resume 선택하여, 프로그램을 시작한다.
+10. C/C++ Application: 항목에 Build 완료된 threadx.elf 파일을 지정한다.
+11. Run->Resume 선택하여, 프로그램을 시작한다.
