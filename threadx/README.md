@@ -33,8 +33,8 @@
 	+ synergy_cfg ( board & driver configuration source )
 # Project build
 ## IDE Setting & Build & Run
-1. https://synergygallery.renesas.com -> 개발툴 -> e2studio ISDE -> 다운로드
-2. 압축 해제 후 설치
+1. https://synergygallery.renesas.com -> 회원가입 -> 개발툴 -> e2studio ISDE, Renesas SSC -> 다운로드
+2. 압축 해제 후 e2studio, SSC 순서로 설치
 3. e2studio 실행
 4. File->Import->General->Existing Projects into Workspace 선택하고 Select root directory 에서 소스 추가
 ![threadx_import1.png](images/threadx_import1.png)
