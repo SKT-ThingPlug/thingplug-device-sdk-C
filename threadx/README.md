@@ -12,7 +12,8 @@
 		+ RAM : 64KB 이상
 		+ Flash memory : 256KB 이상
 	2. Main Board
-		+ S7G2 Renesas Synergy™ S7 MCU 32-Bit ARM® Cortex®-M4 Embedded Evaluation Board		
+		+ S7G2 Renesas Synergy™ S7 MCU 32-Bit ARM® Cortex®-M4 Embedded Evaluation Board
+		https://www.renesas.com/ko-kr/products/software-tools/boards-and-kits/renesas-synergy-kits/renesas-synergy-sk-s7g2.html 
 ![renesas_s7g2.jpg](images/renesas_s7g2.jpg)
 ## Source Tree
 + threadx (project root)
