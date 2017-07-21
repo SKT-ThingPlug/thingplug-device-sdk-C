@@ -1,4 +1,4 @@
-# ThreadX
+# ThingPlug 1.5 C SDK for ThreadX
 ## PC 시스템의 최소 요건
 + 운영 시스템 : Windows® 7 (32비트, 64비트) 이상
 + 프로세서 : Intel® Core™ 패밀리 프로세서, 2.0 GHz 이상 (또는 동등 프로세서)
@@ -50,3 +50,5 @@
 ![threadx_import4.png](images/threadx_import4.png)
 10. C/C++ Application: 항목에 Build 완료된 threadx.elf 파일을 지정한다.
 11. Run->Resume 선택하여, 프로그램을 시작한다.
+
+Copyright (c) 2017 SK Telecom Co., Ltd. All Rights Reserved.
