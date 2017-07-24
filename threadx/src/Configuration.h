@@ -11,11 +11,11 @@
 #define _CONFIGURATION_H_
 
 #define MQTT_HOST                           "mqtt.thingplug.net"
-#define MQTT_SECURE_HOST                    "ssl://mqtt.thingplug.net"
+#define MQTT_SECURE_HOST                    "mqtt.thingplug.net"
 #define MQTT_PORT                           1883
 #define MQTT_SECURE_PORT                    8883
 #define MQTT_KEEP_ALIVE                     120
-#define MQTT_ENABLE_SERVER_CERT_AUTH        0
+#define MQTT_ENABLE_SERVER_CERT_AUTH        1
 
 #define ONEM2M_AE_NAME                      "(Enter Device ID here)"
 #define ONEM2M_SERVICE_ID                   "(Enter Service ID here)"
