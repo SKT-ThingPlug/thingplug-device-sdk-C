@@ -13,7 +13,7 @@
 
 #define DEBUG_ENABLE            // whether print debug log
 
-//#define IMPORT_TLS_LIB          // whether import TLS library
+#define IMPORT_TLS_LIB          // whether import TLS library
 
 #define MAC_ADDRESS                         { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }      // MAC address for NIC
 

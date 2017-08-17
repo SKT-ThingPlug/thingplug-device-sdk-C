@@ -179,7 +179,11 @@ void mac_convert_func(char* origin, char* output, int len)
 
 void time_convert_func(char* origin, char* output, int len)
 {
-    memcpy(output ,origin, len);
+    unsigned int *value;
+    int tmp;
+    value = (unsigned int *)origin;
+    tmp = (int)HTONL(*value);
+    memcpy(output ,&tmp, len);
 }
 
 void latitude_convert_func(char* origin, char* output, int len)

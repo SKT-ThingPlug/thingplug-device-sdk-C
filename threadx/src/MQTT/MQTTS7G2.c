@@ -10,9 +10,25 @@
 static unsigned long MilliTimer = 0;
 uint8_t init_flag = 0;
 extern NX_DNS g_dns0;
+static unsigned int SecTimer = 0;
+uint8_t milli_cnt = 0;
+
+void set_tmp_time(unsigned int t)
+{
+    SecTimer = t;
+}
+unsigned int ntp_time(void)
+{
+	return SecTimer;
+}
 
 void SysTickIntHandler(timer_callback_args_t * p_args) {
   MilliTimer += 10;
+  milli_cnt++;
+  if(milli_cnt == 100) {
+	  SecTimer++;
+	  milli_cnt = 0;
+  }
 }
 
 char expired(Timer* timer) {

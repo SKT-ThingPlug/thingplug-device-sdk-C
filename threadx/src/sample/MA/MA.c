@@ -26,6 +26,7 @@
 #include "oneM2M/Versions/oneM2M_V1_14.h"
 #include "Configuration.h"
 #include "oneM2M/SKTtpDebug.h"
+#include "NTPClient/NTPClient.h"
 
 #define MQTT_CLIENT_ID                      "%s_%s"
 
@@ -125,6 +126,10 @@ int CreateContentInstance() {
     tp_v1_14_AddData(ttv, strlen(ttv));
     free(ttv);
     free(output);
+
+    SRAGetTTVTime(&ttv);
+    tp_v1_14_AddData(ttv, strlen(ttv));
+    free(ttv);
 
     snprintf(to, sizeof(to), TO_CONTAINER, mToStart, ONEM2M_AE_NAME, NAME_CONTAINER);
     rc = tp_v1_14_Report(mAEID, to, cnf, NULL, 1);
@@ -296,12 +301,12 @@ int MARun() {
         sprintf(str,"tpMQTTCreate result : %d", rc);
         SKTDebugPrint(LOG_LEVEL_INFO, str);
     }
+
+    NTPSetTimer();
     if(rc == 0) {
         while (mStep < PROCESS_END) {
-            if(tpMQTTYield(900) != 0)  // wait for seconds
-            {
-                tx_thread_sleep(100);
-            }
+            tpMQTTYield(1000);
+
             if(tpMQTTIsConnected() && mStep == PROCESS_CONTENTINSTANCE_CREATE) {
                 CreateContentInstance();
             }

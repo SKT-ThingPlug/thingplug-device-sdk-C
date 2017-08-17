@@ -18,6 +18,10 @@
 #include "sample/SMA/SMA.h"
 #include "TTVManager.h"
 #include "TTVBuilder.h"
+#include "NTPClient/NTPClient.h"
+
+#define TIME_TTV_TYPE 0x03
+#define TIME_TTV_DATATYPE 0x0d
 
 void SRAGetTTV(char **out_buf, char type, char datatype, char *value )
 {
@@ -34,4 +38,10 @@ void SRAGetTTV(char **out_buf, char type, char datatype, char *value )
     *out_buf = (char *)calloc(1, GetTTVInstanceSize(ttv)+1);
     memcpy((*out_buf), GetTTVInstance(ttv), GetTTVInstanceSize(ttv));
     DestroyTTV(ttv);
+}
+
+void SRAGetTTVTime(char **out_buf)
+{
+    unsigned int tmp = ntp_time() + get_npt_offset();
+    SRAGetTTV(out_buf, TIME_TTV_TYPE, TIME_TTV_DATATYPE, (char*)&tmp);
 }
