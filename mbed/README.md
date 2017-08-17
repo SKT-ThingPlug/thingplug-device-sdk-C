@@ -1,4 +1,4 @@
-mbed (+TLS)
+ThingPlug 1.5 C SDK for mbed
 ===
 
 동작 환경
@@ -20,7 +20,6 @@ mbed (+TLS)
 
 Source Tree
 ---
-* [Source](https://github.com/SKT-ThingPlug/thingplug-device-sdk-C/tree/master/mbed)
 + __mbed__ (project root)
 	+ __Library__ (libraries)
 		+ __mbedtls_2_3_0__ (mbed TLS library)
@@ -33,18 +32,11 @@ Source Tree
 		+ __oneM2M__ (oneM2M library)
 			+ __include__ (library headers)
 			+ __src__ (oneM2M library source)
-				+ __net__ (MQTT handler)
-				+ __oneM2M_V1__ (ThingPlug oneM2M v1 API)
-				+ __oneM2M_V1_12__ (ThingPlug oneM2M v1.12 API)
 		+ __WIZnet_Library__ (WIZnet library)
 			+ __WIZnetInterface__ (WIZnet board interface)
-				+ __DHCPClient__ (DHCP 통신 처리)
-				+ __DNSClient__ (DNS 통신 처리)
-				+ __Socket__ (socket source)
-				+ __WIZnet__ (WIZnet driver)
 	+ __mbed__ (mbed source)
 		+ __TARGET_NUCLEO_F411RE__ (Nucleo F411RE driver)
-	+ __Src__ (test sample)
+	+ __Src__ (ThingPlug Device Middleware lite version)
 		+ __MA__ (ManagementAgent)
 		+ __SMA__ (SensorManagementAgent)
 		+ __SRA__ (ServiceReadyAgent)
@@ -134,19 +126,11 @@ Sample code import
 	+ Import Wizard의 Upload tab에서 화면 아래의 '파일 선택' 버튼을 눌러 zip 파일 선택 후 'Import!' 버튼 클릭
 	+ import 된 sample 파일을 project root에 위치시킴
 2. '/Src/Configuration.h' 수정
-	+ __ONEM2M_V1_12__ : define 됐을 경우 oneM2M v1.12가 활성화 됨
 	+ __MQTT_ENABLE_SERVER_CERT_AUTH__ : 0(Normal socket 사용), 1(TLS socket 사용)
-	+ __ACCOUNT_USER__ : ThingPlug 계정의 ID
-	+ __ACCOUNT_PASSWORD__ : ThingPlug 계정의 사용자 인증키
-	+ __ONEM2M_NODEID__ : ThingPlug 계정에 등록할 Device ID
-3. '/Src/ThingPlug_oneM2M_SDK.cpp' 수정
- 1. serial port speed 변경
-	+ SDKVerification.cpp 파일에서 main() 함수의 pc.baud(115200); 수정
- 2. 실행 대상 변경
-	1. SDK verification을 실행할 경우
-		+ main() function 내의 SDKVerificationMain(); 활성화
-	2. MA를 실행할 경우
-		+ main() function 내의 MARun(); 활성화
+	+ __ACCOUNT_USER_ID__ : ThingPlug 계정의 ID
+	+ __ACCOUNT_CREDENTIAL_ID__ : ThingPlug 계정의 사용자 인증키
+	+ __ONEM2M_AE_NAME__ : ThingPlug 계정에 등록할 Device ID (NAME_MGMTCMD와 NAME_MGMTCMD_FIRMWARE도 동일하게 설정)
+	+ __ONEM2M_SERVICE_ID__ : ThingPlug 계정에서 생성한 서비스ID
 
 Build & Run
 ---
@@ -161,4 +145,4 @@ Build & Run
 	(※ sample code의 ThingPlug_oneM2M_SDK.cpp 파일에서 지정한 speed와 맞춰 환경을 설정해야 글자가 깨져 보이지 않음)
 	![serial_log.png](images/serial_log.png)
 
-Copyright (c) 2016 SK Telecom Co., Ltd. All Rights Reserved.
+Copyright (c) 2017 SK Telecom Co., Ltd. All Rights Reserved.

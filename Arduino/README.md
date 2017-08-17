@@ -1,4 +1,4 @@
-ARDUINO
+ThingPlug 1.5 C SDK for ARDUINO
 ===
 
 지원 사양
