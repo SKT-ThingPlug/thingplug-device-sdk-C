@@ -151,12 +151,20 @@ int handleMQTTCreate(char* host, int port, int keepalive, char* userName, char* 
 		if(!enableServerCertAuth)
 		{
 			g_pNetwork = new MQTTEthernetExt();
+			if(!g_pNetwork->isSocketReady){
+				SKTDebugPrint(LOG_LEVEL_ERROR, "SocketReady Fail.");
+				return FAILURE;
+			}
 			g_pMQTTClient = new MQTTClient_handler(*g_pNetwork);
 		}
 		else
 		{
 #ifdef IMPORT_TLS_LIB
 			g_pNetwork = new MQTTEthernetTLS();
+			if(!g_pNetwork->isSocketReady){
+			SKTDebugPrint(LOG_LEVEL_ERROR, "SocketReady Fail.");
+				return FAILURE;
+			}
 			g_pMQTTClient = new MQTTClient_handler(*(MQTTEthernetTLS*)g_pNetwork);
 #else
 			SKTDebugPrint(LOG_LEVEL_ERROR, "Not support TLS socket.");

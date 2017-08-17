@@ -118,6 +118,7 @@ void SKTtpDebugPrintf(const char *filename, int lineno, LOG_LEVEL_E level, const
     time_t timer;
     
     timer = time(NULL);
+    timer += 32400;
     t = localtime(&timer);
 
 	fprintf(gSKTtpDebugStream, "[%s] [%s] [%d] [%s]: ", TimeToString(t), filename, lineno, stringBuffer);

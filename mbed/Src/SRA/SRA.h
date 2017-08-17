@@ -9,5 +9,6 @@ typedef struct {
 }raw2ttv;
 
 void SRAGetTTV(char **out_buf, char type, char datatype, char *value );
+void SRAGetTTVTime(char **out_buf);
 
 #endif//_SRA_H_

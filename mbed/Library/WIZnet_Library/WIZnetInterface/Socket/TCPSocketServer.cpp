@@ -83,13 +83,13 @@ int TCPSocketServer::accept(TCPSocketConnection& connection)
     _sock_fd = -1; // want to assign new available _sock_fd.
     if(bind(listen_port) < 0) {
         // modified by Patrick Pollet
-        error("No more socket for listening, bind error");
+        printf("No more socket for listening, bind error");
         return -1;
     } else {
         //return -1;
         if(listen(1) < 0) {
             // modified by Patrick Pollet
-            error("No more socket for listening, listen error");
+            printf("No more socket for listening, listen error");
             return -1;
         }
     }
