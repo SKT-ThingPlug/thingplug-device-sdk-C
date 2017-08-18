@@ -9,7 +9,7 @@
 
 #include "MA.h"
 
-extern int SDKVerificationMain(void);
+//extern int SDKVerificationMain(void);
 
 /**
  * @brief main

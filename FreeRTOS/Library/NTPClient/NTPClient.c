@@ -45,6 +45,7 @@ int NTPSocket(void)
 	int retVal = -1;
 	if((retVal = DNSTimeOut((uint8_t*)NTP_IP, hostIp, NETINFO_DNS_TIMEOUT)) < 0)
 	{
+		SKTDebugPrint(LOG_LEVEL_INFO, "NTPSocket DNSTimeOut!!");
 		goto exit;
 	}
 
@@ -53,6 +54,7 @@ int NTPSocket(void)
 	if((retVal = socket(pSockPool->sockNo, Sn_MR_UDP, -1, 0)) < SOCK_ERROR)
 	{
 		sockPoolFree(pSockPool);
+		SKTDebugPrint(LOG_LEVEL_INFO, "socket error!!");
 		goto exit;
 	}
 	SKTDebugPrint(LOG_LEVEL_INFO, "NTPSocket Success!!");
