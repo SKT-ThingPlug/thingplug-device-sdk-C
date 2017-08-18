@@ -28,7 +28,12 @@ Serial pc(USBTX, USBRX);
  */
 int main(int argc, char **argv) {
 	pc.baud(115200);
-	MARun();
+	fprintf(stdout, " MBED START! \r\n");
+	while(1)
+	{
+		wait(2.0);
+		MARun();
+	}
     return 0;
 }
 

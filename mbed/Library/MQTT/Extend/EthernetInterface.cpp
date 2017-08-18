@@ -17,7 +17,7 @@ int EthernetInterface::init()
 	int rc = m_eth.init(mac);                          // Use DHCP
 	if(rc != 0)
 	{
-		error("Ethernet init failed. result = %d\r\n", rc);
+		printf("Ethernet init failed. result = %d\r\n", rc);
 	}
 
 	return rc;
@@ -27,7 +27,7 @@ int EthernetInterface::connect()
 {
     int rc = m_eth.connect();
     if(rc != 0)
-    	error("ethernet connect : %s\r\n", (rc==0)?"Success":"Fail");
+    	printf("ethernet connect : %s\r\n", (rc==0)?"Success":"Fail");
     
     return rc;
 }

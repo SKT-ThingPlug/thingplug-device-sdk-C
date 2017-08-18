@@ -119,6 +119,10 @@ int CreateContentInstance() {
 	tp_v1_14_AddData(ttv, strlen(ttv));
 	free(ttv);
 	free(output);
+	
+	SRAGetTTVTime(&ttv);
+	tp_v1_14_AddData(ttv, strlen(ttv));
+	free(ttv);
 
 	snprintf(to, sizeof(to), TO_CONTAINER, mToStart, ONEM2M_AE_NAME, NAME_CONTAINER);
 	rc = tp_v1_14_Report(mAEID, to, cnf, NULL, 1);
@@ -241,6 +245,7 @@ static void MQTTMessageArrived(char* topic, char* msg, int msgLen) {
             break;
     }
 }
+#include "NTPClient.h"
 
 int MARun() {
     SKTDebugInit(True, LOG_LEVEL_INFO, NULL);
@@ -250,7 +255,7 @@ int MARun() {
     // set callbacks    
     rc = tpMQTTSetCallbacks(MQTTConnected, MQTTSubscribed, MQTTDisconnected, MQTTConnectionLost, MQTTMessageDelivered, MQTTMessageArrived);
     SKTDebugPrint(LOG_LEVEL_INFO, "tpMQTTSetCallbacks result : %d", rc);
-
+	
     // create
     char subscribeTopic[TOPIC_SUBSCRIBE_SIZE][SIZE_TOPIC];
     char publishTopic[SIZE_TOPIC] = "";
@@ -273,10 +278,21 @@ int MARun() {
 #endif
     rc = tpMQTTCreate(host, port, MQTT_KEEP_ALIVE, ACCOUNT_USER_ID, ACCOUNT_CREDENTIAL_ID, MQTT_ENABLE_SERVER_CERT_AUTH, st, TOPIC_SUBSCRIBE_SIZE, publishTopic, mClientID);
     SKTDebugPrint(LOG_LEVEL_INFO, "tpSDKCreate result : %d", rc);
-
+    if( rc < 0 ) {
+    	return -1;
+    }
+	NTPClient ntp;
+	if( ntp.setTime("211.233.40.78") == 0 )
+	{
+		time_t ctTime;
+		ctTime = time(NULL);
+		ctTime += 32400;
+		printf("Time is set to (GMT+9): %s \r\n", ctime(&ctTime));
+	}
     while (mStep < PROCESS_END) {
 		if(tpMQTTIsConnected() && mStep == PROCESS_CONTENTINSTANCE_CREATE) {
-			CreateContentInstance();
+			rc = CreateContentInstance();
+			if( rc < 0 ) break;
 		}
         tpMQTTYield(10000);
     }

@@ -8,12 +8,25 @@
 class MQTTEthernetExt : public MQTTSocketExt
 {
 public:    
+	int isSocketReady;
 	MQTTEthernetExt()
     {
+    	int rc;
     	mysock = new TCPSocketConnection();
 
-        eth.init();                          // Use DHCP
-        eth.connect();
+        rc = eth.init();                          // Use DHCP
+        if(rc != 0) {
+        	delete mysock;
+        	isSocketReady = 0;
+        	return;
+        }
+        rc = eth.connect();
+        if(rc != 0) {
+        	delete mysock;
+        	isSocketReady = 0;
+        	return;
+        }
+        isSocketReady = 1;
     }
     
     ~MQTTEthernetExt()

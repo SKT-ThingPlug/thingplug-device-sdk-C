@@ -8,6 +8,7 @@
  */
 
 #include "SKTtpDebug.h"
+#include "NTPClient/NTPClient.h"
 #include "sf_comms_api.h"
 #include <string.h>
 #include <stdio.h>
@@ -17,6 +18,8 @@
 BOOLEAN_TYPE_E  gSKTtpDebugEnable   = False;
 LOG_LEVEL_E     gSKTtpDebugLogLevel = (LOG_LEVEL_E)LOG_LEVEL_NONE;
 extern const sf_comms_instance_t g_sf_comms0;
+extern unsigned int ntp_time(void);
+char gStopConsole;
 
 /*
  * SKTtpDebugLogLevelString
@@ -104,10 +107,13 @@ void SKTtpDebugPrintf(LOG_LEVEL_E level, char* str)
     struct tm *t;
     time_t timer;
 
-    timer = time(NULL);
+    timer = ntp_time();
+    timer = timer + get_npt_offset() + 32400;
     t = localtime(&timer);
 
     char buffer[2048];
     sprintf(buffer, "[%s] [%s]: %s\r\n", TimeToString(t), stringBuffer, str);
-    g_sf_comms0.p_api->write(g_sf_comms0.p_ctrl, buffer,  strlen(buffer) ,TX_NO_WAIT);
+    if(!gStopConsole){
+        g_sf_comms0.p_api->write(g_sf_comms0.p_ctrl, buffer,  strlen(buffer) ,TX_NO_WAIT);
+    }
 }

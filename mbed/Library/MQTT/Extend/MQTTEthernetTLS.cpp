@@ -105,7 +105,9 @@ MQTTEthernetTLS::MQTTEthernetTLS()
 //#if defined (MBEDTLS_ERROR_C)
 //	char error_buf[100];
 //#endif
-
+	if( !isSocketReady ) {
+		return;
+	}
 #if defined (MBEDTLS_DEBUG_C)
 	debug_set_threshold(DEBUG_LEVEL);
 #endif

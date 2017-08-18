@@ -12,6 +12,8 @@
 
 #define DEBUG_ENABLE            // whether print debug log
 
+#define IMPORT_TLS_LIB
+
 #define MQTT_SUBSCRIBE_TOPIC_MAX_CNT        5               // subscribe topic max count
 #define MQTT_TOPIC_MAX_LENGTH               128             // topic message max length
 
