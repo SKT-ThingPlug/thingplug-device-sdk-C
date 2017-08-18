@@ -1,3 +1,4 @@
+
 /**
  * @file oneM2MCode.h
  *
@@ -24,7 +25,7 @@
  */
 #define TP_SDK_MQTT_DISCONNECTED -3
 /**
- * Return code: The maximum number of messages allowed to be simultaneously 
+ * Return code: The maximum number of messages allowed to be simultaneously
  * in-flight has been reached.
  */
 #define TP_SDK_MQTT_MAX_MESSAGES_INFLIGHT -4
@@ -74,7 +75,7 @@
 
 
 //Table 8.2.4-1 : Resource and specialization type short names
-#define ATTR_ACP "acp"					// resource accessControlPolicy
+#define ATTR_ACP "acp"                  // resource accessControlPolicy
 #define RSC_ACCESSCONTROLPOLICYANNC "acpA"
 #define ATTR_AE "ae"                    // resource AE
 #define RSC_AEANNC "aeA"
@@ -92,7 +93,7 @@
 #define ATTR_LCP "lcp"                  // resource locationPolicy
 #define RSC_LOCATIONPOLICYANNC "lcpA"
 #define RSC_M2MSERVICESUBSCRIPTIONPROFILE "mssp"
-#define ATTR_MGC "mgc"                  // resource mgmtCmd 
+#define ATTR_MGC "mgc"                  // resource mgmtCmd
 #define RSC_MGMTOBJ "mgo"
 #define RSC_MGMTOBJANNC "mgoA"
 #define ATTR_NOD "nod"                   // resource node
@@ -108,7 +109,7 @@
 #define RSC_SERVICESUBSCRIBEDNODE "svsn"
 #define RSC_STATSCOLLECT "stcl"
 #define RSC_STATSCONFIG "stcg"
-#define RSC_SUBSCRIPTION "sub"
+#define ATTR_SUB "sub"                  // resource subscription
 #define RSC_FIRMWARE "fwr"
 #define RSC_SOFTWARE "swr"
 #define RSC_MEMORY "mem"
@@ -136,7 +137,7 @@
 #define ATTR_FR "fr"                    // from
 #define ATTR_RQI "rqi"                  // Request Identifier
 #define ATTR_TY "ty"                    // Resource type
-#define ATTR_NM "nm"                    // name 
+#define ATTR_NM "nm"                    // name
 #define ATTR_PC "pc"                    // Primitive Content
 #define PARAM_ORIGINATING_TIMESTAMP "ot"
 #define PARAM_REQUEST_EXPIRATION_TIMESTAMP "rqet"
@@ -216,7 +217,7 @@
 #define ATTR_EVENTEND "eve"
 #define ATTR_OPERATIONTYPE "opt"
 #define ATTR_DATASIZE "ds"
-#define ATTR_EXS "exs"					// execStatus
+#define ATTR_EXS "exs"                  // execStatus
 #define ATTR_EXR "exr"                  // execResult
 #define ATTR_EXD "exd"                  // execDisable
 #define ATTR_EXT "ext"                  // execTarget
@@ -270,9 +271,9 @@
 #define ATTR_STATSRULESTATUS "srs"
 #define ATTR_STATMODEL "sm"
 #define ATTR_COLLECTPERIOD "cp"
-#define ATTR_EVENTNOTIFICATIONCRITERIA "enc"
+#define ATTR_ENC "enc"                      // eventNotificationCriteria
 #define ATTR_EXPIRATIONCOUNTER "exc"
-#define ATTR_NOTIFICATIONURI "nu"
+#define ATTR_NU "nu"                        // notificationURI
 #define ATTR_NOTIFICATIONFORWARDINGURI "nfu"
 #define ATTR_BATCHNOTIFY "bn"
 #define ATTR_RATELIMIT "rl"
@@ -280,7 +281,7 @@
 #define ATTR_PENDINGNOTIFICATION "pn"
 #define ATTR_NOTIFICATIONSTORAGEPRIORITY "nsp"
 #define ATTR_LATESTNOTIFY "ln"
-#define ATTR_NOTIFICATIONCONTENTTYPE "nct"
+#define ATTR_NCT "nct"                      // notificationContentType
 #define ATTR_NOTIFICATIONEVENTCAT "nec"
 #define ATTR_SUBSCRIBERURI "su"
 #define ATTR_VERSION "vr"
@@ -380,7 +381,7 @@ enum RESOURCE_TYPE {
     serviceSubscribedNode,
     statsCollect,
     statsConfig,
-    subscription,
+    subscription = 23,
     accessControlPolicyAnnc = 10001,
     AEAnnc,
     containerAnnc,
@@ -403,8 +404,9 @@ enum  OPERATION {
 
 
 typedef struct {
-	char *name;
-	char *value;
+    char *name;
+    char *value;
 } oneM2M_Attribute;
 
 #endif
+

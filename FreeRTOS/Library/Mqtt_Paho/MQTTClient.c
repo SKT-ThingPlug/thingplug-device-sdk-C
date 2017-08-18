@@ -14,6 +14,8 @@
  *    Allan Stockdill-Mander/Ian Craggs - initial API and implementation and/or initial documentation
  *******************************************************************************/
 #include "MQTTClient.h"
+#include "SKTtpDebug.h"
+#include <stdio.h>
 
 static void NewMessageData(MessageData* md, MQTTString* aTopicName, MQTTMessage* aMessage) {
     md->topicName = aTopicName;
@@ -224,7 +226,7 @@ int cycle(MQTTClient* c, Timer* timer)
 {
     // read the socket, see what work is due
     unsigned short packet_type = readPacket(c, timer);
-    
+
     int len = 0,
         rc = SUCCESS;
 
@@ -508,8 +510,10 @@ int MQTTPublish(MQTTClient* c, const char* topicName, MQTTMessage* message)
 #if defined(MQTT_TASK)
 	MutexLock(&c->mutex);
 #endif
-	if (!c->isconnected)
+	if (!c->isconnected) {
+		SKTDebugPrint(LOG_LEVEL_DEBUG,"connect lost = %d", c->isconnected);
 		goto exit;
+	}
 
     TimerInit(&timer);
     TimerCountdownMS(&timer, c->command_timeout_ms);
@@ -519,22 +523,31 @@ int MQTTPublish(MQTTClient* c, const char* topicName, MQTTMessage* message)
     
     len = MQTTSerialize_publish(c->buf, c->buf_size, 0, message->qos, message->retained, message->id, 
               topic, (unsigned char*)message->payload, message->payloadlen);
-    if (len <= 0)
+    if (len <= 0) {
+    	SKTDebugPrint(LOG_LEVEL_DEBUG,"MQTTSerialize_publish fail");
         goto exit;
-    if ((rc = sendPacket(c, len, &timer)) != SUCCESS) // send the subscribe packet
+    }
+    if ((rc = sendPacket(c, len, &timer)) != SUCCESS) { // send the subscribe packet
+    	SKTDebugPrint(LOG_LEVEL_DEBUG," sendPacket fail");
         goto exit; // there was a problem
-    
+    }
+    SKTDebugPrint(LOG_LEVEL_DEBUG,"sendPacket rc = %d", rc);
     if (message->qos == QOS1)
     {
         if (waitfor(c, PUBACK, &timer) == PUBACK)
         {
             unsigned short mypacketid;
             unsigned char dup, type;
-            if (MQTTDeserialize_ack(&type, &dup, &mypacketid, c->readbuf, c->readbuf_size) != 1)
+            SKTDebugPrint(LOG_LEVEL_DEBUG,"waitfor");
+            if (MQTTDeserialize_ack(&type, &dup, &mypacketid, c->readbuf, c->readbuf_size) != 1) {
+            	SKTDebugPrint(LOG_LEVEL_DEBUG,"MQTTDeserialize_ack");
                 rc = FAILURE;
+            }
         }
-        else
+        else{
+        	SKTDebugPrint(LOG_LEVEL_DEBUG,"waitfor error");
             rc = FAILURE;
+        }
     }
     else if (message->qos == QOS2)
     {

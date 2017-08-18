@@ -1,11 +1,10 @@
-
 /**
  * @file List.h
  *
  * @brief Header for DeviceMiddleware List API
  *
- * Copyright (C) 2016. SPTek,All Rights Reserved.
- * Written 2016,by SPTek 
+ * Copyright (C) 2016. SK Telecom, All Rights Reserved.
+ * Written 2016,by SK Telecom
  */
 
 #ifndef _DM_LIST_H_
@@ -15,7 +14,7 @@
 extern "C" {
 #endif
 
-//#include <pthread.h>
+#include <pthread.h>
 #include <stdbool.h>
 
 
@@ -28,16 +27,15 @@ typedef struct _list_node{
 typedef void (*Releaser)(void*);
 
 typedef void (*Printer)(void*);
- 
+
 typedef bool (*CompareTo)(void*, void*);
- 
+
 // list structure
 typedef struct _list_head {
     int count;
     Releaser free;
     DMListNode* head;
     DMListNode* tail;
-//    pthread_mutex_t mutex;
 } DMList;
 
 void DMList_Init(DMList *list, Releaser relfn);
@@ -52,4 +50,3 @@ void DMList_Print(DMList *list, Printer printfn);
 #endif
 
 #endif//_DM_LIST_H_
-

@@ -271,9 +271,11 @@ void tskEthernetManager(void const * argument)
 	uint8_t preLinkStatus;
 	uint8_t curLinkStatus;
 	int8_t ret;
-	sockMutexId = osMutexCreate(osMutex(sockMutex));
-	spiMutexId = osMutexCreate(osMutex(spiMutex));
-	NetMemPoolId = osPoolCreate(osPool(NetMemPool));
+	if( sockMutexId == 0 && spiMutexId == 0 && NetMemPoolId == 0 ) {
+		sockMutexId = osMutexCreate(osMutex(sockMutex));
+		spiMutexId = osMutexCreate(osMutex(spiMutex));
+		NetMemPoolId = osPoolCreate(osPool(NetMemPool));
+	}
 
 #if NETINFO_NTP_USE
 	

@@ -73,7 +73,7 @@ int TimerLeftMS(Timer* timer)
 
 char TimerIsExpired(Timer* timer)
 {
-	return xTaskCheckForTimeOut(&timer->xTimeOut, &timer->xTicksToWait) == pdTRUE;
+	return xTaskCheckForTimeOut(&timer->xTimeOut, &timer->xTicksToWait) != pdFALSE;
 }
 
 

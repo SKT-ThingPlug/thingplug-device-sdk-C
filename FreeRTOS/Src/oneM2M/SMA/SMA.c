@@ -39,46 +39,37 @@ void SMAGetData(char *sensorType, char** output)
     switch(idx) {
         case MOTION_IDX:
             if( dummyIdx == 0 ) {
-                *output = malloc(strlen("1") * sizeof(char) + 1);
-                strcpy(*output, "1");
+                *output = strdup("1");
             } else {
-                *output = malloc(strlen("0") * sizeof(char) + 1);
-                strcpy(*output, "0");
+                *output = strdup("0");
             }
             break;
         case TEMP_IDX:
             if( dummyIdx == 0 ) {
-                *output = malloc(strlen("26.26") * sizeof(char) + 1);
-                strcpy(*output, "26.26");
+                *output = strdup("26.26");
                 dummyIdx = 1;
             } else {
-                *output = malloc(strlen("25.25") * sizeof(char) + 1);
-                strcpy(*output, "25.25");
+                *output = strdup("25.25");
             }
             break;
         case HUMI_IDX:
             if( dummyIdx == 0 ) {
-                *output = malloc(strlen("48") * sizeof(char) + 1);
-                strcpy(*output, "48");
+                *output = strdup("48");
             } else {
-                *output = malloc(strlen("44") * sizeof(char) + 1);
-                strcpy(*output, "44");
+                *output = strdup("44");
             }
             break;
         case LIGHT_IDX:
             if( dummyIdx == 0 ) {
-                *output = malloc(strlen("278") * sizeof(char) + 1);
-                strcpy(*output, "278");
+                *output = strdup("278");
             } else {
-                *output = malloc(strlen("267") * sizeof(char) + 1);
-                strcpy(*output, "267");
+                *output = strdup("267");
             }
             break;
         default:
-			*output = NULL;
+            *output = NULL;
             break;
     }
-	dummyIdx++;
-	dummyIdx%=2;
+    dummyIdx++;
+    dummyIdx%=2;
 }
-

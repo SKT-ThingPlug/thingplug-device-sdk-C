@@ -4,13 +4,13 @@
  *
  * @brief DeviceMiddleware List API
  *
- * Copyright (C) 2016. SPTek,All Rights Reserved.
- * Written 2016,by SPTek 
+ * Copyright (C) 2016. SK Telecom, All Rights Reserved.
+ * Written 2016,by SK Telecom
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <unistd.h>
+#include <unistd.h>
 #include <string.h>
 
 #include "List.h"
@@ -22,7 +22,6 @@ void DMList_Init(DMList *list, Releaser relfn)
     list->free = relfn;
     list->head = NULL;
     list->tail = NULL;
-//    pthread_mutex_init(&list->mutex, NULL);
 }
 
 void DMList_Close(DMList *list)
@@ -30,7 +29,6 @@ void DMList_Close(DMList *list)
     DMListNode *tmp,*next;
     if( list == NULL || list->head == NULL || list->tail == NULL || list->count == 0) return;
 
-//    pthread_mutex_lock(&list->mutex);
     tmp = list->head;
     do{
         next = tmp->next;
@@ -39,7 +37,6 @@ void DMList_Close(DMList *list)
         tmp = next;
     }while(tmp != list->head);
     memset(list, 0, sizeof(DMList));
-//    pthread_mutex_unlock(&list->mutex);
 }
 
 void DMList_Add(DMList *list, void *data)
@@ -47,7 +44,6 @@ void DMList_Add(DMList *list, void *data)
     DMListNode *node = (DMListNode *)malloc(sizeof(DMListNode));
     node->data = data;
 
-//    pthread_mutex_lock(&list->mutex);
     if( list->head != NULL) {
         // list is not empty
         node->prev = list->tail;
@@ -55,7 +51,7 @@ void DMList_Add(DMList *list, void *data)
         list->tail->next = node;
         list->tail = node;
         list->head->prev = node;
-    } else { 
+    } else {
         // list is empty
         list->head = node;
         list->tail = node;
@@ -63,16 +59,14 @@ void DMList_Add(DMList *list, void *data)
         node->prev = node;
     }
     list->count++;
-//    pthread_mutex_unlock(&list->mutex);
 }
 
 DMListNode* DMList_Remove(DMList *list)
 {
-    DMListNode *delNode = list->tail;
-
     if( list == NULL || list->head == NULL || list->tail == NULL || list->count == 0) return NULL;
 
-//    pthread_mutex_lock(&list->mutex);
+    DMListNode *delNode = list->tail;
+
     if( list->count == 1) {
         list->head = NULL;
         list->tail = NULL;
@@ -82,7 +76,6 @@ DMListNode* DMList_Remove(DMList *list)
         list->head->prev = list->tail;
     }
     list->count--;
-//    pthread_mutex_unlock(&list->mutex);
 
     return delNode;
 }
@@ -110,11 +103,10 @@ void DMList_Print(DMList *list, Printer printfn)
 {
     DMListNode *tmp;
     if( list == NULL || printfn == NULL) return;
-        
+
     tmp = list->head;
     do{
         printfn(tmp->data);
         tmp = tmp->next;
     }while(tmp != list->head);
 }
-

@@ -65,6 +65,7 @@ extern int ThingPlug_oneM2M_SDK();
 /* USER CODE END 0 */
 
 int main(void)
+
 {
 
   /* USER CODE BEGIN 1 */

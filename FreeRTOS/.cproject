@@ -17,6 +17,7 @@
 						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.683225115" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain">
 							<option id="com.atollic.truestudio.toolchain_options.mcu.1498751672" name="Microcontroller" superClass="com.atollic.truestudio.toolchain_options.mcu" value="STM32F411RE" valueType="string"/>
 							<option id="com.atollic.truestudio.toolchain_options.vendor.1457033508" name="Vendor name" superClass="com.atollic.truestudio.toolchain_options.vendor" value="STMicroelectronics" valueType="string"/>
+							<option id="com.atollic.truestudio.general.runtimelib.1760858653" name="Runtime Library" superClass="com.atollic.truestudio.general.runtimelib" value="com.atollic.truestudio.ld.general.clib.small" valueType="enumerated"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.atollic.truestudio.exe.debug.toolchain.platform.2054752829" isAbstract="false" name="Debug platform" superClass="com.atollic.truestudio.exe.debug.toolchain.platform"/>
 							<builder buildPath="${workspace_loc:/STM32100B-EVAL/Debug}" id="com.atollic.truestudio.mbs.builder1.1222194476" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="com.atollic.truestudio.mbs.builder1">
 								<outputEntries>
@@ -53,6 +54,7 @@
 									<listOptionValue builtIn="false" value="../Library/Mqtt_Paho"/>
 									<listOptionValue builtIn="false" value="../Library/Mqtt_Paho/MQTTPacket"/>
 									<listOptionValue builtIn="false" value="../Library/mbedtls_2_3_0/include"/>
+									<listOptionValue builtIn="false" value="../Library/NTPClient"/>
 									<listOptionValue builtIn="false" value="../Library/oneM2M/include"/>
 									<listOptionValue builtIn="false" value="../Src/oneM2M"/>
 									<listOptionValue builtIn="false" value="../Src/oneM2M/MA"/>

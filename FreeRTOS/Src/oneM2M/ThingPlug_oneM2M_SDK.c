@@ -9,16 +9,19 @@
 
 #include "MA.h"
 
-extern int SDKVerificationMain();
+extern int SDKVerificationMain(void);
 
 /**
  * @brief main
  * @param[in] argc
  * @param[in] argv
  */
-int ThingPlug_oneM2M_SDK(int argc, char **argv) {
+int ThingPlug_oneM2M_SDK(void) {
 //	SDKVerificationMain();
-	MARun();
+	while(1) {
+		osDelay(2000);
+		MARun();
+	}
     return 0;
 }
 
