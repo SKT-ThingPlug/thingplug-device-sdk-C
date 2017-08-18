@@ -20,7 +20,7 @@ FreeRTOS (+TLS)
 
 Source Tree
 ---
-* [Source](https://github.com/SKT-ThingPlug/thingplug-device-sdk-C/tree/master/FreeRTOS)
+
 + __FreeRTOS__ (project root)
 	+ __Drivers__
 		+ __CMSIS__
@@ -42,8 +42,7 @@ Source Tree
 			+ __include__ (library headers)
 			+ __src__ (oneM2M library source)
 				+ __net__ (MQTT handler)
-				+ __oneM2M_V1__ (ThingPlug oneM2M v1 API)
-				+ __oneM2M_V1_12__ (ThingPlug oneM2M v1.12 API)
+				+ __oneM2M_V1_14__ (ThingPlug oneM2M v1.14 API)
 	+ __Middlewares__
 		+ __Third_Party__
 			+ __FreeRTOS__ (FreeRTOS source)
@@ -150,48 +149,20 @@ Library import
 
 Sample code import
 ---
-1. Code import
-	+ Source Tree의 '/Src/oneM2M' directory를 '/Src' directory에 복사
-2. '/Src/oneM2M/Configuration.h' 수정
-	+ __ONEM2M_V1_12__ : define 됐을 경우 oneM2M v1.12가 활성화 됨
-	+ __MQTT_ENABLE_SERVER_CERT_AUTH__ : 0(Normal socket 사용), 1(TLS socket 사용)
-	+ __ACCOUNT_USER__ : ThingPlug 계정의 UKEY
-	+ __ACCOUNT_PASSWORD__ : ThingPlug 계정의 Password
-	+ __ONEM2M_NODEID__ : ThingPlug 계정에 등록된 Device ID
-3. '/Src/main.c' 수정
-	+ Source Tree의 '/Src/main.c' 파일과 비교해서 main() 함수에 WIZnet library 초기화 등의 code 추가
-	+ serial port speed 변경
-		+ '/Src/main.c' 파일에서 MX_USART2_UART_Init() 함수의 huart2.Init.BaudRate = 115200; 수정
-4. '/Src/oneM2M/ThingPlug_oneM2M_SDK.cpp' 수정
- 1. 실행 대상 변경
-	1. SDK verification을 실행할 경우
-		+ ThingPlug_oneM2M_SDK() function 내의 SDKVerificationMain(); 활성화
-	2. MA를 실행할 경우
-		+ ThingPlug_oneM2M_SDK() function 내의 MARun(); 활성화
 
-Library path 설정
----
-1. include path 설정
-	+ 메뉴 > 프로젝트 > 특성 > C/C++ General > Includes tab
-	![TrueSTUDIO_setting_include.png](images/TrueSTUDIO_setting_include.png)
-2. source path 설정
-	+ 메뉴 > 프로젝트 > 특성 > C/C++ General > Source Location tab
-	![TrueSTUDIO_setting_source.png](images/TrueSTUDIO_setting_source.png)
-
-Build & Run
----
-1. Build
-	+ 메뉴 > 프로젝트 > Build Project
-	![TrueSTUDIO_compile.png](images/TrueSTUDIO_compile.png)
-2. Run
-	+ build 후 '/Debug' directory에 생성 된 .elf 파일을 사용해서 다음 명령으로 .bin 생성
-	~~~
-	> C:\Program Files (x86)\Atollic\TrueSTUDIO for ARM 6.0.0\ARMTools\bin\arm-atollic-eabi-objcopy.exe -O binary ${project_name}.elf ${project_name}.bin
-	~~~
-	+ 생성된 .bin 파일을 윈도우 탐색기에서 'NODE_F411RE'로 연결된 device drive에 복사
-3. 실행 로그 확인
+1. Code Download
+-> git clone 하거나 다운로드 진행
+2. TrueSTUDIO를 실행한다.
+3. 위 메뉴바 -> 파일 -> 가져오기
+4. 일반->기존 프로젝트를 작업공간으로->루트 디렉토리(압축해제한 폴더 선택)->프로젝트 선택->완료
+5. 메뉴바->프로젝트->모두빌드 (경고 화면이 나올 수 있으나 무시)
+6. 보드를 연결
+7. 실행->디버그 구성->Embedded C/C++ Application->FreeRTOS.elf(확인후)->오른쪽 하단에 디버그 버튼 클릭
+8. 메뉴바->실행->재게를 누르면 프로그램이 동작한다.
+9. 실행 로그 확인
 	+ Serial 통신 프로그램(ex. Putty, Tera Term 등)을 사용해서 프로그램 로그 확인
-	(※ sample code의 main.c 파일에서 지정한 speed와 맞춰 환경을 설정해야 글자가 깨져 보이지 않음)
+
+	(※ sample code의 main.c 파일에서 지정한 speed와 맞춰 환경설정해야 글자가 깨져 보이지 않음)
 	![serial_log.png](images/serial_log.png)
 
-Copyright (c) 2016 SK Telecom Co., Ltd. All Rights Reserved.
+Copyright (c) 2017 SK Telecom Co., Ltd. All Rights Reserved.
