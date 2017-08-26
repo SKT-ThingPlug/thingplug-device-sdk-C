@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "Starting ThingPlug Device SDK..."
+/home/nvidia/thingplug-device-sdk-C/linux/samples/AutoStartup.sh
