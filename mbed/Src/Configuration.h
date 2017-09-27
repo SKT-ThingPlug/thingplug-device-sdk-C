@@ -40,7 +40,7 @@
 #define NAME_ACCESSCONTROLPOLICY            "acp-middleware"
 #else // oneM2M V1
 
-#define MQTT_HOST                           "thingplugtest.sktiot.com"
+#define MQTT_HOST                           "mqtt.sktiot.com"
 #define MQTT_PORT                           1883
 #define MQTT_SECURE_PORT                    8883
 #define MQTT_KEEP_ALIVE                     300
@@ -51,7 +51,7 @@
 
 #define ONEM2M_CSEBASE                      "ThingPlug"
 #define ONEM2M_NODEID                       "(TBD.)"
-#define ONEM2M_TO                           "/ThingPlug/v1_0" // thingplugtest.sktiot.com
+#define ONEM2M_TO                           "/ThingPlug/v1_0"
 #define ONEM2M_PASSCODE                     "(TBD.)"
 #define ONEM2M_RI                           "1234"
 
