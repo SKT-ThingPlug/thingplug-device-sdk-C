@@ -55,6 +55,21 @@ SDK를 활용해볼 수 있는 Sample App으로서 Device Middleware lite 버전
 실행시키면 Configuration에 명시된 내용에 따라 자동으로 ThingPlug에 등록시키고,
 가상 센서 데이터(온도, 습도, 조도 등)와 실제 시스템의 여유 메모리량을 ThingPlug로 매 10초마다 전송한다.
 
+만약 빌드 시 openssl을 찾지 못할 경우에는 개발용 openssl 패키지를 설치해주어야 한다.
+
+ubuntu계열:
+	```
+	#apt-get install openssl-dev
+	```
+
+fedora계열:
+	```
+	#dnf install openssl-devel
+	```
+
+만약 미리 빌드된 paho 라이브러리가 동작하지 않을 경우에는, 본 프로젝트 루트에 등록되어 있는 paho.mqtt.c 프로젝트를 먼저 빌드하여,
+생성된 libpaho-mqtt3as.a 파일을 linux/lib 폴더에 복사한 다음 다시 Sample App 빌드를 시도한다.
+
 Configuration 설정(samples/Configuration.h)
 ---
 1. Device 정보 입력
